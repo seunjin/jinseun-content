@@ -76,6 +76,13 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
+
+  --header-height: 3rem;
+  --content-width: 80rem;
+  --global-inline-padding: 3rem;
+  @media (width<=40rem) {
+    --global-inline-padding: 1rem;
+  }
 }
 
 .dark {
@@ -115,8 +122,39 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    scrollbar-width: none;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  html {
+    @apply font-sans text-base;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-sm;
   }
 }
+/* 
+.page {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+
+  margin: auto;
+
+  .container {
+    width: 100%;
+    max-width: 1328px;
+    padding-top: 48px;
+    flex: 1;
+  }
+} */
