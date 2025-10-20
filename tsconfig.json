@@ -22,6 +22,7 @@
       "@/*": ["./src/*"],
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/components/*"],
+      "@shadcn/*": ["./src/shadcn/*"],
       "@lib/*": ["./src/lib/*"]
     }
   },
