@@ -145,9 +145,18 @@
   }
 }
 
-.main-container {
+.app-layout {
   width: min(100%, var(--content-width));
-  padding: var(--main-container-padding-block)
-    var(--main-container-padding-inline);
   margin: 0 auto;
+  &.app-header {
+    padding-inline: var(--main-container-padding-inline);
+  }
+  &.app-main {
+    padding: var(--main-container-padding-block)
+      var(--main-container-padding-inline) 12rem;
+  }
+  &.app-footer {
+    padding: var(--main-container-padding-block)
+      var(--main-container-padding-inline) 8rem;
+  }
 }
