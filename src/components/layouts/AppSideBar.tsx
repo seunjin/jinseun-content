@@ -6,14 +6,13 @@ import { cn } from "@shadcn/lib/utils";
 
 const AppSideBar = () => {
   return (
-    <aside className="sticky top-[calc(var(--header-height)+var(--main-container-padding-block))] h-[calc(100dvh-3rem-var(--header-height))] w-60 border-r pr-4 shrink-0 ">
+    <aside className="sticky top-[calc(var(--header-height)+var(--main-container-padding-block))] h-[calc(100dvh-3rem-var(--header-height))] w-60 pr-4 shrink-0 ">
       <div className="flex items-center gap-2 pb-6">
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
           카테고리
         </h4>
-        <Icon name={"ChevronDown"} />
       </div>
-      <div>
+      <div className="overflow-auto h-[calc(100%-52px)] overscroll-contain">
         {INSIGHT_CATEGORY.map((category) => (
           <div key={category.id} className="flex items-center gap-2 mb-2">
             <button

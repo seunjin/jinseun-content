@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@shadcn/ui/button";
 import { useTheme } from "next-themes";
 import React from "react";
 
@@ -13,15 +12,15 @@ const ThemeToggleButton = () => {
   const next = current === "dark" ? "light" : "dark";
 
   return (
-    <Button
+    <button
       onClick={() => setTheme(next)}
-      variant="ghost"
       aria-label="Toggle color scheme"
+      className="font-medium cursor-pointer"
     >
       <span suppressHydrationWarning>
         {!mounted ? "Loading..." : next === "dark" ? "Dark Mode" : "Light Mode"}
       </span>
-    </Button>
+    </button>
   );
 };
 

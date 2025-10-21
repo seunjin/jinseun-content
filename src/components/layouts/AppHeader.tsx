@@ -7,7 +7,7 @@ import React from "react";
 
 const AppHeader = () => {
   return (
-    <header className="sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b h-[var(--header-height)]">
+    <header className="sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]">
       <div
         className={cn(
           "main-container",
@@ -26,20 +26,18 @@ const AppHeader = () => {
             <Link href={"#"} className="font-medium text-base text-primary">
               Insight
             </Link>
-            <Separator orientation="vertical" className="!h-3 !bg-white/40" />
+            <Separator orientation="vertical" className="h-3 bg-border" />
             <Link href={"#"} className="font-medium text-base text-primary">
               Portfolio
             </Link>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            className="font-medium text-muted-foreground hover:text-shadow-primary transition-[color] duration-300 cursor-pointer"
-          >
+          <button className="font-medium text-primary/50 hover:text-primary transition-[color] duration-300 cursor-pointer">
             Sign In
-          </Button>
-          <Separator orientation="vertical" className="!h-3 !bg-white/40" />
+          </button>
+
+          <Separator orientation="vertical" className="h-3 bg-border" />
           <ThemeToggleButton />
         </div>
       </div>
