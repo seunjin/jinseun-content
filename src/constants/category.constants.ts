@@ -1,57 +1,67 @@
+import { SelectOption } from "@app/types/common/select";
 import { ICON_PALETTE } from "@components/lib/lucide-icons/icons-palette";
+import { extractSelectOptions } from "@utils/select-options";
+
 type InsightCategory = {
-  id: number;
-  label: string;
-  category: string;
   icon: keyof typeof ICON_PALETTE;
-};
+} & SelectOption;
 export const INSIGHT_CATEGORY: InsightCategory[] = [
   {
     id: 1,
     label: "전체",
-    category: "",
+    value: "all",
     icon: "List",
   },
   {
     id: 2,
     label: "인문학",
-    category: "humanity",
+    value: "humanity",
     icon: "Lightbulb",
   },
   {
     id: 3,
     label: "스타트업",
-    category: "startup",
+    value: "startup",
     icon: "Rocket",
   },
   {
     id: 4,
     label: "IT·프로그래밍",
-    category: "programming",
+    value: "programming",
     icon: "CodeXml",
   },
   {
     id: 5,
     label: "서비스·전략 기획",
-    category: "planning",
+    value: "planning",
     icon: "Goal",
   },
   {
     id: 6,
     label: "마케팅",
-    category: "marketing",
+    value: "marketing",
     icon: "ChartNoAxesCombined",
   },
   {
     id: 7,
     label: "디자인·일러스트",
-    category: "design",
+    value: "design",
     icon: "DraftingCompass",
   },
   {
     id: 8,
     label: "자기계발",
-    category: "self-development",
+    value: "self-development",
     icon: "Footprints",
   },
 ];
+/** 인사이트 카테고리 옵션 (전체 제외) */
+export const INSIGHT_CATEGORY_SELECT_OPTIONS =
+  extractSelectOptions(INSIGHT_CATEGORY);
+/** 인사이트 카테고리 옵션 (전체 포함) */
+export const INSIGHT_CATEGORY_SELECT_OPTIONS_WITH_ALL = extractSelectOptions(
+  INSIGHT_CATEGORY,
+  {
+    includeAll: true,
+  }
+);
