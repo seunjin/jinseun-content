@@ -9,6 +9,11 @@ import {
   List,
   LucideIcon,
   Rocket,
+  ArrowLeft,
+  Save,
+  BookOpenCheck,
+  Asterisk,
+  ImageOff,
 } from "lucide-react";
 
 export const ICON_PALETTE = {
@@ -21,4 +26,9 @@ export const ICON_PALETTE = {
   Lightbulb,
   List,
   Rocket,
+  ArrowLeft,
+  Save,
+  BookOpenCheck,
+  Asterisk,
+  ImageOff,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서
