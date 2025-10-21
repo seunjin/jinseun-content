@@ -7,6 +7,7 @@ import {
   Goal,
   Lightbulb,
   List,
+  LucideIcon,
   Rocket,
 } from "lucide-react";
 
@@ -20,4 +21,4 @@ export const ICON_PALETTE = {
   Lightbulb,
   List,
   Rocket,
-};
+} satisfies Record<string, LucideIcon>; // icons-palette.ts에서
