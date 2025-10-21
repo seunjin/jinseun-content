@@ -77,8 +77,11 @@
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
 
+  /* Layout */
   --header-height: 3rem;
   --global-inline-padding: 3rem;
+  --main-container-padding-block: 1.5rem;
+  --main-container-padding-inline: var(--global-inline-padding);
   --content-width: calc(80rem + 2 * var(--global-inline-padding));
   @media (width<=40rem) {
     --global-inline-padding: 1rem;
@@ -144,6 +147,7 @@
 
 .main-container {
   width: min(100%, var(--content-width));
-  padding-inline: var(--global-inline-padding);
+  padding: var(--main-container-padding-block)
+    var(--main-container-padding-inline);
   margin: 0 auto;
 }

@@ -7,11 +7,11 @@ import React from "react";
 
 const AppHeader = () => {
   return (
-    <header className="sticky top-0 z-10 flex items-center w-full  bg-background backdrop-blur-md">
+    <header className="sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b h-[var(--header-height)]">
       <div
         className={cn(
           "main-container",
-          "h-[var(--header-height)] mx-auto flex items-center justify-between "
+          "h-full mx-auto flex items-center justify-between "
         )}
       >
         <div className="flex items-center gap-6">
@@ -23,11 +23,11 @@ const AppHeader = () => {
             />
           </Link>
           <div className="flex items-center gap-4">
-            <Link href={"#"} className="font-medium text-base text-gray-200">
+            <Link href={"#"} className="font-medium text-base text-primary">
               Insight
             </Link>
             <Separator orientation="vertical" className="!h-3 !bg-white/40" />
-            <Link href={"#"} className="font-medium text-base text-white">
+            <Link href={"#"} className="font-medium text-base text-primary">
               Portfolio
             </Link>
           </div>
@@ -35,7 +35,7 @@ const AppHeader = () => {
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
-            className="font-medium text-muted-foreground hover:text-white transition-[color] duration-300 cursor-pointer"
+            className="font-medium text-muted-foreground hover:text-shadow-primary transition-[color] duration-300 cursor-pointer"
           >
             Sign In
           </Button>
