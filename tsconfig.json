@@ -23,7 +23,9 @@
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/components/*"],
       "@shadcn/*": ["./src/shadcn/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@providers/*": ["./src/providers/*"],
+      "@constants/*": ["./src/constants/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
