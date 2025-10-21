@@ -7,15 +7,19 @@ import React from "react";
 
 const AppHeader = () => {
   return (
-    <header className="sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]">
+    <header
+      className={cn(
+        "sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]"
+      )}
+    >
       <div
         className={cn(
-          "main-container",
+          "app-layout app-header",
           "h-full mx-auto flex items-center justify-between "
         )}
       >
         <div className="flex items-center gap-6">
-          <Link href={"#"}>
+          <Link href={"/"}>
             <img
               src="https://github.com/seunjin.png"
               alt="@LOGO"
@@ -39,6 +43,10 @@ const AppHeader = () => {
 
           <Separator orientation="vertical" className="h-3 bg-border" />
           <ThemeToggleButton />
+          <Separator orientation="vertical" className="h-3 bg-border" />
+          <Link href="/admin" className="font-medium">
+            Admin
+          </Link>
         </div>
       </div>
     </header>

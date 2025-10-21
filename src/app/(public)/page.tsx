@@ -1,9 +1,9 @@
-import { HotTopic } from "@components/ui/hot-topic";
 import AppContainer from "@components/layouts/AppContainer";
-import { Skeleton } from "@shadcn/ui/skeleton";
+import { HotTopic } from "@components/ui/hot-topic";
 import { NewTopic } from "@components/ui/new-topic";
+import React from "react";
 
-export default function Home() {
+const PubliRootPage = () => {
   return (
     <AppContainer withSidebar>
       {/* 토픽 콘텐츠 */}
@@ -63,28 +63,11 @@ export default function Home() {
             <NewTopic.Skeleton />
             <NewTopic.Skeleton />
             <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
-            <NewTopic.Skeleton />
           </div>
         </section>
       </div>
     </AppContainer>
   );
-}
+};
+
+export default PubliRootPage;

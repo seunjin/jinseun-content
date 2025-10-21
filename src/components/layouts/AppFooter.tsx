@@ -5,10 +5,8 @@ import React from "react";
 
 const AppFooter = () => {
   return (
-    <footer
-      className={cn("border-t border-border/50 dark:border-border pb-18")}
-    >
-      <div className={cn("main-container")}>
+    <footer className={cn("border-t border-border/50 dark:border-border")}>
+      <div className={cn("app-layout app-footer")}>
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-2">
             <div className="flex flex-col">
