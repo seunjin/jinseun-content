@@ -33,7 +33,6 @@ export default function RootLayout({
         >
           <AppHeader />
           {children}
-          <AppFooter />
         </ThemeProvider>
       </body>
     </html>
