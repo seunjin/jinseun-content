@@ -18,10 +18,10 @@ const AppFooter = () => {
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size={"icon"}>
-                <Image src="/" alt="@SNS" className="size-6" />
+                <Image src="/" alt="@SNS" width={24} height={24} />
               </Button>
               <Button variant="outline" size={"icon"}>
-                <Image src="/" alt="@SNS" className="size-6" />
+                <Image src="/" alt="@SNS" width={24} height={24} />
               </Button>
             </div>
           </div>

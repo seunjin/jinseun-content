@@ -1,10 +1,13 @@
+import { LogoutButton } from "@components/ui/LogoutButton";
 import ThemeToggleButton from "@components/ui/ThemeToggleButton";
 import { cn } from "@shadcn/lib/utils";
 import { Separator } from "@shadcn/ui";
+import type { Session } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 
-const AppHeader = () => {
+const AppHeader = ({ session }: { session: Session | null }) => {
+  console.log(session);
   return (
     <header
       className={cn(
@@ -19,14 +22,13 @@ const AppHeader = () => {
       >
         <div className="flex items-center gap-6">
           <Link href={"/"}>
-            <div className="relative size-6">
-              <Image
-                src="https://avatars.githubusercontent.com/seunjin"
-                alt="@LOGO"
-                fill
-                className="size-6 cursor-pointer rounded-full"
-              />
-            </div>
+            <Image
+              src="https://avatars.githubusercontent.com/seunjin"
+              alt="@LOGO"
+              width={24}
+              height={24}
+              className="cursor-pointer rounded-full"
+            />
           </Link>
           <div className="flex items-center gap-4">
             <Link href={"#"} className="font-medium text-base text-primary">
@@ -52,6 +54,8 @@ const AppHeader = () => {
           <Link href="/admin" className="font-medium">
             Admin
           </Link>
+          <Separator orientation="vertical" className="h-3 bg-border" />
+          <LogoutButton />
         </div>
       </div>
     </header>

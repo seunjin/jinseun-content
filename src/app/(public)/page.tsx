@@ -1,7 +1,6 @@
 import AppContainer from "@components/layouts/AppContainer";
 import { HotTopic } from "@components/templates/hot-topic";
 import { NewTopic } from "@components/templates/new-topic";
-
 import Image from "next/image";
 
 const PubliRootPage = () => {
@@ -16,7 +15,8 @@ const PubliRootPage = () => {
               <Image
                 src="/assets/gif/gif-001.gif"
                 alt="@fire logo"
-                className="size-6"
+                width={24}
+                height={24}
               />
 
               <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
@@ -42,7 +42,8 @@ const PubliRootPage = () => {
               <Image
                 src="/assets/gif/gif-002.gif"
                 alt="@fire logo"
-                className="size-6"
+                width={24}
+                height={24}
               />
 
               <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
