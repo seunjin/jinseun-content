@@ -1,6 +1,7 @@
 import { requireEnv } from "@utils/env";
 import { createApiClient } from "./api-client";
 import { logApiError, logApiRequest, logApiResponse } from "./api-logger";
+import { createHttpHelpers } from "./http-helpers";
 import { extractResponseSnippet } from "./response-snippet";
 
 /**
@@ -65,3 +66,8 @@ export const serverHttp = createApiClient(
     baseUrl: API_ORIGIN,
   },
 );
+
+/**
+ * @description 서버 환경에서 동일한 HTTP 헬퍼를 제공합니다.
+ */
+export const serverApi = createHttpHelpers(serverHttp);

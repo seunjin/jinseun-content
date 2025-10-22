@@ -9,25 +9,48 @@
 사용 예시
 ```ts
 // 서버 컴포넌트 또는 Route Handler
-import { serverHttp } from "@/lib/api/server-http";
+import { serverApi } from "@/lib/api/server-http";
 import { postSchema } from "@/schemas/post";
 
-const post = await serverHttp({
-  url: "/posts",
-  method: "POST",
+const post = await serverApi.post("/posts", postSchema, {
   json: { title: "새 글", body: "본문" },
-  schema: postSchema,
 });
 
 // 클라이언트 (React Query)
 import { useQuery } from "@tanstack/react-query";
-import { clientHttp } from "@/lib/api/client-http";
+import { clientApi } from "@/lib/api/client-http";
 
 export const usePost = (id: string) =>
   useQuery({
     queryKey: ["post", id],
-    queryFn: () => clientHttp({ url: `/posts/${id}` }),
+    queryFn: () => clientApi.get(`/posts/${id}`, postSchema),
   });
+
+// 제네릭 + 커스텀 스키마 예시
+import { z } from "zod";
+import { ApiSuccessSchema } from "@/lib/api/api-response";
+
+const profileListSchema = ApiSuccessSchema({
+  data: z.object({
+    responseData: z.array(profileSchema),
+    responseMetaData: z.array(metaSchema).optional(),
+  }),
+  meta: z.object({
+    totalCount: z.number(),
+  }),
+});
+
+// GET
+const response = await clientApi.get("/api/profiles", profileListSchema, {
+  query: { page: 1 },
+});
+const profiles = ensureOk(response).data.responseData;
+
+// POST
+const created = await serverApi.post("/api/profiles", profileListSchema, {
+  json: { name: "Jin" },
+});
+```
 ```
 
 설계 포인트
@@ -62,6 +85,7 @@ export const usePost = (id: string) =>
 구현 체크리스트
 - [ ] `src/lib/api/create-http-client.ts`에서 요청 옵션(XOR), 헤더 자동화, `parseAs` 로직을 정의한다.
 - [ ] `serverHttp`와 `clientHttp` 바인딩 파일을 만들고 각 환경 전용 fetch 엔진(fetch/ky)을 주입한다.
+- [ ] `createHttpHelpers`로 `clientApi`/`serverApi` 헬퍼를 생성해 메서드 호출을 일관되게 유지한다.
 - [ ] ky 인스턴스에 `beforeRequest`/`afterResponse` 훅을 등록해 토큰, 재시도, 에러 매핑을 구현한다.
 - [ ] Zod 스키마는 모듈 단위로 정의하고 `schema` 옵션으로 전달하도록 강제한다.
 - [ ] Storybook 혹은 테스트 환경에서 사용할 목업 fetcher를 추가해 동일 인터페이스로 주입한다.

@@ -1,6 +1,7 @@
 import ky, { HTTPError } from "ky";
 import { createApiClient } from "./api-client";
 import { logApiError, logApiRequest, logApiResponse } from "./api-logger";
+import { createHttpHelpers } from "./http-helpers";
 import { extractResponseSnippet } from "./response-snippet";
 
 const API_ORIGIN = process.env.NEXT_PUBLIC_API_ORIGIN;
@@ -102,3 +103,9 @@ export const clientHttp = createApiClient(
     baseUrl: API_ORIGIN,
   },
 );
+
+/**
+ * @description 클라이언트 환경에서 HTTP 메서드별 헬퍼를 제공합니다.
+ * - 항상 schema를 전달해 타입·런타임 검증을 모두 만족시켜 주세요.
+ */
+export const clientApi = createHttpHelpers(clientHttp);
