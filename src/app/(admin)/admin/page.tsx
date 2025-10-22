@@ -1,5 +1,5 @@
+import Icon from "@components/common/lucide-icons/Icon";
 import AppContainer from "@components/layouts/AppContainer";
-import Icon from "@components/lib/lucide-icons/Icon";
 import { INSIGHT_CATEGORY_SELECT_OPTIONS } from "@constants/category.constants";
 import {
   Button,

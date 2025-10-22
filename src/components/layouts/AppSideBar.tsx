@@ -1,4 +1,4 @@
-import Icon from "@components/lib/lucide-icons/Icon";
+import Icon from "@components/common/lucide-icons/Icon";
 import { cn } from "@shadcn/lib/utils";
 import { INSIGHT_CATEGORY } from "../../constants/category.constants";
 

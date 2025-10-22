@@ -1,5 +1,5 @@
 import type { SelectOption } from "@app/types/common/select";
-import type { ICON_PALETTE } from "@components/lib/lucide-icons/icons-palette";
+import type { ICON_PALETTE } from "@components/common/lucide-icons/icons-palette";
 import { extractSelectOptions } from "@utils/select-options";
 
 type InsightCategory = {

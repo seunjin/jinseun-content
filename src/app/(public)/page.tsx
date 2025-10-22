@@ -1,6 +1,7 @@
 import AppContainer from "@components/layouts/AppContainer";
-import { HotTopic } from "@components/ui/hot-topic";
-import { NewTopic } from "@components/ui/new-topic";
+import { HotTopic } from "@components/templates/hot-topic";
+import { NewTopic } from "@components/templates/new-topic";
+
 import Image from "next/image";
 
 const PubliRootPage = () => {

@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
+import { requireEnv } from "@utils/env";
 import type { NextRequest, NextResponse } from "next/server";
-import { requireEnv } from "../env";
 
 /**
  * Middleware에서 사용할 Supabase 클라이언트를 생성합니다.
