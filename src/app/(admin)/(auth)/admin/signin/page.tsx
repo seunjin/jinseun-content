@@ -84,10 +84,14 @@ export default function AdminSignInPage() {
           {isLoading ? "로그인 이동 중..." : "Google로 계속하기"}
         </Button>
 
-        <p className="text-xs text-muted-foreground">
-          허용된 이메일이 아닌 경우 접근할 수 없습니다. 문제가 있다면 운영자에게
-          문의해 주세요.
-        </p>
+        <div>
+          <p className="text-xs text-muted-foreground">
+            허용된 이메일이 아닌 경우 접근할 수 없습니다.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            문제가 있다면 운영자에게 문의해 주세요.
+          </p>
+        </div>
       </section>
     </main>
   );
