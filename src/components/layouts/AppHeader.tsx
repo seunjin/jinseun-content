@@ -19,11 +19,14 @@ const AppHeader = () => {
       >
         <div className="flex items-center gap-6">
           <Link href={"/"}>
-            <Image
-              src="https://github.com/seunjin.png"
-              alt="@LOGO"
-              className="size-6 cursor-pointer rounded-full"
-            />
+            <div className="relative size-6">
+              <Image
+                src="https://avatars.githubusercontent.com/seunjin"
+                alt="@LOGO"
+                fill
+                className="size-6 cursor-pointer rounded-full"
+              />
+            </div>
           </Link>
           <div className="flex items-center gap-4">
             <Link href={"#"} className="font-medium text-base text-primary">
