@@ -32,7 +32,7 @@ export default function AdminSignInPage() {
     try {
       const supabase = createClient();
       const origin = window.location.origin;
-      const callbackUrl = new URL("/auth/callback", origin);
+      const callbackUrl = new URL("/api/auth/callback", origin);
       callbackUrl.searchParams.set("next", nextPath);
 
       const { error: signInError } = await supabase.auth.signInWithOAuth({
