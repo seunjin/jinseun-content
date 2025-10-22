@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import type { Session } from "@supabase/supabase-js";
 import { requireEnv } from "@utils/env";
 import { cookies } from "next/headers";
 
@@ -31,3 +32,14 @@ export async function createServerSupabase() {
     },
   );
 }
+
+/**
+ * @description 서버 환경에서 현재 세션을 조회합니다. 서버 컴포넌트/Route Handler에서 사용하세요.
+ */
+export const getServerSession = async (): Promise<Session | null> => {
+  const supabase = await createServerSupabase();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session;
+};
