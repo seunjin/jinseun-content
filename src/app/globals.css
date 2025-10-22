@@ -83,7 +83,7 @@
   --main-container-padding-block: 1.5rem;
   --main-container-padding-inline: var(--global-inline-padding);
   --content-width: calc(80rem + 2 * var(--global-inline-padding));
-  @media (width<=40rem) {
+  @media (width <= 40rem) {
     --global-inline-padding: 1rem;
   }
 }
@@ -137,8 +137,8 @@
   }
   html {
     @apply font-sans text-base;
-    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
-      sans-serif;
+    font-family:
+      "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   body {
     @apply bg-background text-foreground text-sm;

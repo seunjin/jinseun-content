@@ -32,7 +32,7 @@ export function extractSelectOptions<T extends Record<string, unknown>>(
     allValue = "all",
     allId = 0,
     dedupeAll = true,
-  }: ExtractConfig<T> = {}
+  }: ExtractConfig<T> = {},
 ): SelectOption[] {
   // 1) 선택적으로 기존 "all" 항목을 원본 items에서 제거
   const filtered = dedupeAll

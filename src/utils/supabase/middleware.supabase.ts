@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
+import { requireEnv } from "../env";
 
 /**
  * Middleware에서 사용할 Supabase 클라이언트를 생성합니다.
@@ -9,11 +9,11 @@ import { NextResponse } from "next/server";
  */
 export function createMiddlewareSupabase(
   request: NextRequest,
-  response: NextResponse
+  response: NextResponse,
 ) {
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       cookies: {
         /** 들어온 요청의 모든 쿠키를 Supabase에 제공 */
@@ -27,6 +27,6 @@ export function createMiddlewareSupabase(
           });
         },
       },
-    }
+    },
   );
 }

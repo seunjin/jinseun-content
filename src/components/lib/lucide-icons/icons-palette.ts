@@ -1,19 +1,19 @@
 import {
+  ArrowLeft,
+  Asterisk,
+  BookOpenCheck,
   ChartNoAxesCombined,
   ChevronDown,
   CodeXml,
   DraftingCompass,
   Footprints,
   Goal,
+  ImageOff,
   Lightbulb,
   List,
-  LucideIcon,
+  type LucideIcon,
   Rocket,
-  ArrowLeft,
   Save,
-  BookOpenCheck,
-  Asterisk,
-  ImageOff,
 } from "lucide-react";
 
 export const ICON_PALETTE = {

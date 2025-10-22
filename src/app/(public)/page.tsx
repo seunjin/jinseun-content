@@ -1,7 +1,7 @@
 import AppContainer from "@components/layouts/AppContainer";
 import { HotTopic } from "@components/ui/hot-topic";
 import { NewTopic } from "@components/ui/new-topic";
-import React from "react";
+import Image from "next/image";
 
 const PubliRootPage = () => {
   return (
@@ -12,7 +12,7 @@ const PubliRootPage = () => {
         <section className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
             <div className="flex items-conter gap-2">
-              <img
+              <Image
                 src="/assets/gif/gif-001.gif"
                 alt="@fire logo"
                 className="size-6"
@@ -38,7 +38,7 @@ const PubliRootPage = () => {
         <section className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
             <div className="flex items-conter gap-2">
-              <img
+              <Image
                 src="/assets/gif/gif-002.gif"
                 alt="@fire logo"
                 className="size-6"

@@ -1,29 +1,28 @@
 import ThemeToggleButton from "@components/ui/ThemeToggleButton";
 import { cn } from "@shadcn/lib/utils";
-import { Button } from "@shadcn/ui/button";
-import { Separator } from "@shadcn/ui/separator";
+import { Separator } from "@shadcn/ui";
+import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const AppHeader = () => {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]"
+        "sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]",
       )}
     >
       <div
         className={cn(
           "app-layout app-header",
-          "h-full mx-auto flex items-center justify-between "
+          "h-full mx-auto flex items-center justify-between ",
         )}
       >
         <div className="flex items-center gap-6">
           <Link href={"/"}>
-            <img
+            <Image
               src="https://github.com/seunjin.png"
               alt="@LOGO"
-              className="w-6 h-6 cursor-pointer rounded-full"
+              className="size-6 cursor-pointer rounded-full"
             />
           </Link>
           <div className="flex items-center gap-4">
@@ -37,7 +36,10 @@ const AppHeader = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="font-medium text-primary/50 hover:text-primary transition-[color] duration-300 cursor-pointer">
+          <button
+            type="button"
+            className="font-medium text-primary/50 hover:text-primary transition-[color] duration-300 cursor-pointer"
+          >
             Sign In
           </button>
 

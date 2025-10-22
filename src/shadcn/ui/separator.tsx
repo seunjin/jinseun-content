@@ -1,9 +1,8 @@
 "use client";
 
-import * as React from "react";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
-
 import { cn } from "@shadcn/lib/utils";
+import type * as React from "react";
 
 function Separator({
   className,
@@ -22,7 +21,7 @@ function Separator({
         "data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full",
         // 수직 //data-[orientation=vertical]:h-full 제거
         "data-[orientation=vertical]:w-px",
-        className
+        className,
       )}
       {...props}
     />

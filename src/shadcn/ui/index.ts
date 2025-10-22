@@ -1,8 +1,6 @@
-export { Button, buttonVariants } from "./button";
+export { Button, type buttonVariants } from "./button";
 export { Input } from "./input";
 export { Label } from "./label";
-export { Separator } from "./separator";
-export { Skeleton } from "./skeleton";
 export {
   Select,
   SelectContent,
@@ -15,3 +13,5 @@ export {
   SelectTrigger,
   SelectValue,
 } from "./select";
+export { Separator } from "./separator";
+export { Skeleton } from "./skeleton";

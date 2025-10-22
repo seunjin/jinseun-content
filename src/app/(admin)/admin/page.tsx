@@ -5,7 +5,6 @@ import {
   Button,
   Input,
   Label,
-  Skeleton,
   Select,
   SelectContent,
   SelectGroup,
@@ -13,6 +12,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  Skeleton,
 } from "@shadcn/ui";
 
 const AdminPage = () => {

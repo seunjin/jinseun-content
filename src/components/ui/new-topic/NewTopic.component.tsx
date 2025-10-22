@@ -1,5 +1,3 @@
-import React from "react";
-
 const NewTopicComponent = () => {
   return <article>NewTopic</article>;
 };

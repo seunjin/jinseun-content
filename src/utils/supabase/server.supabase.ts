@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { requireEnv } from "../env";
 
 /**
  * Server Component·Route Handler에서 사용할 Supabase 클라이언트를 생성합니다.
@@ -9,8 +10,8 @@ export async function createServerSupabase() {
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       cookies: {
         getAll() {
@@ -27,6 +28,6 @@ export async function createServerSupabase() {
           }
         },
       },
-    }
+    },
   );
 }

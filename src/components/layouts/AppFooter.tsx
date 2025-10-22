@@ -1,7 +1,6 @@
 import { cn } from "@shadcn/lib/utils";
-import { Button } from "@shadcn/ui/button";
-import { Separator } from "@shadcn/ui/separator";
-import React from "react";
+import { Button, Separator } from "@shadcn/ui";
+import Image from "next/image";
 
 const AppFooter = () => {
   return (
@@ -19,23 +18,32 @@ const AppFooter = () => {
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size={"icon"}>
-                <img src="/" alt="@SNS" className="size-6" />
+                <Image src="/" alt="@SNS" className="size-6" />
               </Button>
               <Button variant="outline" size={"icon"}>
-                <img src="/" alt="@SNS" className="size-6" />
+                <Image src="/" alt="@SNS" className="size-6" />
               </Button>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="cursor-pointer transition-[color] duration-300 text-primary/40 hover:text-primary">
+            <button
+              type="button"
+              className="cursor-pointer transition-[color] duration-300 text-primary/40 hover:text-primary"
+            >
               이용약관
             </button>
             <Separator orientation="vertical" className="h-3 bg-border" />
-            <button className="cursor-pointer transition-[color] duration-300 text-primary/40 hover:text-primary">
+            <button
+              type="button"
+              className="cursor-pointer transition-[color] duration-300 text-primary/40 hover:text-primary"
+            >
               개인정보처리방침
             </button>
             <Separator orientation="vertical" className="h-3 bg-border" />
-            <button className="cursor-pointer transition-[color] duration-300 text-primary/40 hover:text-primary">
+            <button
+              type="button"
+              className="cursor-pointer transition-[color] duration-300 text-primary/40 hover:text-primary"
+            >
               클래스 론칭 문의
             </button>
           </div>

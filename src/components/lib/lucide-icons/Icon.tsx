@@ -1,7 +1,6 @@
-import React, { forwardRef } from "react";
-
+import type { LucideIcon, LucideProps } from "lucide-react";
+import { forwardRef } from "react";
 import { ICON_PALETTE } from "./icons-palette";
-import { LucideIcon, LucideProps } from "lucide-react";
 
 export type IconName = keyof typeof ICON_PALETTE;
 
