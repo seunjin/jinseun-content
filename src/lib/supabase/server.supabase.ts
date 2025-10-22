@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
+import { requireEnv } from "@utils/env";
 import { cookies } from "next/headers";
-import { requireEnv } from "../env";
 
 /**
  * Server Component·Route Handler에서 사용할 Supabase 클라이언트를 생성합니다.
