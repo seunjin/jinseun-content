@@ -1,8 +1,10 @@
 "use client";
 
 import { createClient } from "@shared/lib/supabase/client.supabase";
+import { Button } from "@ui/shadcn/components";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import Icon from "./lucide-icons/Icon";
 
 const supabase = createClient();
 
@@ -16,12 +18,13 @@ export function LogoutButton() {
   }, [router]);
 
   return (
-    <button
+    <Button
+      variant={"ghost"}
+      size={"icon-sm"}
       type="button"
       onClick={handleLogout}
-      className="text-sm font-medium"
     >
-      로그아웃
-    </button>
+      <Icon name="LogOut" />
+    </Button>
   );
 }

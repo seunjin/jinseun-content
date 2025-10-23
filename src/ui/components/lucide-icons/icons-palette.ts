@@ -11,9 +11,12 @@ import {
   ImageOff,
   Lightbulb,
   List,
+  LogOut,
   type LucideIcon,
+  Moon,
   Rocket,
   Save,
+  Sun,
 } from "lucide-react";
 
 export const ICON_PALETTE = {
@@ -31,4 +34,7 @@ export const ICON_PALETTE = {
   BookOpenCheck,
   Asterisk,
   ImageOff,
+  Moon,
+  Sun,
+  LogOut,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서
