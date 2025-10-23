@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@providers/theme.provider";
-import { getServerSession } from "@shared/lib/supabase/server.supabase";
+import { getSessionWithUser } from "@shared/lib/supabase/server.supabase";
 import AppHeader from "@ui/layouts/AppHeader";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
+  const { session, user } = await getSessionWithUser();
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
@@ -32,7 +32,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppHeader session={session} />
+          <AppHeader session={session} user={user} />
           {children}
         </ThemeProvider>
       </body>

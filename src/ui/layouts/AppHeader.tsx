@@ -1,3 +1,4 @@
+import type { ProfileRow } from "@features/profiles/schemas";
 import type { Session } from "@supabase/supabase-js";
 import { LogoutButton } from "@ui/components/LogoutButton";
 import ThemeToggleButton from "@ui/components/ThemeToggleButton";
@@ -6,8 +7,15 @@ import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
-const AppHeader = ({ session }: { session: Session | null }) => {
-  console.log(session);
+type AppHeaderProps = {
+  session: Session | null;
+  user: ProfileRow | null;
+};
+
+const AppHeader = ({ session, user }: AppHeaderProps) => {
+  const isAuthenticated = Boolean(session);
+  const displayName = user?.name;
+
   return (
     <header
       className={cn(
@@ -41,21 +49,19 @@ const AppHeader = ({ session }: { session: Session | null }) => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="font-medium text-primary/50 hover:text-primary transition-[color] duration-300 cursor-pointer"
-          >
-            Sign In
-          </button>
+          {isAuthenticated && (
+            <>
+              <span className="font-medium text-primary/70">{displayName}</span>
+              <Separator orientation="vertical" className="h-3 bg-border" />
+              <Link href="/admin" className="font-medium">
+                관리자 페이지
+              </Link>
+              <Separator orientation="vertical" className="h-3 bg-border" />
+              <LogoutButton />
+            </>
+          )}
 
-          <Separator orientation="vertical" className="h-3 bg-border" />
           <ThemeToggleButton />
-          <Separator orientation="vertical" className="h-3 bg-border" />
-          <Link href="/admin" className="font-medium">
-            Admin
-          </Link>
-          <Separator orientation="vertical" className="h-3 bg-border" />
-          <LogoutButton />
         </div>
       </div>
     </header>

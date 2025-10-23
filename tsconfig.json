@@ -30,7 +30,7 @@
       "@shared/types/*": ["./src/shared/types/*"],
       "@utils/*": ["./src/shared/utils/*"],
       "@ui/*": ["./src/ui/*"],
-      "@features": ["./src/features/*"]
+      "@features/*": ["./src/features/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
