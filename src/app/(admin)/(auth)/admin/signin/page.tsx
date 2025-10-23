@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@shadcn/lib/utils";
-import { Button } from "@shadcn/ui/button";
 import { createClient } from "@shared/lib/supabase/client.supabase";
+import { Button } from "@ui/shadcn/components/button";
+import { cn } from "@ui/shadcn/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 

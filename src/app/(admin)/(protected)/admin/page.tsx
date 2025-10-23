@@ -1,5 +1,6 @@
-import Icon from "@components/common/lucide-icons/Icon";
-import AppContainer from "@components/layouts/AppContainer";
+import { INSIGHT_CATEGORY_SELECT_OPTIONS } from "@shared/constants/category.constants";
+import Icon from "@ui/components/lucide-icons/Icon";
+import AppContainer from "@ui/layouts/AppContainer";
 import {
   Button,
   Input,
@@ -12,8 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
-} from "@shadcn/ui";
-import { INSIGHT_CATEGORY_SELECT_OPTIONS } from "@shared/constants/category.constants";
+} from "@ui/shadcn/components";
 
 const AdminPage = () => {
   return (

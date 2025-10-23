@@ -1,5 +1,5 @@
-import Icon from "@components/common/lucide-icons/Icon";
-import { cn } from "@shadcn/lib/utils";
+import Icon from "@ui/components/lucide-icons/Icon";
+import { cn } from "@ui/shadcn/lib/utils";
 import { INSIGHT_CATEGORY } from "../../shared/constants/category.constants";
 
 const AppSideBar = () => {

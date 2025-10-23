@@ -1,4 +1,4 @@
-import { Skeleton } from "@shadcn/ui";
+import { Skeleton } from "@ui/shadcn/components";
 
 const SkeletonHotTopic = () => {
   return (

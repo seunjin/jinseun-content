@@ -1,4 +1,4 @@
-import AppFooter from "@components/layouts/AppFooter";
+import AppFooter from "@ui/layouts/AppFooter";
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return (

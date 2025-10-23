@@ -1,5 +1,5 @@
-import { cn } from "@shadcn/lib/utils";
-import { Button, Separator } from "@shadcn/ui";
+import { Button, Separator } from "@ui/shadcn/components";
+import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 
 const AppFooter = () => {

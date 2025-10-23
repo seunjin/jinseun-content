@@ -1,4 +1,4 @@
-import { cn } from "@shadcn/lib/utils";
+import { cn } from "@ui/shadcn/lib/utils";
 import AppSideBar from "./AppSideBar";
 
 const AppContainer = ({

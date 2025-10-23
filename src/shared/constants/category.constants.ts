@@ -1,6 +1,6 @@
-import type { ICON_PALETTE } from "@components/common/lucide-icons/icons-palette";
 import type { SelectOption } from "@shared/types/common/select";
 import { extractSelectOptions } from "@shared/utils/select-options";
+import type { ICON_PALETTE } from "@ui/components/lucide-icons/icons-palette";
 
 type InsightCategory = {
   icon: keyof typeof ICON_PALETTE;

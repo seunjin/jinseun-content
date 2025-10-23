@@ -28,7 +28,8 @@
       "@lib/*": ["./src/shared/lib/*"],
       "@constants/*": ["./src/shared/constants/*"],
       "@shared/types/*": ["./src/shared/types/*"],
-      "@utils/*": ["./src/shared/utils/*"]
+      "@utils/*": ["./src/shared/utils/*"],
+      "@ui/*": ["./src/ui/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

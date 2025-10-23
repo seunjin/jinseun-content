@@ -1,8 +1,8 @@
-import { LogoutButton } from "@components/ui/LogoutButton";
-import ThemeToggleButton from "@components/ui/ThemeToggleButton";
-import { cn } from "@shadcn/lib/utils";
-import { Separator } from "@shadcn/ui";
 import type { Session } from "@supabase/supabase-js";
+import { LogoutButton } from "@ui/components/LogoutButton";
+import ThemeToggleButton from "@ui/components/ThemeToggleButton";
+import { Separator } from "@ui/shadcn/components";
+import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
