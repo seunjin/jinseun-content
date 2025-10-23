@@ -1,7 +1,9 @@
 import ky, { HTTPError, type KyInstance, type Options } from "ky";
 import { ZodError } from "zod";
 import { logApiError, logApiRequest, logApiResponse } from "./api-logger";
+import type { ApiErrorCode } from "./error-codes";
 import type {
+  ApiError,
   HttpClient,
   HttpMethod,
   HttpRequestOptions,
@@ -22,6 +24,41 @@ type KyInstanceWithDefaults = KyInstance & {
 };
 
 const defaultKyInstance = ky.create(defaultKyConfig) as KyInstanceWithDefaults;
+
+/**
+ * @description HTTP 클라이언트에서 사용하는 API 오류 객체입니다.
+ * - 서버가 반환한 `ApiError` 구조를 그대로 담아 전달합니다.
+ */
+export class ApiClientError<TDetails = unknown> extends Error {
+  /** HTTP 상태 코드 */
+  readonly status?: number;
+  /** 표준화된 API 오류 코드 */
+  readonly code: ApiErrorCode;
+  /** 서버가 전달한 추가 상세 정보 */
+  readonly details?: TDetails;
+  /** 서버가 발급한 요청 ID */
+  readonly requestId?: string;
+  /** 트레이싱용 trace ID */
+  readonly traceId?: string;
+
+  constructor(params: {
+    message: string;
+    status?: number;
+    code: ApiErrorCode;
+    details?: TDetails;
+    requestId?: string;
+    traceId?: string;
+    cause?: unknown;
+  }) {
+    super(params.message, { cause: params.cause });
+    this.name = "ApiClientError";
+    this.status = params.status;
+    this.code = params.code;
+    this.details = params.details;
+    this.requestId = params.requestId;
+    this.traceId = params.traceId;
+  }
+}
 
 export type CreateHttpClientOptions = {
   /** ky 인스턴스를 커스터마이징하고 싶을 때 전달합니다. */
@@ -93,12 +130,53 @@ const snippet = (value: string | undefined) => {
  */
 const normalizeResult = <TResponse, TMeta>(
   payload: HttpResult<TResponse, TMeta>,
-): HttpResult<TResponse, TMeta> => ({
-  data: payload.data,
-  meta: (Object.hasOwn(payload, "meta")
-    ? payload.meta
-    : undefined) as HttpResult<TResponse, TMeta>["meta"],
-});
+): HttpResult<TResponse, TMeta> => {
+  const normalized: HttpResult<TResponse, TMeta> = {
+    data: payload.data,
+  };
+
+  if (Object.hasOwn(payload, "meta")) {
+    normalized.meta = payload.meta;
+  }
+
+  if (payload.requestId) {
+    normalized.requestId = payload.requestId;
+  }
+
+  if (payload.traceId) {
+    normalized.traceId = payload.traceId;
+  }
+
+  return normalized;
+};
+
+/**
+ * @description 응답 JSON이 ApiError 형태인지 검사합니다.
+ */
+const isApiErrorPayload = (value: unknown): value is ApiError => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+  if (
+    !("error" in record) ||
+    !record.error ||
+    typeof record.error !== "object"
+  ) {
+    return false;
+  }
+
+  const errorRecord = record.error as Record<string, unknown>;
+  if (
+    typeof errorRecord.code !== "string" ||
+    typeof errorRecord.message !== "string"
+  ) {
+    return false;
+  }
+
+  return true;
+};
 
 /**
  * @description ky 인스턴스에서 prefixUrl을 추출합니다.
@@ -141,6 +219,7 @@ const createRequester =
 
     let response: Response | undefined;
     let responseClone: Response | undefined;
+    let parsedErrorPayload: ApiError | undefined;
 
     try {
       response = await kyInstance(url, {
@@ -176,8 +255,19 @@ const createRequester =
         status = error.response.status;
         targetUrl = error.response.url;
         try {
-          const text = await error.response.clone().text();
+          const clonedResponse = error.response.clone();
+          const text = await clonedResponse.text();
           bodySnippet = snippet(text);
+          if (text) {
+            try {
+              const json = JSON.parse(text);
+              if (isApiErrorPayload(json)) {
+                parsedErrorPayload = json;
+              }
+            } catch {
+              parsedErrorPayload = undefined;
+            }
+          }
         } catch {
           bodySnippet = undefined;
         }
@@ -214,6 +304,18 @@ const createRequester =
         status,
         duration,
       });
+
+      if (parsedErrorPayload) {
+        throw new ApiClientError({
+          message: parsedErrorPayload.error.message,
+          status,
+          code: parsedErrorPayload.error.code as ApiErrorCode,
+          details: parsedErrorPayload.error.details,
+          requestId: parsedErrorPayload.requestId,
+          traceId: parsedErrorPayload.traceId,
+          cause: error,
+        });
+      }
 
       throw error;
     }

@@ -66,6 +66,7 @@ console.log(result.meta); // { invitedBy: string }
 2. `schema`가 있으면 `schema.parse`로 검증 후 반환. 없으면 `HttpResult` 구조에 맞춰 변환
 3. 메서드별로 `body` 허용 여부/필수 여부를 타입으로 강제
 4. 필요 시 `createServerHttp` 등 동일 시그니처로 확장 가능
+5. HTTP 오류 발생 시 `ApiClientError`로 래핑해 `ApiErrorCode`·`requestId`·`traceId`를 그대로 전달
 
 ## API 응답 규약 제안
 - 공통 응답 형태는 `{ data: T; meta: M }` 구조를 기본으로 합니다.
@@ -74,7 +75,17 @@ console.log(result.meta); // { invitedBy: string }
   ```ts
   export type ApiSuccess<TData, TMeta = never> = {
     data: TData;
-    meta: TMeta extends never ? undefined : TMeta;
+    meta?: TMeta extends never ? undefined : TMeta;
+    /**
+     * @description 서버에서 발급한 요청 식별자입니다.
+     * - 로그 상호 연관을 위해 응답마다 포함합니다.
+     */
+    requestId?: string;
+    /**
+     * @description 분산 추적을 위해 사용되는 트레이스 식별자입니다.
+     * - OpenTelemetry 등 APM 연동 시 바로 활용 가능합니다.
+     */
+    traceId?: string;
   };
 
   export type ApiError = {
@@ -83,6 +94,10 @@ console.log(result.meta); // { invitedBy: string }
       message: string;
       details?: unknown;
     };
+    requestId?: string;
+    traceId?: string;
   };
   ```
 - 서버·클라이언트에서 동일한 규약을 참조해 응답을 구성하고, `ky` 기반 클라이언트에서도 해당 타입을 반환하도록 설계합니다.
+- 응답 생성 시 `src/shared/lib/api/response.ts`의 `createApiSuccess`·`createApiError`를 사용해 `requestId`·`traceId`를 자동으로 주입합니다.
+- 에러 코드는 `src/shared/lib/api/error-codes.ts`에서 상수로 관리해 서버와 클라이언트의 분기 로직을 일원화합니다.

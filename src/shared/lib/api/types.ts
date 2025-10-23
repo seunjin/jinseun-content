@@ -6,7 +6,15 @@ import type { ZodSchema } from "zod";
  */
 export type ApiSuccess<TData, TMeta = never> = {
   data: TData;
-  meta: TMeta extends never ? undefined : TMeta;
+  /**
+   * @description 추가 메타 정보가 있을 때만 포함합니다.
+   * - `never`를 전달하면 타입상 `undefined`로 제한됩니다.
+   */
+  meta?: TMeta extends never ? undefined : TMeta;
+  /** 추적을 위해 서버가 발급하는 요청 ID */
+  requestId?: string;
+  /** 분산 추적을 위한 trace ID */
+  traceId?: string;
 };
 
 /**
@@ -14,6 +22,10 @@ export type ApiSuccess<TData, TMeta = never> = {
  * - 서버·클라이언트에서 일관된 에러 구조를 사용하기 위한 기본 타입입니다.
  */
 export type ApiError = {
+  /** 트레이싱 연동을 위한 요청 ID */
+  requestId?: string;
+  /** APM 연계에 활용할 trace ID */
+  traceId?: string;
   error: {
     /** 서비스 고유의 에러 코드 */
     code: string;
