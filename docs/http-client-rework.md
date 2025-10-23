@@ -16,9 +16,13 @@ type HttpResult<Response, Meta> = {
 };
 
 type RequestOptions<Request, Response, Meta> = {
-  body?: Request;
+  body?: Request; // POST/PUT/PATCH 등에서 사용하며, T["request"] 타입을 따릅니다.
   query?: Record<string, string | number | boolean | undefined>;
   headers?: HeadersInit;
+  /**
+   * @description (선택) 외부 API 등 검증이 필요한 경우에만 Zod 스키마를 전달합니다.
+   * - 내부 Supabase 기반 API는 이미 서버에서 Zod 검증을 완료했으므로 대부분 생략 가능합니다.
+   */
   schema?: ZodSchema<HttpResult<Response, Meta>>;
   signal?: AbortSignal;
   // 필요 시 retry/hook 등 확장용 슬롯
