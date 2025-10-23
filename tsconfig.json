@@ -23,11 +23,12 @@
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/components/*"],
       "@shadcn/*": ["./src/shadcn/*"],
-      "@lib/*": ["./src/lib/*"],
       "@providers/*": ["./src/providers/*"],
-      "@constants/*": ["./src/constants/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@app/types/*": ["./src/types/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@lib/*": ["./src/shared/lib/*"],
+      "@constants/*": ["./src/shared/constants/*"],
+      "@shared/types/*": ["./src/shared/types/*"],
+      "@utils/*": ["./src/shared/utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

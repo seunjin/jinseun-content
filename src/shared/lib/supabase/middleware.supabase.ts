@@ -1,5 +1,5 @@
+import { requireEnv } from "@shared/utils/env";
 import { createServerClient } from "@supabase/ssr";
-import { requireEnv } from "@utils/env";
 import type { NextRequest, NextResponse } from "next/server";
 
 /**

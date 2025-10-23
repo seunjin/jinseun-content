@@ -1,4 +1,4 @@
-import { requireEnv } from "@utils/env";
+import { requireEnv } from "@shared/utils/env";
 import { createApiClient } from "./api-client";
 import { logApiError, logApiRequest, logApiResponse } from "./api-logger";
 import { createHttpHelpers } from "./http-helpers";

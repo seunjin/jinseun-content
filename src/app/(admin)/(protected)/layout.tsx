@@ -1,4 +1,4 @@
-import { createServerSupabase } from "@lib/supabase/server.supabase";
+import { createServerSupabase } from "@shared/lib/supabase/server.supabase";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({

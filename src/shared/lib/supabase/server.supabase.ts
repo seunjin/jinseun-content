@@ -1,6 +1,6 @@
+import { requireEnv } from "@shared/utils/env";
 import { createServerClient } from "@supabase/ssr";
 import type { Session } from "@supabase/supabase-js";
-import { requireEnv } from "@utils/env";
 import { cookies } from "next/headers";
 
 /**
@@ -41,5 +41,6 @@ export const getServerSession = async (): Promise<Session | null> => {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+
   return session;
 };

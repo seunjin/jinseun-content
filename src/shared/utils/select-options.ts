@@ -1,4 +1,4 @@
-import type { SelectOption } from "@app/types/common/select";
+import type { SelectOption } from "@shared/types/common/select";
 
 /**
  * 배열에서 선택용 옵션을 추출합니다.

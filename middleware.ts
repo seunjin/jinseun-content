@@ -1,4 +1,4 @@
-import { createMiddlewareSupabase } from "@lib/supabase/middleware.supabase";
+import { createMiddlewareSupabase } from "@shared/lib/supabase/middleware.supabase";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
