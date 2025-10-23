@@ -12,15 +12,22 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const error = requestUrl.searchParams.get("error");
   const errorDescription = requestUrl.searchParams.get("error_description");
+  const appOrigin =
+    process.env.NEXT_PUBLIC_APP_ORIGIN ?? "http://localhost:3000";
   const next = requestUrl.searchParams.get("next") ?? "/admin";
 
-  const redirectPath = error
-    ? `/admin/signin?error=${encodeURIComponent(errorDescription ?? error)}`
-    : next;
+  const redirectUrl = new URL(next, appOrigin);
+  redirectUrl.searchParams.delete("code");
+  redirectUrl.searchParams.delete("state");
 
-  const response = NextResponse.redirect(
-    new URL(redirectPath, requestUrl.origin),
-  );
+  if (error) {
+    redirectUrl.pathname = "/admin/signin";
+    redirectUrl.search = `error=${encodeURIComponent(
+      errorDescription ?? error,
+    )}`;
+  }
+
+  const response = NextResponse.redirect(redirectUrl);
 
   if (!code) {
     return response;

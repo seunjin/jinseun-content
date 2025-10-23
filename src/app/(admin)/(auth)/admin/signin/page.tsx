@@ -3,7 +3,7 @@
 import { createClient } from "@shared/lib/supabase/client.supabase";
 import { Button } from "@ui/shadcn/components/button";
 import { cn } from "@ui/shadcn/lib/utils";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
 /**
@@ -11,10 +11,11 @@ import { useCallback, useMemo, useState } from "react";
  * - 개별 버튼만 제공하고, 성공 시 Supabase OAuth 콜백으로 이동합니다.
  */
 export default function AdminSignInPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const appOrigin =
+    process.env.NEXT_PUBLIC_APP_ORIGIN ?? "http://localhost:3000";
 
   const nextPath = useMemo(
     () => searchParams.get("next") ?? "/admin",
@@ -31,8 +32,7 @@ export default function AdminSignInPage() {
 
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
-      const callbackUrl = new URL("/api/auth/callback", origin);
+      const callbackUrl = new URL("/api/auth/callback", appOrigin);
       callbackUrl.searchParams.set("next", nextPath);
 
       const { error: signInError } = await supabase.auth.signInWithOAuth({
@@ -47,8 +47,6 @@ export default function AdminSignInPage() {
         setIsLoading(false);
         return;
       }
-      // OAuth 흐름으로 이동하므로 추가 동작은 필요 없지만, 오류 대비용으로 남겨둡니다.
-      router.prefetch("/admin");
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -57,7 +55,7 @@ export default function AdminSignInPage() {
       );
       setIsLoading(false);
     }
-  }, [nextPath, router]);
+  }, [appOrigin, nextPath]);
 
   return (
     <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4">
