@@ -29,7 +29,8 @@
       "@constants/*": ["./src/shared/constants/*"],
       "@shared/types/*": ["./src/shared/types/*"],
       "@utils/*": ["./src/shared/utils/*"],
-      "@ui/*": ["./src/ui/*"]
+      "@ui/*": ["./src/ui/*"],
+      "@features": ["./src/features/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
