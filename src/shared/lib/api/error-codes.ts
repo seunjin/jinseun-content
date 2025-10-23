@@ -3,12 +3,20 @@
  * - 문자열 포맷은 `도메인.상세코드` 규칙을 따릅니다.
  */
 export const ApiErrorCode = {
-  /** 인증 정보가 누락되었거나 만료된 경우 */
-  AUTH_UNAUTHORIZED: "AUTH.UNAUTHORIZED",
-  /** 입력 값이 유효성 검사를 통과하지 못한 경우 */
-  REQUEST_VALIDATION_FAILED: "REQUEST.VALIDATION_FAILED",
-  /** 서버에서 예상치 못한 오류가 발생한 경우 */
-  SYSTEM_INTERNAL_ERROR: "SYSTEM.INTERNAL_ERROR",
+  /** http status: 200 */
+  OK: "OK",
+  /** http status: 201 */
+  CREATED: "Created",
+  /** http status: 400 */
+  BAD_REQUEST: "Bad Request",
+  /** http status: 401 */
+  UNAUTHORIZED: "Unauthorized",
+  /** http status: 403 */
+  FORBIDDEN: "Forbidden",
+  /** http status: 404 */
+  NOT_FOUND: "Not Found",
+  /** http status: 500 */
+  INTERNAL_SERVER_ERROR: "Internal Server Error",
 } as const;
 
 /**

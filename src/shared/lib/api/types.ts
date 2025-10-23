@@ -1,4 +1,5 @@
 import type { ZodSchema } from "zod";
+import type { ApiErrorCode } from "./error-codes";
 
 /**
  * @description API 성공 응답의 공통 형태입니다.
@@ -28,7 +29,7 @@ export type ApiError = {
   traceId?: string;
   error: {
     /** 서비스 고유의 에러 코드 */
-    code: string;
+    code: ApiErrorCode;
     /** 사용자 또는 개발자가 이해하기 쉬운 에러 메시지 */
     message: string;
     /** 추가 디버깅 정보 */

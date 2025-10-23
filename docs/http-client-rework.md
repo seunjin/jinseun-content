@@ -100,4 +100,4 @@ console.log(result.meta); // { invitedBy: string }
   ```
 - 서버·클라이언트에서 동일한 규약을 참조해 응답을 구성하고, `ky` 기반 클라이언트에서도 해당 타입을 반환하도록 설계합니다.
 - 응답 생성 시 `src/shared/lib/api/response.ts`의 `createApiSuccess`·`createApiError`를 사용해 `requestId`·`traceId`를 자동으로 주입합니다.
-- 에러 코드는 `src/shared/lib/api/error-codes.ts`에서 상수로 관리해 서버와 클라이언트의 분기 로직을 일원화합니다.
+- 에러 코드는 `src/shared/lib/api/error-codes.ts`에서 상수로 관리해 서버와 클라이언트의 분기 로직을 일원화합니다. 필요 시 `HTTP_STATUS` 상수를 활용해 상태 코드와 기본 메시지를 재사용할 수 있습니다.
