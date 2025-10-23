@@ -22,6 +22,7 @@
 2. **SDK 응답 검증**: Supabase SDK 호출 후 반환되는 `data` 객체는 대응하는 Zod 스키마로 검증합니다. 실패 시 API 호출 결과를 로그에 남기고 적절한 에러를 반환합니다.
 3. **타입 연동**: 스키마에서 `export type HotTopic = z.infer<typeof hotTopicSchema>`처럼 타입을 추출해 TypeScript 타입과 런타임 검증이 일치하게 유지합니다.
 4. **스키마 분리**: 입력/응답의 형태가 다르면 스키마를 별도로 정의합니다. 예를 들어 `hotTopicInsertSchema`, `hotTopicResponseSchema`처럼 목적별로 나눕니다.
+5. **Supabase SDK + Drizzle 타입 연계**: 테이블 CRUD는 Supabase JS SDK를 사용하고, 정적 타입은 `pnpm dlx drizzle-kit introspect`로 생성된 Drizzle schema를 기반으로 합니다. 생성된 타입을 Zod 스키마와 함께 재사용하면, 런타임과 컴파일 타임 타입 안전성을 동시에 확보할 수 있습니다.
 
 ```ts
 import { z } from "zod";
@@ -74,4 +75,33 @@ export async function createTopic(payload: unknown) {
 - `supabase db push`: 작성한 마이그레이션을 로컬 DB에 적용
 - `supabase db reset --local`: 로컬 DB를 드롭 후 모든 마이그레이션을 재적용
 - `supabase gen types typescript --local > src/types/supabase.ts`: 최신 DB 스키마 기반 TypeScript 타입 생성
-- `pnpm dlx drizzle-kit introspect`: 향후 Drizzle 도입 시 introspection 용
+- `pnpm db:introspect`: Supabase 스키마를 기반으로 Drizzle schema 및 TypeScript 타입을 생성
+
+## 예시 시나리오: 신규 테이블 추가 후 타입 반영
+
+### 1. 마이그레이션 생성 및 작성
+```bash
+supabase migration new add_topics_table
+```
+- `supabase/migrations/<timestamp>_add_topics_table.sql` 파일에 `CREATE TABLE topics (...)` 등 SQL을 작성합니다.
+
+### 2. 로컬 DB에 적용 및 검증
+```bash
+supabase db lint
+supabase db push
+```
+- 오류가 없으면 변경된 스키마를 확인하고, 필요한 경우 `supabase db reset --local`로 전체 재적용 테스트를 수행합니다.
+
+### 3. Drizzle schema & 타입 갱신
+```bash
+pnpm db:introspect
+```
+- `drizzle/schema.ts` 등 지정된 경로에 최신 스키마와 타입이 생성됩니다.
+
+### 4. Zod 스키마 및 SDK 코드 업데이트
+- 생성된 Drizzle 타입을 기반으로 Zod 스키마(예: `topicInsertSchema`, `topicRowSchema`)를 작성합니다.
+- Supabase SDK로 CRUD 함수를 구성하고, 입력/응답을 Zod 스키마로 검증합니다.
+
+### 5. 문서 및 테스트 정리
+- 작성한 SQL 파일에 주석으로 변경 의도를 남기고, 관련 문서를 갱신합니다.
+- `pnpm format`, `pnpm lint`로 스타일/정적 검사를 통과한 뒤 커밋합니다.
