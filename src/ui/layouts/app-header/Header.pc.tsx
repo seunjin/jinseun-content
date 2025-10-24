@@ -12,7 +12,7 @@ const PCHeader = ({ session, user }: AppHeaderProps) => {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]",
+        "sticky top-0 z-10 flex items-center w-full bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]",
         "hidden lg:block",
       )}
     >

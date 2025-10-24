@@ -26,7 +26,6 @@ const AppSideBar = () => {
                 "transition-[padding-left,color,background-color] duration-300",
                 "cursor-pointer",
                 "hover:text-primary hover:pl-5 hover:bg-border/30 dark:hover:bg-primary/20",
-                "",
               )}
             >
               <Icon name={category.icon} size={16} />

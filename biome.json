@@ -22,7 +22,7 @@
         "noUnknownAtRules": "off"
       },
       "complexity": {
-        "noImportantStyles": "info"
+        "noImportantStyles": "off"
       }
     },
     "domains": {
