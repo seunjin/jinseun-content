@@ -89,7 +89,7 @@ const AdminCreatePostPage = () => {
               <Label className="text-muted-foreground">썸네일</Label>
             </div>
             <div className="aspect-video" />
-            <Button variant="outline" className="border-0">
+            <Button variant="default">
               <Icon name="ImageOff" /> 썸네일 제거
             </Button>
           </div>

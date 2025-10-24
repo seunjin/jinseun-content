@@ -9,8 +9,9 @@ import {
 import { ko } from "@blocknote/core/locales";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
+import { cn } from "@ui/shadcn/lib/utils";
 import { useTheme } from "next-themes";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 const CODE_BLOCK_LANGUAGES: Record<
   string,
@@ -32,8 +33,9 @@ const CODE_BLOCK_LANGUAGES: Record<
 const CODE_BLOCK_LANGUAGE_KEYS = ["typescript", "javascript", "json"] as const;
 const CODE_BLOCK_THEME = "one-dark-pro" as const;
 export default function BlockNoteEditor() {
-  const { theme } = useTheme();
   const locale = ko;
+  const { theme } = useTheme();
+  const [focus, setFocus] = useState<boolean>(false);
 
   const schema = useMemo(
     () =>
@@ -115,6 +117,13 @@ export default function BlockNoteEditor() {
 
   return (
     <BlockNoteView
+      className={cn(
+        "py-4",
+        "border-input rounded-md border dark:bg-input/30 bg-transparent shadow-xs transition-[color,box-shadow] outline-none",
+        focus && "border-ring ring-ring/50 ring-[3px] ",
+      )}
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
       theme={theme === "dark" ? "dark" : "light"}
       editor={editor}
     />

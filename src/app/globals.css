@@ -168,8 +168,7 @@
 }
 
 .bn-editor {
-  /* background-color: transparent !important; */
-  border-color: var(--input);
+  background-color: transparent !important;
 }
 
 /* Shiki 색상을 그대로 적용 */
@@ -186,10 +185,3 @@
   white-space: pre-wrap; /* 공백 유지 + 자동 줄바꿈 */
   word-break: break-word; /* 공백 없는 긴 토큰도 줄바꿈 */
 }
-/* 
-html:not(.dark) .shiki {
-  color: var(--shiki-light, currentColor);
-}
-html.dark .shiki {
-  color: var(--shiki-dark, currentColor);
-} */
