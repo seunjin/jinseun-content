@@ -11,6 +11,7 @@ import {
   ImageOff,
   Lightbulb,
   List,
+  LoaderCircle,
   LogOut,
   type LucideIcon,
   Moon,
@@ -37,4 +38,5 @@ export const ICON_PALETTE = {
   Moon,
   Sun,
   LogOut,
+  LoaderCircle,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서
