@@ -12,8 +12,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-  Skeleton,
 } from "@ui/shadcn/components";
+import Editor from "./Editor.client";
 
 const AdminCreatePostPage = () => {
   return (
@@ -48,7 +48,8 @@ const AdminCreatePostPage = () => {
               <Icon name="Asterisk" size={14} className="text-[#f96859]" />
               <Label className="text-muted-foreground">본문</Label>
             </div>
-            <Skeleton className="h-100" />
+            {/* BlockNote Text Editor UI */}
+            <Editor />
           </div>
         </section>
         {/* 카테고리 및 썸네일 등록*/}

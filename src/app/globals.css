@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@blocknote/shadcn/style.css";
+@source "../../node_modules/@blocknote/shadcn";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -164,3 +166,30 @@
       var(--main-container-padding-inline) 8rem;
   }
 }
+
+.bn-editor {
+  /* background-color: transparent !important; */
+  border-color: var(--input);
+}
+
+/* Shiki 색상을 그대로 적용 */
+.bn-block-content[data-content-type="codeBlock"] {
+  background-color: var(--prosemirror-highlight-bg, rgb(22 22 22));
+  color: var(--prosemirror-highlight, white);
+}
+
+.bn-block-content[data-content-type="codeBlock"] pre {
+  background-color: transparent;
+  color: inherit;
+}
+.bn-block-content[data-content-type="codeBlock"] pre code {
+  white-space: pre-wrap; /* 공백 유지 + 자동 줄바꿈 */
+  word-break: break-word; /* 공백 없는 긴 토큰도 줄바꿈 */
+}
+/* 
+html:not(.dark) .shiki {
+  color: var(--shiki-light, currentColor);
+}
+html.dark .shiki {
+  color: var(--shiki-dark, currentColor);
+} */
