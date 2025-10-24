@@ -14,10 +14,12 @@ import {
   LoaderCircle,
   LogOut,
   type LucideIcon,
+  Menu,
   Moon,
   Rocket,
   Save,
   Sun,
+  X,
 } from "lucide-react";
 
 export const ICON_PALETTE = {
@@ -39,4 +41,6 @@ export const ICON_PALETTE = {
   Sun,
   LogOut,
   LoaderCircle,
+  X,
+  Menu,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서

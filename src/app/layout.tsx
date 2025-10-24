@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@providers/theme.provider";
 import { getSessionWithUser } from "@shared/lib/supabase/server.supabase";
-import AppHeader from "@ui/layouts/AppHeader";
+import AppHeader from "@ui/layouts/app-header/AppHeader";
 
 export const metadata: Metadata = {
   title: "Create Next App",

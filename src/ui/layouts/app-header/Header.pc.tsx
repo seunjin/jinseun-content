@@ -1,31 +1,26 @@
-import type { ProfileRow } from "@features/profiles/schemas";
-import type { Session } from "@supabase/supabase-js";
 import { LogoutButton } from "@ui/components/LogoutButton";
 import ThemeToggleButton from "@ui/components/ThemeToggleButton";
 import { Separator } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import type { AppHeaderProps } from "./AppHeader";
 
-type AppHeaderProps = {
-  session: Session | null;
-  user: ProfileRow | null;
-};
-
-const AppHeader = ({ session, user }: AppHeaderProps) => {
+const PCHeader = ({ session, user }: AppHeaderProps) => {
   const isAuthenticated = Boolean(session);
   const displayName = user?.name;
-
   return (
     <header
       className={cn(
         "sticky top-0 z-10 flex items-center w-full  bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]",
+        "hidden lg:block",
       )}
     >
       <div
         className={cn(
           "app-layout app-header",
-          "h-full mx-auto flex items-center justify-between ",
+          "flex items-center justify-between",
+          "h-full mx-auto",
         )}
       >
         <div className="flex items-center gap-6">
@@ -68,4 +63,4 @@ const AppHeader = ({ session, user }: AppHeaderProps) => {
   );
 };
 
-export default AppHeader;
+export default PCHeader;
