@@ -12,9 +12,15 @@ const AppContainer = ({
 }) => {
   if (withSidebar) {
     return (
-      <main className={cn("app-layout app-main", "flex gap-6", className)}>
+      <main
+        className={cn(
+          "app-layout app-main",
+          "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6",
+          className,
+        )}
+      >
         <AppSideBar />
-        <div className="flex-1">{children}</div>
+        <div className="min-w-0">{children}</div>
       </main>
     );
   }

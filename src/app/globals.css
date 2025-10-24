@@ -79,10 +79,14 @@
 
   /* Layout */
   --header-height: 3rem;
+  --sidebar-width: 15rem;
   --global-inline-padding: 3rem;
   --main-container-padding-block: 1.5rem;
   --main-container-padding-inline: var(--global-inline-padding);
-  --content-width: calc(80rem + 2 * var(--global-inline-padding));
+  /* width */
+  --content-width: 80rem;
+  /* width + padding */
+  --content-size: calc(var(--content-width) + 2 * var(--global-inline-padding));
   @media (width <= 40rem) {
     --global-inline-padding: 1rem;
   }
@@ -146,7 +150,7 @@
 }
 
 .app-layout {
-  width: min(100%, var(--content-width));
+  width: min(100%, var(--content-size));
   margin: 0 auto;
   &.app-header {
     padding-inline: var(--main-container-padding-inline);

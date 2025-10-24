@@ -4,7 +4,12 @@ import { INSIGHT_CATEGORY } from "../../shared/constants/category.constants";
 
 const AppSideBar = () => {
   return (
-    <aside className="sticky top-[calc(var(--header-height)+var(--main-container-padding-block))] h-[calc(100dvh-3rem-var(--header-height))] w-60 pr-4 shrink-0 ">
+    <aside
+      className={cn(
+        "sticky top-[calc(var(--header-height)+var(--main-container-padding-block))] h-[calc(100dvh-3rem-var(--header-height))] w-[var(--sidebar-width)] pr-4 shrink-0",
+        "hidden lg:block",
+      )}
+    >
       <div className="flex items-center gap-2 pb-6">
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
           카테고리

@@ -28,11 +28,16 @@ const PubliRootPage = () => {
               얻어보세요
             </p>
           </div>
-          <div className="grid grid-cols-4 gap-6">
-            <HotTopic.Skeleton />
-            <HotTopic.Skeleton />
-            <HotTopic.Skeleton />
-            <HotTopic.Skeleton />
+          <div className="overflow-hidden">
+            <div className="flex min-w-0 flex-nowrap gap-6 overflow-x-auto pb-2">
+              <HotTopic.Skeleton />
+              <HotTopic.Skeleton />
+              <HotTopic.Skeleton />
+              <HotTopic.Skeleton />
+              <HotTopic.Skeleton />
+              <HotTopic.Skeleton />
+              <HotTopic.Skeleton />
+            </div>
           </div>
         </section>
         {/* NEW 토픽 */}
@@ -56,7 +61,6 @@ const PubliRootPage = () => {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-6">
-            <NewTopic.Skeleton />
             <NewTopic.Skeleton />
             <NewTopic.Skeleton />
             <NewTopic.Skeleton />
