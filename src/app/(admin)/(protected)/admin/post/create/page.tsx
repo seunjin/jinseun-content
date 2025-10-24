@@ -1,4 +1,4 @@
-import { INSIGHT_CATEGORY_SELECT_OPTIONS } from "@shared/constants/category.constants";
+import { CONTENT_CATEGORY_SELECT_OPTIONS } from "@shared/constants/category.constants";
 import Icon from "@ui/components/lucide-icons/Icon";
 import AppContainer from "@ui/layouts/AppContainer";
 import {
@@ -71,7 +71,7 @@ const AdminCreatePostPage = () => {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>카테고리(주제)</SelectLabel>
-                  {INSIGHT_CATEGORY_SELECT_OPTIONS.map((option) => {
+                  {CONTENT_CATEGORY_SELECT_OPTIONS.map((option) => {
                     return (
                       <SelectItem key={option.id} value={option.value}>
                         {option.label}

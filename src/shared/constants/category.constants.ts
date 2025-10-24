@@ -2,10 +2,10 @@ import type { SelectOption } from "@shared/types/common/select";
 import { extractSelectOptions } from "@shared/utils/select-options";
 import type { ICON_PALETTE } from "@ui/components/lucide-icons/icons-palette";
 
-type InsightCategory = {
+type ContentCategory = {
   icon: keyof typeof ICON_PALETTE;
 } & SelectOption;
-export const INSIGHT_CATEGORY: InsightCategory[] = [
+export const CONTENT_CATEGORY: ContentCategory[] = [
   {
     id: 1,
     label: "전체",
@@ -56,11 +56,11 @@ export const INSIGHT_CATEGORY: InsightCategory[] = [
   },
 ];
 /** 인사이트 카테고리 옵션 (전체 제외) */
-export const INSIGHT_CATEGORY_SELECT_OPTIONS =
-  extractSelectOptions(INSIGHT_CATEGORY);
+export const CONTENT_CATEGORY_SELECT_OPTIONS =
+  extractSelectOptions(CONTENT_CATEGORY);
 /** 인사이트 카테고리 옵션 (전체 포함) */
-export const INSIGHT_CATEGORY_SELECT_OPTIONS_WITH_ALL = extractSelectOptions(
-  INSIGHT_CATEGORY,
+export const CONTENT_CATEGORY_SELECT_OPTIONS_WITH_ALL = extractSelectOptions(
+  CONTENT_CATEGORY,
   {
     includeAll: true,
   },

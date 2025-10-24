@@ -40,7 +40,7 @@ const AppHeader = ({ session, user }: AppHeaderProps) => {
           </Link>
           <div className="flex items-center gap-4">
             <Link href={"#"} className="font-medium text-base text-primary">
-              Insight
+              Content
             </Link>
             <Separator orientation="vertical" className="h-3 bg-border" />
             <Link href={"#"} className="font-medium text-base text-primary">

@@ -1,6 +1,6 @@
 import Icon from "@ui/components/lucide-icons/Icon";
 import { cn } from "@ui/shadcn/lib/utils";
-import { INSIGHT_CATEGORY } from "../../shared/constants/category.constants";
+import { CONTENT_CATEGORY } from "../../shared/constants/category.constants";
 
 const AppSideBar = () => {
   return (
@@ -16,7 +16,7 @@ const AppSideBar = () => {
         </h4>
       </div>
       <div className="overflow-auto h-[calc(100%-52px)] overscroll-contain">
-        {INSIGHT_CATEGORY.map((category) => (
+        {CONTENT_CATEGORY.map((category) => (
           <div key={category.id} className="flex items-center gap-2 mb-2">
             <button
               type="button"
