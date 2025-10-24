@@ -16,3 +16,4 @@ export {
 export { Separator } from "./separator";
 export { Skeleton } from "./skeleton";
 export { Switch } from "./switch";
+export { Typography } from "./typography";
