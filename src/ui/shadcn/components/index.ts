@@ -16,5 +16,6 @@ export {
 export { Separator } from "./separator";
 export { Skeleton } from "./skeleton";
 export { Toaster } from "./sonner";
+export { Spinner } from "./spinner";
 export { Switch } from "./switch";
 export { Typography } from "./typography";

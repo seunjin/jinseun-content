@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NextQueryClientProvider from "@providers/QueryClient.provider";
 import ClientDialogRenderer from "@ui/components/dialogs/ClientDialogRenderer";
 
 export const metadata: Metadata = {
@@ -32,8 +33,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         ></ThemeProvider> */}
-        {children}
-        <ClientDialogRenderer />
+        <NextQueryClientProvider>
+          {children}
+          <ClientDialogRenderer />
+        </NextQueryClientProvider>
       </body>
     </html>
   );

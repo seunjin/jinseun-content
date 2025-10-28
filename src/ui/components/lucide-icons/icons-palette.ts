@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   Asterisk,
   BookOpenCheck,
+  CalendarClock,
   ChartNoAxesCombined,
   ChevronDown,
   CodeXml,
@@ -17,6 +18,7 @@ import {
   type LucideIcon,
   Menu,
   Moon,
+  RefreshCcw,
   Rocket,
   Save,
   Sun,
@@ -45,4 +47,6 @@ export const ICON_PALETTE = {
   X,
   Menu,
   FilePlus,
+  RefreshCcw,
+  CalendarClock,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서
