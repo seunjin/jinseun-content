@@ -1,11 +1,22 @@
-import AppContainer from "@ui/layouts/AppContainer";
+import AppSidebar from "@ui/layouts/AppSidebar";
+import { cn } from "@ui/shadcn/lib/utils";
 import { HotTopic } from "@ui/templates/hot-topic";
 import { NewTopic } from "@ui/templates/new-topic";
 import Image from "next/image";
 
 const PubliRootPage = () => {
   return (
-    <AppContainer withSidebar>
+    <main
+      className={cn(
+        "app-layout app-main",
+        "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6",
+      )}
+    >
+      {/* --- 사이드 바 영역 --- */}
+      <AppSidebar />
+
+      {/* --- 메인 컨텐츠 영역 --- */}
+
       {/* 토픽 콘텐츠 */}
       <div className="flex flex-col gap-12">
         {/* 핫 토픽 */}
@@ -72,7 +83,7 @@ const PubliRootPage = () => {
           </div>
         </section>
       </div>
-    </AppContainer>
+    </main>
   );
 };
 
