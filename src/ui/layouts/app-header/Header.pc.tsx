@@ -1,5 +1,4 @@
 import { LogoutButton } from "@ui/components/LogoutButton";
-import ThemeToggleButton from "@ui/components/ThemeToggleButton";
 import { Separator } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
@@ -56,7 +55,7 @@ const PCHeader = ({ session, user }: AppHeaderProps) => {
             </>
           )}
 
-          <ThemeToggleButton />
+          {/* <ThemeToggleButton /> */}
         </div>
       </div>
     </header>

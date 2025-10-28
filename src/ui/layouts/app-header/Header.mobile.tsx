@@ -1,4 +1,3 @@
-import ThemeToggleButton from "@ui/components/ThemeToggleButton";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -59,7 +58,7 @@ const MobileHeader = ({ session, user }: AppHeaderProps) => {
             </>
           )} */}
 
-            <ThemeToggleButton />
+            {/* <ThemeToggleButton /> */}
           </div>
         </div>
       </header>
