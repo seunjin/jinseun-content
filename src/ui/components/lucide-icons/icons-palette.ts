@@ -6,6 +6,7 @@ import {
   ChevronDown,
   CodeXml,
   DraftingCompass,
+  FilePlus,
   Footprints,
   Goal,
   ImageOff,
@@ -43,4 +44,5 @@ export const ICON_PALETTE = {
   LoaderCircle,
   X,
   Menu,
+  FilePlus,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서
