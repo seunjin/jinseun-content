@@ -149,6 +149,15 @@
   body {
     @apply bg-background text-foreground text-sm;
   }
+
+  button[type="button"] {
+    &:not(:disabled) {
+      cursor: pointer;
+    }
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
 }
 
 .app-layout {
@@ -184,4 +193,9 @@
 .bn-block-content[data-content-type="codeBlock"] pre code {
   white-space: pre-wrap; /* 공백 유지 + 자동 줄바꿈 */
   word-break: break-word; /* 공백 없는 긴 토큰도 줄바꿈 */
+}
+
+/* react-layered-dialogs */
+.scroll-locked {
+  overflow: hidden;
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ClientDialogRenderer from "@ui/components/dialogs/ClientDialogRenderer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
+      className="dark"
       // ThemeProvider사용 시 true
       // suppressHydrationWarning
     >
@@ -26,11 +28,12 @@ export default function RootLayout({
       <body className="antialiased">
         {/* <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         ></ThemeProvider> */}
         {children}
+        <ClientDialogRenderer />
       </body>
     </html>
   );

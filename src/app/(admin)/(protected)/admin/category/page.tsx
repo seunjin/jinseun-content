@@ -3,6 +3,7 @@ import Main from "@ui/layouts/Main";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
 import { Button } from "@ui/shadcn/components";
 import Link from "next/link";
+import CreateCategoryButton from "./_components/CreateCategoryButton";
 
 const CATEGORY = [
   {
@@ -34,21 +35,24 @@ const AdminCategoryPage = () => {
           </Link>
         }
         rightSideComponents={
-          <Button size="sm">
-            <Icon name="FilePlus" /> 카테고리 생성
-          </Button>
+          // 카테고리 생성하기 버튼
+          <CreateCategoryButton />
         }
       />
 
       <div className="flex items-center gap-2 mb-8">
         <span className="text-lg font-semibold">카테고리 관리</span>
       </div>
-      <div className="flex flex-col gap-4">
-        {CATEGORY.map((item, index) => {
+      <div className="flex gap-4">
+        {CATEGORY.map((item) => {
           return (
-            <div key={item.id} className="border p-4 rounded-lg">
-              {item.categoryName} {index + 1}
-            </div>
+            <button
+              type="button"
+              key={item.id}
+              className="border p-4 bg-foreground text-primary-foreground rounded-lg"
+            >
+              {item.categoryName}
+            </button>
           );
         })}
       </div>
