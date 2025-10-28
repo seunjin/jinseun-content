@@ -1,10 +1,11 @@
+import Main from "@ui/layouts/Main";
 import { Separator } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import Link from "next/link";
 
 const AdminPage = () => {
   return (
-    <main className={cn("app-layout app-main", "flex flex-col gap-6")}>
+    <Main className={cn("flex flex-col gap-6")}>
       <div>
         <div>
           <Link
@@ -38,7 +39,7 @@ const AdminPage = () => {
         <div>
           <Link
             className="text-base hover:underline underline-offset-4"
-            href="/admin/post"
+            href="/admin/category"
           >
             main: 카테고리 리스트
           </Link>
@@ -73,7 +74,7 @@ const AdminPage = () => {
           </Link>
         </div>
       </div>
-    </main>
+    </Main>
   );
 };
 

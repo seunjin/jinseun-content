@@ -1,4 +1,5 @@
 import AppSidebar from "@ui/layouts/AppSidebar";
+import Main from "@ui/layouts/Main";
 import { cn } from "@ui/shadcn/lib/utils";
 import { HotTopic } from "@ui/templates/hot-topic";
 import { NewTopic } from "@ui/templates/new-topic";
@@ -6,9 +7,8 @@ import Image from "next/image";
 
 const PubliRootPage = () => {
   return (
-    <main
+    <Main
       className={cn(
-        "app-layout app-main",
         "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6",
       )}
     >
@@ -83,7 +83,7 @@ const PubliRootPage = () => {
           </div>
         </section>
       </div>
-    </main>
+    </Main>
   );
 };
 

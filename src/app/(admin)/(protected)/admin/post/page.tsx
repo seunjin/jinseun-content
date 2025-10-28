@@ -1,5 +1,7 @@
+import Main from "@ui/layouts/Main";
+
 const AdminPostPage = () => {
-  return <div>page</div>;
+  return <Main>page</Main>;
 };
 
 export default AdminPostPage;

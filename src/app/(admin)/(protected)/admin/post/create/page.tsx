@@ -1,6 +1,7 @@
 import { CONTENT_CATEGORY_SELECT_OPTIONS } from "@shared/constants/category.constants";
 import Icon from "@ui/components/lucide-icons/Icon";
-import PageTopToolBar from "@ui/layouts/PageTopToolBar";
+import Main from "@ui/layouts/Main";
+import PageTopToolbar from "@ui/layouts/PageTopToolbar";
 import {
   Button,
   Input,
@@ -19,8 +20,8 @@ import Editor from "./Editor.client";
 
 const AdminCreatePostPage = () => {
   return (
-    <main className={cn("app-layout app-main")}>
-      <PageTopToolBar
+    <Main>
+      <PageTopToolbar
         leftSideComponents={
           <Link href="/admin/post">
             <Button variant="outline" size="icon-sm">
@@ -124,7 +125,7 @@ const AdminCreatePostPage = () => {
           </div>
         </section>
       </div>
-    </main>
+    </Main>
   );
 };
 
