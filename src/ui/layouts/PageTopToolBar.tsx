@@ -1,13 +1,13 @@
 import { cn } from "@ui/shadcn/lib/utils";
 
-interface PageTopToolBarProps {
-  leftSideComponents: React.ReactNode;
-  rightSideComponents: React.ReactNode;
+interface PageTopToolbarProps {
+  leftSideComponents?: React.ReactNode;
+  rightSideComponents?: React.ReactNode;
 }
 const PageTopToolBar = ({
   leftSideComponents,
   rightSideComponents,
-}: PageTopToolBarProps) => {
+}: PageTopToolbarProps) => {
   return (
     <div className="h-[var(--header-height)]">
       <div
