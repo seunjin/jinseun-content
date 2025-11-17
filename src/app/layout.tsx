@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import NextQueryClientProvider from "@providers/QueryClient.provider";
 import ClientDialogRenderer from "@ui/components/dialogs/ClientDialogRenderer";
+import { Toaster } from "@ui/shadcn/components";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -37,6 +38,7 @@ export default function RootLayout({
           {children}
           <ClientDialogRenderer />
         </NextQueryClientProvider>
+        <Toaster />
       </body>
     </html>
   );

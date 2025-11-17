@@ -23,6 +23,9 @@ import {
   Save,
   Sun,
   X,
+  MoreVertical,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 export const ICON_PALETTE = {
@@ -49,4 +52,7 @@ export const ICON_PALETTE = {
   FilePlus,
   RefreshCcw,
   CalendarClock,
+  MoreVertical,
+  Pencil,
+  Trash2,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서

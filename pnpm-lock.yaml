@@ -17,6 +17,9 @@ importers:
       '@blocknote/shadcn':
         specifier: ^0.41.1
         version: 0.41.1(@floating-ui/dom@1.7.4)(@tiptap/extensions@3.7.2(@tiptap/core@3.7.2(@tiptap/pm@3.7.2))(@tiptap/pm@3.7.2))(@types/hast@3.0.4)(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@4.1.14)
+      '@radix-ui/react-dropdown-menu':
+        specifier: ^2.1.16
+        version: 2.1.16(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-label':
         specifier: ^2.1.7
         version: 2.1.7(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -78,8 +81,8 @@ importers:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
       react-layered-dialog:
-        specifier: ^0.4.0
-        version: 0.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^0.5.0
+        version: 0.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       shiki:
         specifier: ^3.13.0
         version: 3.13.0
@@ -2374,8 +2377,8 @@ packages:
     peerDependencies:
       react: '*'
 
-  react-layered-dialog@0.4.0:
-    resolution: {integrity: sha512-f+rNNlarzS8aLGkMl25RIZb4SExF3f0H3FOb6vZ9ChYAnSwC8WvFagWVlIlTgRxXZzt5YsY6cQihLvHu8EDgMQ==}
+  react-layered-dialog@0.5.0:
+    resolution: {integrity: sha512-k/atM5UHZGYSmaEm6rnxbSlAOmYob0VptRqr21jrutJShtSMWam6MyLLcSgo/PewEkd1HlpZMlhBKlo1khrJSQ==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -4983,7 +4986,7 @@ snapshots:
     dependencies:
       react: 19.1.0
 
-  react-layered-dialog@0.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-layered-dialog@0.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)

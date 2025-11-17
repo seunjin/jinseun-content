@@ -1,74 +1,83 @@
 "use client";
-import {
-  type AlertDialogProps,
-  useDialogs,
-} from "@shared/lib/react-layered-dialog/dialogs";
+import { BaseDialogOptions } from "@shared/lib/react-layered-dialog/dialogs";
 import { Button } from "@ui/shadcn/components";
-import { useCallback, useRef } from "react";
-import { useLayerBehavior } from "react-layered-dialog";
+import { DialogComponent, useDialogController } from "react-layered-dialog";
+import { AnimatePresence, motion } from "motion/react";
+import { cn } from "@ui/shadcn/lib/utils";
 
-const Alert = ({
-  id,
-  title,
-  message,
-  onOk,
-  zIndex,
-  closeOnEscape = true,
-  closeOnOutsideClick = true,
-  dimmed = true,
-}: AlertDialogProps) => {
-  const { dialogs, closeDialog } = useDialogs();
-  const panelRef = useRef<HTMLDivElement>(null);
+type AlertProps = {
+  title?: string | React.ReactNode;
+  message: string | React.ReactNode;
+  onOk?: () => void;
+} & BaseDialogOptions;
+const Alert: DialogComponent<AlertProps> = (props: AlertProps) => {
+  const { id, isOpen, close, zIndex, unmount, getStateFields } =
+    useDialogController<AlertProps>();
 
-  const handleClose = useCallback(() => {
+  const {
+    title,
+    message,
+    onOk,
+    closeOnOutsideClick = false,
+    dimmed = true,
+  } = getStateFields(props);
+  const handleClose = () => {
     onOk?.();
-    closeDialog(id);
-  }, [closeDialog, id, onOk]);
-
-  useLayerBehavior({
-    id,
-    dialogs,
-    zIndex,
-    closeOnEscape,
-    onEscape: handleClose,
-    closeOnOutsideClick,
-    onOutsideClick: handleClose,
-    outsideClickRef: panelRef,
-  });
+    close();
+  };
 
   return (
-    <div
-      className={`fixed inset-0 flex items-center justify-center transition-none ${
-        dimmed
-          ? "bg-black/40 pointer-events-auto"
-          : "bg-transparent pointer-events-none"
-      }`}
-      style={{ zIndex }}
-    >
-      <div
-        ref={panelRef}
-        className="pointer-events-auto relative min-w-[280px] rounded-lg border border-border bg-white p-6 shadow-lg"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby={`alert-${id}-title`}
-        aria-describedby={`alert-${id}-message`}
-      >
-        <h3 id={`alert-${id}-title`} className="text-lg font-semibold">
-          {title}
-        </h3>
-        <p
-          id={`alert-${id}-message`}
-          className="mt-2 text-sm text-muted-foreground"
+    <AnimatePresence onExitComplete={unmount}>
+      {isOpen && (
+        <motion.div
+          className={cn(
+            "fixed inset-0 flex items-center justify-center",
+            dimmed ? "pointer-events-auto" : "pointer-events-none",
+          )}
+          initial={{
+            backgroundColor: "rgba(0, 0, 0, 0)",
+            backdropFilter: "blur(0px)",
+          }}
+          animate={{
+            backgroundColor: dimmed ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0)",
+            backdropFilter: "blur(4px)",
+          }}
+          exit={{
+            backgroundColor: "rgba(0, 0, 0, 0)",
+            backdropFilter: "blur(0px)",
+          }}
+          style={{ zIndex }}
         >
-          {message}
-        </p>
-        <div className="mt-4 flex justify-end">
-          <Button autoFocus onClick={handleClose}>
-            확인
-          </Button>
-        </div>
-      </div>
-    </div>
+          <motion.div
+            className="bg-background border rounded-md px-4 py-4 w-[min(100%,360px)]"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby={`alert-${id}-title`}
+            aria-describedby={`alert-${id}-message`}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+          >
+            {title && (
+              <h3 id={`alert-${id}-title`} className="text-lg font-semibold">
+                {title}
+              </h3>
+            )}
+            <p
+              id={`alert-${id}-message`}
+              className="mt-2 text-sm text-muted-foreground"
+            >
+              {message}
+            </p>
+            <div className="mt-4 flex justify-end">
+              <Button autoFocus size={"sm"} onClick={handleClose}>
+                확인
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
