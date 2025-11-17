@@ -424,5 +424,3 @@ export const createHttpClient = (
  * @description 즉시 사용할 수 있는 기본 HTTP 클라이언트 인스턴스입니다.
  */
 export const clientHttp = createHttpClient();
-
-export default clientHttp;
