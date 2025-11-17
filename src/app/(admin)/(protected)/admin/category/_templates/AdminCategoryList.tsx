@@ -16,7 +16,10 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { CategoryRow } from "@features/categories/schemas";
+import type {
+  CategoryRow,
+  ReorderCategoriesInput,
+} from "@features/categories/schemas";
 import { clientHttp } from "@shared/lib/api/http-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Icon from "@ui/components/lucide-icons/Icon";
@@ -117,12 +120,10 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
         id: c.id,
         sortOrder: idx,
       }));
-      await clientHttp.post<{ response: CategoryRow[] }>(
-        "/api/categories/reorder",
-        {
-          json: { orderings },
-        },
-      );
+      await clientHttp.post<{
+        request: ReorderCategoriesInput;
+        response: CategoryRow[];
+      }>("/api/categories/reorder", { body: { orderings } });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["categories"] });

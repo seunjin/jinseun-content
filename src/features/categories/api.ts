@@ -213,15 +213,19 @@ async function reorderCategories(
   const parsed = reorderCategoriesInputSchema.parse(payload);
   const { orderings } = parsed;
 
+  // Upsert는 누락 컬럼이 있는 신규 insert로 오해될 수 있어 NOT NULL 제약을 유발합니다.
+  // 안전하게 id별 update로 처리합니다.
+  for (const ordering of orderings) {
+    const { error: updateError } = await client
+      .from("categories")
+      .update({ sort_order: ordering.sortOrder })
+      .eq("id", ordering.id);
+
+    if (updateError) throw updateError;
+  }
+
   const { data, error } = await client
     .from("categories")
-    .upsert(
-      orderings.map((ordering) => ({
-        id: ordering.id,
-        sort_order: ordering.sortOrder,
-      })),
-      { onConflict: "id" },
-    )
     .select(CATEGORY_SELECT)
     .in(
       "id",
