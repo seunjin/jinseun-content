@@ -27,7 +27,7 @@ import type {
 import { clientHttp } from "@shared/lib/api/http-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Icon from "@ui/components/lucide-icons/Icon";
-import { Button } from "@ui/shadcn/components";
+import { Button, Switch } from "@ui/shadcn/components";
 import { Spinner } from "@ui/shadcn/components/spinner";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -109,7 +109,9 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     if (oldIndex === -1 || newIndex === -1) return;
     const next = arrayMove(ordered, oldIndex, newIndex);
     setOrdered(next);
-    // 저장은 명시적 트리거(저장 버튼)에서 수행
+    if (isEditOrder) {
+      saveOrder(next);
+    }
   };
 
   // 정렬 저장 뮤테이션
@@ -167,41 +169,16 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <span className="text-muted-foreground">{`Total (${categories.length})`}</span>
-        <div className="flex items-center gap-2">
-          {!isEditOrder && (
-            <Button
-              variant="outline"
-              onClick={() => {
-                setOrdered(categories);
-                setIsEditOrder(true);
-              }}
-              size="sm"
-            >
-              <Icon name="ListChecks" className="size-3" /> 정렬 편집
-            </Button>
-          )}
-          {isEditOrder && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setOrdered(categories);
-                  setIsEditOrder(false);
-                }}
-              >
-                취소
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => saveOrder(ordered)}
-                disabled={isSavingOrder}
-              >
-                {isSavingOrder && <Spinner className="size-3" />}
-                저장
-              </Button>
-            </>
-          )}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground select-none">
+            <Switch
+              checked={isEditOrder}
+              onCheckedChange={(checked) => setIsEditOrder(Boolean(checked))}
+              disabled={isSavingOrder}
+              id="toggle-reorder-mode"
+            />
+            <label htmlFor="toggle-reorder-mode">정렬 모드</label>
+          </div>
           <Button
             variant="outline"
             onClick={() => refetch()}
