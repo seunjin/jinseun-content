@@ -4,22 +4,25 @@ import type {
   CategoryRow,
   CreateCategoryInput,
 } from "@features/categories/schemas";
-import { Label } from "@radix-ui/react-label";
-import { ApiClientError, createHttpClient } from "@shared/lib/api/http-client";
-import { useDialogs } from "@shared/lib/react-layered-dialog/dialogs";
+import { ApiClientError, clientHttp } from "@shared/lib/api/http-client";
 import { useForm } from "@tanstack/react-form";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import ModalContainer from "@ui/components/dialogs/ModalContainer";
 import Icon from "@ui/components/lucide-icons/Icon";
-import { Button, Input, Spinner, Switch } from "@ui/shadcn/components";
-import { motion } from "motion/react";
-import { useState } from "react";
-
-const httpClient = createHttpClient();
+import {
+  Button,
+  Input,
+  Spinner,
+  Switch,
+  Label,
+  Textarea,
+} from "@ui/shadcn/components";
+import { useDialogController } from "react-layered-dialog";
+import { toast } from "sonner";
 
 const CreateCategoryModal = () => {
-  const { closeDialog } = useDialogs();
+  const { close, setStatus } = useDialogController();
   const queryClient = useQueryClient();
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const initialValues: CreateCategoryInput = {
     name: "",
@@ -28,67 +31,53 @@ const CreateCategoryModal = () => {
     isVisible: true,
   };
 
+  const mutation = useMutation({
+    mutationFn: (payload: CreateCategoryInput) =>
+      clientHttp.post<{ request: CreateCategoryInput; response: CategoryRow }>(
+        "/api/categories",
+        { body: payload },
+      ),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["categories"] });
+      toast.success("카테고리 생성에 성공했습니다.");
+    },
+  });
+
+  // onSubmit 안에서 mutateAsync 호출
+
   const form = useForm({
     defaultValues: initialValues,
     onSubmit: async ({ value }) => {
-      try {
-        setSubmitError(null);
+      const payload: CreateCategoryInput = {
+        ...value,
+        name: value.name.trim(),
+        slug: value.slug.trim(),
+        description: value.description?.trim() || undefined,
+        isVisible: value.isVisible,
+      };
 
-        const payload: CreateCategoryInput = {
-          ...value,
-          name: value.name.trim(),
-          slug: value.slug.trim(),
-          description: value.description?.trim() || undefined,
-          isVisible: value.isVisible,
-        };
-
-        if (!payload.name) {
-          throw new Error("카테고리명을 입력하세요.");
-        }
-
-        if (!payload.slug) {
-          throw new Error("슬러그를 입력하세요.");
-        }
-
-        const slugPattern = /^[a-z0-9-]+$/;
-        if (!slugPattern.test(payload.slug)) {
-          throw new Error("슬러그는 영문 소문자, 숫자, 하이픈만 허용합니다.");
-        }
-
-        await httpClient.post<{
-          request: CreateCategoryInput;
-          response: CategoryRow;
-        }>("/api/categories", {
-          body: payload,
-        });
-
-        await queryClient.invalidateQueries({ queryKey: ["categories"] });
-        closeDialog();
-      } catch (error) {
-        if (error instanceof ApiClientError) {
-          setSubmitError(error.message);
-          return;
-        }
-
-        setSubmitError(
-          error instanceof Error
-            ? error.message
-            : "카테고리 생성 중 오류가 발생했습니다.",
-        );
+      if (!payload.name) {
+        throw new Error("카테고리명을 입력하세요.");
       }
+
+      if (!payload.slug) {
+        throw new Error("슬러그를 입력하세요.");
+      }
+
+      const slugPattern = /^[a-z0-9-]+$/;
+      if (!slugPattern.test(payload.slug)) {
+        throw new Error("슬러그는 영문 소문자, 숫자, 하이픈만 허용합니다.");
+      }
+      await mutation.mutateAsync(payload);
+      close();
     },
   });
 
   return (
-    <motion.div
-      className="bg-background border rounded-md px-4 py-4 w-[min(100%,360px)]"
-      initial={{ opacity: 0, y: 4 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 4 }}
-    >
-      <div className="flex justify-between items-center pb-6">
+    <ModalContainer>
+      <div className="flex justify-between items-center pb-6 ">
         <span className="text-lg font-semibold">카테고리 생성하기</span>
-        <Button variant="ghost" size="icon-sm" onClick={() => closeDialog()}>
+        <Button variant="ghost" size="icon-sm" onClick={close}>
           <Icon name="X" />
         </Button>
       </div>
@@ -121,11 +110,11 @@ const CreateCategoryModal = () => {
                 onChange={(event) => field.handleChange(event.target.value)}
                 onBlur={field.handleBlur}
               />
-              {field.state.meta.errors?.length ? (
+              {field.state.meta.errors?.length > 0 && (
                 <p className="text-sm text-destructive">
                   {field.state.meta.errors[0]}
                 </p>
-              ) : null}
+              )}
             </div>
           )}
         </form.Field>
@@ -153,11 +142,11 @@ const CreateCategoryModal = () => {
                 onChange={(event) => field.handleChange(event.target.value)}
                 onBlur={field.handleBlur}
               />
-              {field.state.meta.errors?.length ? (
+              {field.state.meta.errors?.length > 0 && (
                 <p className="text-sm text-destructive">
                   {field.state.meta.errors[0]}
                 </p>
-              ) : null}
+              )}
             </div>
           )}
         </form.Field>
@@ -166,7 +155,7 @@ const CreateCategoryModal = () => {
           {(field) => (
             <div className="flex flex-col gap-2">
               <Label className="text-muted-foreground">description</Label>
-              <Input
+              <Textarea
                 placeholder="선택 입력"
                 value={field.state.value ?? ""}
                 onChange={(event) => field.handleChange(event.target.value)}
@@ -202,20 +191,24 @@ const CreateCategoryModal = () => {
                   {field.state.value ? "공개" : "비공개"}
                 </Label>
               </div>
-              {field.state.meta.errors?.length ? (
+              {field.state.meta.errors?.length > 0 && (
                 <p className="text-sm text-destructive">
                   {field.state.meta.errors[0]}
                 </p>
-              ) : null}
+              )}
             </div>
           )}
         </form.Field>
 
-        {submitError ? (
+        {mutation.error && (
           <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {submitError}
+            {mutation.error instanceof ApiClientError
+              ? mutation.error.message
+              : mutation.error instanceof Error
+                ? mutation.error.message
+                : "카테고리 생성 중 오류가 발생했습니다."}
           </div>
-        ) : null}
+        )}
 
         <form.Subscribe selector={(state) => state.isSubmitting}>
           {(isSubmitting) => (
@@ -223,15 +216,15 @@ const CreateCategoryModal = () => {
               size="lg"
               className="w-full"
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || mutation.isPending}
             >
-              {isSubmitting && <Spinner />}
+              {(isSubmitting || mutation.isPending) && <Spinner />}
               생성하기
             </Button>
           )}
         </form.Subscribe>
       </form>
-    </motion.div>
+    </ModalContainer>
   );
 };
 
