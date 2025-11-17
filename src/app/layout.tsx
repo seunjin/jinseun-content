@@ -38,7 +38,7 @@ export default function RootLayout({
           {children}
           <ClientDialogRenderer />
         </NextQueryClientProvider>
-        <Toaster />
+        <Toaster expand position={`top-center`} />
       </body>
     </html>
   );
