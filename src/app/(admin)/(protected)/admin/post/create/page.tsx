@@ -1,4 +1,4 @@
-import { CONTENT_CATEGORY_SELECT_OPTIONS } from "@shared/constants/category.constants";
+import { fetchCategoriesServer } from "@features/categories/server";
 import Icon from "@ui/components/lucide-icons/Icon";
 import Main from "@ui/layouts/Main";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
@@ -16,9 +16,11 @@ import {
 } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import Link from "next/link";
-import Editor from "./Editor.client";
+import Editor from "./_components/Editor.client";
 
-const AdminCreatePostPage = () => {
+const AdminCreatePostPage = async () => {
+  // 서버에서 카테고리 목록을 조회해 정렬 순서대로 옵션을 구성합니다.
+  const categories = await fetchCategoriesServer();
   return (
     <Main>
       <PageTopToolbar
@@ -69,18 +71,23 @@ const AdminCreatePostPage = () => {
             </div>
             <Select>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a fruit" />
+                <SelectValue placeholder="카테고리를 선택하세요" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>카테고리(주제)</SelectLabel>
-                  {CONTENT_CATEGORY_SELECT_OPTIONS.map((option) => {
-                    return (
-                      <SelectItem key={option.id} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    );
-                  })}
+                  {categories.map(
+                    (category) =>
+                      category.isVisible && (
+                        <SelectItem
+                          key={category.id}
+                          value={String(category.id)}
+                          // aria-label 등 접근성 속성을 필요 시 추가할 수 있습니다.
+                        >
+                          {category.name}
+                        </SelectItem>
+                      ),
+                  )}
                 </SelectGroup>
               </SelectContent>
             </Select>
