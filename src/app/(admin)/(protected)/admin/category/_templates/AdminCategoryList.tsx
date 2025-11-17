@@ -4,11 +4,15 @@ import {
   closestCenter,
   DndContext,
   type DragEndEvent,
-  type DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import {
+  restrictToFirstScrollableAncestor,
+  restrictToParentElement,
+  restrictToWindowEdges,
+} from "@dnd-kit/modifiers";
 import {
   arrayMove,
   rectSortingStrategy,
@@ -96,13 +100,8 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
   const itemIds = useMemo(() => ordered.map((c) => c.id), [ordered]);
-  const [_activeId, setActiveId] = useState<number | null>(null);
-
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId((event.active.id as number) ?? null);
-  };
+  const [isEditOrder, setIsEditOrder] = useState(false);
   const handleDragEnd = (event: DragEndEvent) => {
-    setActiveId(null);
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     const oldIndex = ordered.findIndex((c) => c.id === active.id);
@@ -110,7 +109,7 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     if (oldIndex === -1 || newIndex === -1) return;
     const next = arrayMove(ordered, oldIndex, newIndex);
     setOrdered(next);
-    saveOrder(next);
+    // 저장은 명시적 트리거(저장 버튼)에서 수행
   };
 
   // 정렬 저장 뮤테이션
@@ -128,6 +127,7 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["categories"] });
       toast.success("정렬을 저장했습니다.");
+      setIsEditOrder(false);
     },
     onError: () => {
       toast.error("정렬 저장에 실패했습니다. 다시 시도해 주세요.");
@@ -167,43 +167,104 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <span className="text-muted-foreground">{`Total (${categories.length})`}</span>
-        <Button
-          variant="outline"
-          onClick={() => refetch()}
-          disabled={isRefetching ?? false}
-          size="sm"
-        >
-          {isRefetching ? (
-            <Spinner className="size-3" />
-          ) : (
-            <Icon name="RefreshCcw" className="size-3" />
+        <div className="flex items-center gap-2">
+          {!isEditOrder && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setOrdered(categories);
+                setIsEditOrder(true);
+              }}
+              size="sm"
+            >
+              <Icon name="ListChecks" className="size-3" /> 정렬 편집
+            </Button>
           )}
-          새로고침
-        </Button>
+          {isEditOrder && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setOrdered(categories);
+                  setIsEditOrder(false);
+                }}
+              >
+                취소
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => saveOrder(ordered)}
+                disabled={isSavingOrder}
+              >
+                {isSavingOrder && <Spinner className="size-3" />}
+                저장
+              </Button>
+            </>
+          )}
+          <Button
+            variant="outline"
+            onClick={() => refetch()}
+            disabled={isRefetching ?? false}
+            size="sm"
+          >
+            {isRefetching ? (
+              <Spinner className="size-3" />
+            ) : (
+              <Icon name="RefreshCcw" className="size-3" />
+            )}
+            새로고침
+          </Button>
+        </div>
       </div>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={itemIds} strategy={rectSortingStrategy}>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {ordered.map((item) => (
-              <SortableCard key={item.id} id={item.id}>
-                <AdminCategoryItem
-                  item={item}
-                  isPending={isDeleting || isSavingOrder}
-                  onDelete={async (id) => {
-                    await deleteAsync(id);
-                  }}
-                />
-              </SortableCard>
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+      {isEditOrder ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          modifiers={[
+            restrictToParentElement,
+            restrictToFirstScrollableAncestor,
+            restrictToWindowEdges,
+          ]}
+        >
+          <SortableContext items={itemIds} strategy={rectSortingStrategy}>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {ordered.map((item, idx) => (
+                <SortableCard key={item.id} id={item.id}>
+                  <div className="relative">
+                    {/* 순번 배지 (편집 모드에서만 표시) */}
+                    <span className="absolute -top-2 -left-2 z-10 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground shadow">
+                      {idx + 1}
+                    </span>
+                    <AdminCategoryItem
+                      item={item}
+                      isPending={isDeleting || isSavingOrder}
+                      onDelete={async (id) => {
+                        await deleteAsync(id);
+                      }}
+                    />
+                  </div>
+                </SortableCard>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {ordered.map((item) => (
+            <AdminCategoryItem
+              key={item.id}
+              item={item}
+              isPending={isDeleting}
+              onDelete={async (id) => {
+                await deleteAsync(id);
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
