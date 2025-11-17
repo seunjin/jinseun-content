@@ -1,19 +1,16 @@
 "use client";
-import { BaseDialogOptions } from "@shared/lib/react-layered-dialog/dialogs";
+import type { BaseDialogOptions } from "@shared/lib/react-layered-dialog/dialogs";
 import { cn } from "@ui/shadcn/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { useDialogController } from "react-layered-dialog";
+
 type ModalDialogProps = {
   children: React.ReactNode;
 } & BaseDialogOptions;
 const Modal = (props: ModalDialogProps) => {
-  const { id, isOpen, zIndex, close, unmount, getStateFields } =
+  const { isOpen, zIndex, unmount, getStateFields } =
     useDialogController<ModalDialogProps>();
-  const {
-    closeOnOutsideClick,
-    dimmed = true,
-    children,
-  } = getStateFields(props);
+  const { dimmed = true, children } = getStateFields(props);
 
   return (
     <AnimatePresence onExitComplete={unmount}>

@@ -1,18 +1,21 @@
 "use client";
 
-import { BaseDialogOptions } from "@shared/lib/react-layered-dialog/dialogs";
+import type { BaseDialogOptions } from "@shared/lib/react-layered-dialog/dialogs";
 import { Button, Spinner } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
-import { DialogComponent, useDialogController } from "react-layered-dialog";
+import {
+  type DialogComponent,
+  useDialogController,
+} from "react-layered-dialog";
 
 type ConfirmDialogProps = {
   title?: string | React.ReactNode;
   message: string | React.ReactNode;
   confirmButtonText?: string;
   cancelButtonText?: string;
-  onConfirm?: () => void | boolean | Promise<void | boolean>;
-  onCancel?: () => void | boolean | Promise<void | boolean>;
+  onConfirm?: () => void;
+  onCancel?: () => void;
 } & BaseDialogOptions;
 
 const Confirm: DialogComponent<ConfirmDialogProps> = (
@@ -27,7 +30,6 @@ const Confirm: DialogComponent<ConfirmDialogProps> = (
     unmount,
     getStateFields,
     reject,
-    setStatus,
     resolve,
   } = useDialogController<ConfirmDialogProps>();
 
@@ -40,7 +42,6 @@ const Confirm: DialogComponent<ConfirmDialogProps> = (
     confirmButtonText = "확인",
     onCancel,
     onConfirm,
-    closeOnOutsideClick = false,
     dimmed = true,
   } = getStateFields(props);
 

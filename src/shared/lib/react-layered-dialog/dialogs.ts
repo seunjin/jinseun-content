@@ -8,11 +8,6 @@ export type BaseDialogOptions = {
   dimmed?: boolean;
 };
 
-type ModalState = {
-  type: "modal";
-  children: React.ReactNode;
-};
-
 export const dialog = createDialogApi(new DialogStore(), {
   alert: { component: Alert },
   confirm: { component: Confirm, mode: "async" },

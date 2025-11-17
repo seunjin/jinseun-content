@@ -12,16 +12,16 @@ import Icon from "@ui/components/lucide-icons/Icon";
 import {
   Button,
   Input,
+  Label,
   Spinner,
   Switch,
-  Label,
   Textarea,
 } from "@ui/shadcn/components";
 import { useDialogController } from "react-layered-dialog";
 import { toast } from "sonner";
 
 const CreateCategoryModal = () => {
-  const { close, setStatus } = useDialogController();
+  const { close } = useDialogController();
   const queryClient = useQueryClient();
 
   const initialValues: CreateCategoryInput = {

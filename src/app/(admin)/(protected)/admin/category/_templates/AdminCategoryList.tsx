@@ -1,11 +1,10 @@
 "use client";
 
 import type { CategoryRow } from "@features/categories/schemas";
-import { dialog } from "@shared/lib/react-layered-dialog/dialogs";
 import { clientHttp } from "@shared/lib/api/http-client";
+import { dialog } from "@shared/lib/react-layered-dialog/dialogs";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Icon from "@ui/components/lucide-icons/Icon";
-
 import { Button } from "@ui/shadcn/components";
 import {
   DropdownMenu,
@@ -14,10 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@ui/shadcn/components/dropdown-menu";
 import { Spinner } from "@ui/shadcn/components/spinner";
+import { toast } from "sonner";
 import { useCategoriesQuery } from "../_hooks/useCategoriesQuery";
 import UpdateCategoryModal from "./UpdateCategoryModal";
-import Modal from "@ui/components/dialogs/Modal";
-import { toast } from "sonner";
 
 export interface AdminCategoryListProps {
   initialCategories: CategoryRow[];
@@ -91,8 +89,6 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
         {categories.map((item) => (
           <div
             key={item.id}
-            role="button"
-            tabIndex={0}
             className="grid grid-rows-[auto_1fr_auto] group border rounded-xl bg-card shadow-sm transition-all hover:border-primary/40 hover:shadow-lg focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/30 "
           >
             <div className="flex items-start justify-between gap-3 border-b px-4 py-3 transition-colors group-hover:bg-primary/5">

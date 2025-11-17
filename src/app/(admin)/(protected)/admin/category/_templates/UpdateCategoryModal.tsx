@@ -1,28 +1,28 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { z } from "zod";
+import {
+  type CategoryRow,
+  categoryRowSchema,
+  type UpdateCategoryInput,
+} from "@features/categories/schemas";
 import { ApiClientError, clientHttp } from "@shared/lib/api/http-client";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import ModalContainer from "@ui/components/dialogs/ModalContainer";
 import Icon from "@ui/components/lucide-icons/Icon";
 import {
   Button,
   Input,
+  Label,
   Spinner,
   Switch,
   Textarea,
-  Label,
 } from "@ui/shadcn/components";
-import {
-  categoryRowSchema,
-  type CategoryRow,
-  type UpdateCategoryInput,
-} from "@features/categories/schemas";
-import SkeletonUpdateCategoryModal from "./UpdateCategoryModal.skeleton";
-import ModalContainer from "@ui/components/dialogs/ModalContainer";
+import { useEffect, useMemo } from "react";
 import { useDialogController } from "react-layered-dialog";
 import { toast } from "sonner";
+import { z } from "zod";
+import SkeletonUpdateCategoryModal from "./UpdateCategoryModal.skeleton";
 
 const categoryDetailResponseSchema = z.object({
   data: categoryRowSchema,

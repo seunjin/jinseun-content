@@ -18,14 +18,14 @@ import {
   type LucideIcon,
   Menu,
   Moon,
+  MoreVertical,
+  Pencil,
   RefreshCcw,
   Rocket,
   Save,
   Sun,
-  X,
-  MoreVertical,
-  Pencil,
   Trash2,
+  X,
 } from "lucide-react";
 
 export const ICON_PALETTE = {

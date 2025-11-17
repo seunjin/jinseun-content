@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+
 const ModalContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div

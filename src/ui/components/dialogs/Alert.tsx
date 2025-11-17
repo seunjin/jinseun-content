@@ -1,9 +1,12 @@
 "use client";
-import { BaseDialogOptions } from "@shared/lib/react-layered-dialog/dialogs";
+import type { BaseDialogOptions } from "@shared/lib/react-layered-dialog/dialogs";
 import { Button } from "@ui/shadcn/components";
-import { DialogComponent, useDialogController } from "react-layered-dialog";
-import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@ui/shadcn/lib/utils";
+import { AnimatePresence, motion } from "motion/react";
+import {
+  type DialogComponent,
+  useDialogController,
+} from "react-layered-dialog";
 
 type AlertProps = {
   title?: string | React.ReactNode;
@@ -14,13 +17,7 @@ const Alert: DialogComponent<AlertProps> = (props: AlertProps) => {
   const { id, isOpen, close, zIndex, unmount, getStateFields } =
     useDialogController<AlertProps>();
 
-  const {
-    title,
-    message,
-    onOk,
-    closeOnOutsideClick = false,
-    dimmed = true,
-  } = getStateFields(props);
+  const { title, message, onOk, dimmed = true } = getStateFields(props);
   const handleClose = () => {
     onOk?.();
     close();

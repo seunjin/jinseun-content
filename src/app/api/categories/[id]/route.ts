@@ -1,15 +1,14 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { z } from "zod";
-
-import { createServerSupabase } from "@lib/supabase/server.supabase";
-import { ApiErrorCode } from "@shared/lib/api/error-codes";
-import { createApiError, createApiSuccess } from "@shared/lib/api/response";
 import { createCategoriesApi } from "@features/categories/api";
 import {
   categoryRowSchema,
   updateCategoryInputSchema,
 } from "@features/categories/schemas";
+import { createServerSupabase } from "@lib/supabase/server.supabase";
+import { ApiErrorCode } from "@shared/lib/api/error-codes";
+import { createApiError, createApiSuccess } from "@shared/lib/api/response";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 
 const paramsSchema = z.object({
   id: z
