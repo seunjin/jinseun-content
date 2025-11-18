@@ -31,9 +31,7 @@ const PostCardGrid = ({
   if (loading) {
     const skeletonKeys = ["s1", "s2", "s3", "s4", "s5", "s6"] as const;
     return (
-      <div
-        className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-2", className)}
-      >
+      <div className={cn("grid gap-6", className)}>
         {skeletonKeys.map((k) => (
           <PostCardSkeleton key={k} />
         ))}
@@ -50,7 +48,7 @@ const PostCardGrid = ({
   }
 
   return (
-    <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-2", className)}>
+    <div className={cn("grid gap-6", className)}>
       {items.map((item) => {
         const link = hrefBase
           ? `${hrefBase}/${hrefField === "slug" ? item.slug : item.id}`

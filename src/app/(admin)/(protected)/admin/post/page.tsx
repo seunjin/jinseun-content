@@ -17,6 +17,7 @@ const AdminPostPage = () => {
       title: "Hello World",
       categoryName: "일반",
       isPublished: true,
+      createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       thumbnailUrl: null,
     },
@@ -26,6 +27,7 @@ const AdminPostPage = () => {
       title: "두 번째 글",
       categoryName: "React",
       isPublished: false,
+      createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
   ];
@@ -48,12 +50,14 @@ const AdminPostPage = () => {
         )}
       >
         <AppSideBar />
-        <PostCardGrid
-          items={items}
-          hrefBase="/admin/post"
-          hrefField="id"
-          className="mt-4"
-        />
+        <div>
+          <PostCardGrid
+            items={items}
+            hrefBase="/admin/post"
+            hrefField="id"
+            className="mt-4"
+          />
+        </div>
       </div>
     </Main>
   );

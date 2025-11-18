@@ -30,76 +30,74 @@ const PostCard = ({
   showCategory = true,
   className,
 }: PostCardProps) => {
-  const updated = item.updatedAt
-    ? new Date(item.updatedAt).toLocaleDateString("ko-KR")
+  const created = item.createdAt
+    ? new Date(item.createdAt).toLocaleDateString("ko-KR")
     : null;
 
   return (
-    <article
-      className={cn(
-        "group grid grid-rows-[auto_1fr_auto] rounded-xl border bg-card shadow-sm transition-all hover:shadow-md",
-        className,
-      )}
-    >
-      {/* 썸네일 */}
-      <div className="relative aspect-video w-full overflow-hidden rounded-t-xl bg-accent">
-        {item.thumbnailUrl ? (
-          <Image
-            src={item.thumbnailUrl}
-            alt="thumbnail"
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover"
-            priority={false}
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/70">
-            <Icon name="ImageOff" className="size-6" />
-          </div>
+    <Link href={href ?? ""}>
+      <article
+        className={cn(
+          "group flex gap-4 rounded-xl border bg-card shadow-sm transition-all hover:shadow-md cursor-pointer",
+          className,
         )}
-      </div>
-
-      {/* 본문 */}
-      <div className="flex flex-col gap-2 px-4 py-3">
-        <div className="flex items-center gap-2">
-          {showCategory && item.categoryName && (
-            <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground">
-              {item.categoryName}
-            </span>
-          )}
-          {showStatus && (
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
-                item.isPublished
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300",
-              )}
-            >
-              {item.isPublished ? "published" : "draft"}
-            </span>
-          )}
-        </div>
-
-        <h3 className="line-clamp-2 text-base font-semibold text-foreground">
-          {href ? (
-            <Link href={href} className="hover:underline">
-              {item.title}
-            </Link>
+      >
+        {/* 썸네일 */}
+        <div className="relative aspect-video w-1/5 overflow-hidden rounded-xl bg-accent">
+          {item.thumbnailUrl ? (
+            <Image
+              src={item.thumbnailUrl}
+              alt="thumbnail"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover"
+              priority={false}
+            />
           ) : (
-            item.title
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/70">
+              <Icon name="ImageOff" className="size-6" />
+            </div>
           )}
-        </h3>
-      </div>
-
-      {/* 푸터 */}
-      <div className="flex items-center justify-between border-t px-4 py-2 text-xs text-muted-foreground">
-        <div className="flex items-center gap-1">
-          <Icon name="CalendarClock" size={14} />
-          <span>{updated ? `수정: ${updated}` : "수정 정보 없음"}</span>
         </div>
-      </div>
-    </article>
+
+        <div className="flex-1">
+          {/* 본문 */}
+          <div className="flex flex-col gap-2  py-3">
+            <div className="flex items-center gap-2">
+              {showCategory && item.categoryName && (
+                <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground">
+                  {item.categoryName}
+                </span>
+              )}
+              {showStatus && (
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
+                    item.isPublished
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300",
+                  )}
+                >
+                  {item.isPublished ? "published" : "draft"}
+                </span>
+              )}
+            </div>
+
+            <h3 className="line-clamp-2 text-base font-semibold text-foreground">
+              {item.title}
+            </h3>
+          </div>
+
+          {/* 푸터 */}
+          <div className="flex items-center justify-between border-t py-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Icon name="CalendarClock" size={14} />
+              <span>{created ? `작성: ${created}` : "작성 정보 없음"}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </Link>
   );
 };
 
@@ -108,13 +106,20 @@ export default PostCard;
 /** 스켈레톤 카드 */
 export const PostCardSkeleton = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("animate-pulse rounded-xl border bg-card", className)}>
-      <div className="aspect-video rounded-t-xl bg-accent/50" />
-      <div className="px-4 py-3">
+    <div
+      className={cn(
+        "animate-pulse flex gap-4 rounded-xl border bg-card shadow-sm",
+        className,
+      )}
+    >
+      {/* 썸네일 자리 */}
+      <div className="relative aspect-video w-1/5 overflow-hidden rounded-xl bg-accent/50" />
+      {/* 본문 자리 */}
+      <div className="flex-1 py-3">
         <div className="mb-2 h-3 w-16 rounded bg-accent/60" />
-        <div className="h-4 w-3/4 rounded bg-accent/60" />
+        <div className="mb-3 h-4 w-3/4 rounded bg-accent/60" />
+        <div className="h-8 border-t" />
       </div>
-      <div className="h-8 border-t" />
     </div>
   );
 };

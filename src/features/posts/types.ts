@@ -15,6 +15,8 @@ export type PostSummary = {
   thumbnailUrl?: string | null;
   /** 발행 여부(true=발행, false=초안) */
   isPublished: boolean;
+  /** 생성 시각(ISO 문자열) */
+  createdAt?: string | null;
   /** 최종 수정 시각(ISO 문자열) */
   updatedAt?: string | null;
 };
