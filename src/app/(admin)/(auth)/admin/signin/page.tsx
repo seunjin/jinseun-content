@@ -23,11 +23,11 @@ export default function AdminSignInPage() {
 
   const nextPath = useMemo(
     () => searchParams.get("next") ?? "/admin",
-    [searchParams]
+    [searchParams],
   );
   const hydratedError = useMemo(
     () => searchParams.get("error"),
-    [searchParams]
+    [searchParams],
   );
 
   const handleSignIn = useCallback(async () => {
@@ -55,7 +55,7 @@ export default function AdminSignInPage() {
       setError(
         cause instanceof Error
           ? cause.message
-          : "알 수 없는 오류가 발생했습니다."
+          : "알 수 없는 오류가 발생했습니다.",
       );
       setIsLoading(false);
     }
@@ -85,7 +85,7 @@ export default function AdminSignInPage() {
               disabled={isLoading}
               className={cn(
                 "w-full",
-                isLoading && "cursor-not-allowed opacity-80"
+                isLoading && "cursor-not-allowed opacity-80",
               )}
             >
               {isLoading ? (

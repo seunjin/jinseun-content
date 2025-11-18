@@ -44,7 +44,7 @@ const AdminPostPage = () => {
       />
       <div
         className={cn(
-          "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6"
+          "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6",
         )}
       >
         <AppSideBar />
