@@ -3,6 +3,7 @@
 import { createClient } from "@shared/lib/supabase/client.supabase";
 import Icon from "@ui/components/lucide-icons/Icon";
 import AppContainer from "@ui/layouts/AppContainer";
+import Main from "@ui/layouts/Main";
 import { Button } from "@ui/shadcn/components/button";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
@@ -22,11 +23,11 @@ export default function AdminSignInPage() {
 
   const nextPath = useMemo(
     () => searchParams.get("next") ?? "/admin",
-    [searchParams],
+    [searchParams]
   );
   const hydratedError = useMemo(
     () => searchParams.get("error"),
-    [searchParams],
+    [searchParams]
   );
 
   const handleSignIn = useCallback(async () => {
@@ -54,63 +55,68 @@ export default function AdminSignInPage() {
       setError(
         cause instanceof Error
           ? cause.message
-          : "알 수 없는 오류가 발생했습니다.",
+          : "알 수 없는 오류가 발생했습니다."
       );
       setIsLoading(false);
     }
   }, [appOrigin, nextPath]);
 
   return (
-    <AppContainer>
-      <div className="flex items-center h-full">
-        <section className="w-full mx-auto  max-w-sm space-y-6 rounded-2xl border border-border/60 bg-background/75 p-8 text-center shadow-sm backdrop-blur">
-          <header className="space-y-2">
-            <h1 className="text-2xl font-semibold">관리자 로그인</h1>
-            <p className="text-sm text-muted-foreground">
-              Google 계정으로 로그인해야 관리자 페이지를 사용할 수 있습니다.
-            </p>
-          </header>
+    <AppContainer className="grid-rows-[1fr]">
+      <Main>
+        <div className="flex items-center  h-full">
+          <section className="w-full mx-auto  max-w-sm space-y-6 rounded-2xl border border-border/60 bg-background/75 p-8 text-center shadow-sm backdrop-blur">
+            <header className="space-y-2">
+              <h1 className="text-2xl font-semibold">관리자 로그인</h1>
+              <p className="text-sm text-muted-foreground">
+                Google 계정으로 로그인해야 관리자 페이지를 사용할 수 있습니다.
+              </p>
+            </header>
 
-          {(hydratedError || error) && (
-            <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {hydratedError ?? error}
-            </p>
-          )}
-
-          <Button
-            type="button"
-            onClick={handleSignIn}
-            disabled={isLoading}
-            className={cn(
-              "w-full",
-              isLoading && "cursor-not-allowed opacity-80",
+            {(hydratedError || error) && (
+              <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {hydratedError ?? error}
+              </p>
             )}
-          >
-            {isLoading ? (
-              <Icon name="LoaderCircle" className="animate-spin size-[18px]" />
-            ) : (
-              <>
-                <Image
-                  src="/assets/icons/google.svg"
-                  alt="@GOOGlE LOGO"
-                  width={18}
-                  height={18}
+
+            <Button
+              type="button"
+              onClick={handleSignIn}
+              disabled={isLoading}
+              className={cn(
+                "w-full",
+                isLoading && "cursor-not-allowed opacity-80"
+              )}
+            >
+              {isLoading ? (
+                <Icon
+                  name="LoaderCircle"
+                  className="animate-spin size-[18px]"
                 />
-                Google Login
-              </>
-            )}
-          </Button>
+              ) : (
+                <>
+                  <Image
+                    src="/assets/icons/google.svg"
+                    alt="@GOOGlE LOGO"
+                    width={18}
+                    height={18}
+                  />
+                  Google Login
+                </>
+              )}
+            </Button>
 
-          <div>
-            <p className="text-xs text-muted-foreground">
-              허용된 이메일이 아닌 경우 접근할 수 없습니다.
-            </p>
-            <p className="text-xs text-muted-foreground">
-              문제가 있다면 운영자에게 문의해 주세요.
-            </p>
-          </div>
-        </section>
-      </div>
+            <div>
+              <p className="text-xs text-muted-foreground">
+                허용된 이메일이 아닌 경우 접근할 수 없습니다.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                문제가 있다면 운영자에게 문의해 주세요.
+              </p>
+            </div>
+          </section>
+        </div>
+      </Main>
     </AppContainer>
   );
 }
