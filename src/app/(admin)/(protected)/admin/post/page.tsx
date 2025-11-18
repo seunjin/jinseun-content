@@ -1,9 +1,11 @@
 import type { PostSummary } from "@features/posts/types";
 import Icon from "@ui/components/lucide-icons/Icon";
 import PostCardGrid from "@ui/components/post/PostCardGrid";
+import AppSideBar from "@ui/layouts/AppSidebar";
 import Main from "@ui/layouts/Main";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
 import { Button } from "@ui/shadcn/components";
+import { cn } from "@ui/shadcn/lib/utils";
 import Link from "next/link";
 
 const AdminPostPage = () => {
@@ -40,11 +42,19 @@ const AdminPostPage = () => {
           </Link>
         }
       />
-      <PostCardGrid
-        items={items}
-        toHref={(item) => `/admin/post/${item.id}`}
-        className="mt-4"
-      />
+      <div
+        className={cn(
+          "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6"
+        )}
+      >
+        <AppSideBar />
+        <PostCardGrid
+          items={items}
+          hrefBase="/admin/post"
+          hrefField="id"
+          className="mt-4"
+        />
+      </div>
     </Main>
   );
 };

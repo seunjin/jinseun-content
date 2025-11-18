@@ -7,8 +7,10 @@ import PostCard, { PostCardSkeleton } from "./PostCard";
 export type PostCardGridProps = {
   /** 렌더링할 게시글 목록 */
   items: PostSummary[];
-  /** 각 카드의 상세 링크 생성기(선택) */
-  toHref?: (item: PostSummary) => string;
+  /** 상세 링크 베이스 경로(선택). 예: "/admin/post" 또는 "/blog" */
+  hrefBase?: string;
+  /** 링크에 사용할 식별자 필드(기본: "id"). */
+  hrefField?: "id" | "slug";
   /** 그리드 외부 클래스 확장 */
   className?: string;
   /** 로딩 여부(스켈레톤 표시) */
@@ -21,7 +23,8 @@ export type PostCardGridProps = {
  */
 const PostCardGrid = ({
   items,
-  toHref,
+  hrefBase,
+  hrefField = "id",
   className,
   loading,
 }: PostCardGridProps) => {
@@ -29,7 +32,7 @@ const PostCardGrid = ({
     const skeletonKeys = ["s1", "s2", "s3", "s4", "s5", "s6"] as const;
     return (
       <div
-        className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3", className)}
+        className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-2", className)}
       >
         {skeletonKeys.map((k) => (
           <PostCardSkeleton key={k} />
@@ -47,10 +50,13 @@ const PostCardGrid = ({
   }
 
   return (
-    <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3", className)}>
-      {items.map((item) => (
-        <PostCard key={item.id} item={item} href={toHref?.(item)} />
-      ))}
+    <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-2", className)}>
+      {items.map((item) => {
+        const link = hrefBase
+          ? `${hrefBase}/${hrefField === "slug" ? item.slug : item.id}`
+          : undefined;
+        return <PostCard key={item.id} item={item} href={link} />;
+      })}
     </div>
   );
 };
