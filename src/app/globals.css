@@ -82,6 +82,7 @@
   /* Layout */
   --header-height: 3rem;
   --sidebar-width: 15rem;
+  --page-toolbar-height: var(--header-height);
   --global-inline-padding: 3rem;
   --main-container-padding-block-start: 1.5rem;
   --main-container-padding-block-end: 12rem;
@@ -177,6 +178,10 @@
       var(--main-container-padding-inline) 0;
   }
 }
+/* 페이지 툴바가 있을 때 사이드바 sticky 오프셋 보정 */
+.with-page-toolbar {
+  --page-toolbar-offset: var(--page-toolbar-height);
+}
 
 .bn-editor {
   background-color: transparent !important;
@@ -200,9 +205,4 @@
 /* react-layered-dialogs */
 .scroll-locked {
   overflow: hidden;
-}
-
-/* 페이지 툴바가 있을 때 사이드바 sticky 오프셋 보정 */
-.with-page-toolbar {
-  --page-toolbar-offset: var(--header-height);
 }
