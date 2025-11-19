@@ -10,12 +10,12 @@ const PubliRootPage = () => {
         <section className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
             <div className="flex items-conter gap-2">
-              <Image
+              {/* <Image
                 src="/assets/gif/gif-002.gif"
                 alt="@fire logo"
                 width={24}
                 height={24}
-              />
+              /> */}
 
               <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
                 NEW 토픽

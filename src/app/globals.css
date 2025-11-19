@@ -201,3 +201,8 @@
 .scroll-locked {
   overflow: hidden;
 }
+
+/* 페이지 툴바가 있을 때 사이드바 sticky 오프셋 보정 */
+.with-page-toolbar {
+  --page-toolbar-offset: var(--header-height);
+}

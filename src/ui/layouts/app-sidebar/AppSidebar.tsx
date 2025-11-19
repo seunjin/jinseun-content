@@ -14,8 +14,8 @@ const AppSidebar = ({
 }: AppSidebarProps) => {
   const stickyClasses = sticky
     ? [
-        "sticky top-[calc(var(--header-height)+var(--main-container-padding-block-start))]",
-        "h-[calc(100dvh-var(--header-height)-var(--main-container-padding-block-start))]",
+        "sticky top-[calc(var(--header-height)+var(--page-toolbar-offset,0px)+var(--main-container-padding-block-start))]",
+        "h-[calc(100dvh-var(--header-height)-var(--page-toolbar-offset,0px)-var(--main-container-padding-block-start))]",
       ]
     : [];
   return (

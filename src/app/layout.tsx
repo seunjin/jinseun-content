@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className="dark"
+      className=""
       // ThemeProvider사용 시 true
       // suppressHydrationWarning
     >
