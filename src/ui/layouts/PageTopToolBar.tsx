@@ -1,13 +1,9 @@
 import { cn } from "@ui/shadcn/lib/utils";
 
 interface PageTopToolbarProps {
-  leftSideComponents?: React.ReactNode;
-  rightSideComponents?: React.ReactNode;
+  children?: React.ReactNode;
 }
-const PageTopToolBar = ({
-  leftSideComponents,
-  rightSideComponents,
-}: PageTopToolbarProps) => {
+const PageTopToolBar = ({ children }: PageTopToolbarProps) => {
   return (
     <div className="h-[var(--header-height)]">
       <div
@@ -22,8 +18,7 @@ const PageTopToolBar = ({
             "flex items-center justify-between",
           )}
         >
-          <div className="flex gap-2">{leftSideComponents}</div>
-          <div className="flex gap-2">{rightSideComponents}</div>
+          {children}
         </div>
       </div>
     </div>

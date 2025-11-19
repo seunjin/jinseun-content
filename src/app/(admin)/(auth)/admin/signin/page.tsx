@@ -3,7 +3,7 @@
 import { createClient } from "@shared/lib/supabase/client.supabase";
 import Icon from "@ui/components/lucide-icons/Icon";
 import AppContainer from "@ui/layouts/AppContainer";
-import Main from "@ui/layouts/Main";
+import Main from "@ui/layouts/PageContainer";
 import { Button } from "@ui/shadcn/components/button";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";

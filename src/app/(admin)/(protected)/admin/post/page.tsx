@@ -1,16 +1,11 @@
 import type { PostSummary } from "@features/posts/types";
-import Icon from "@ui/components/lucide-icons/Icon";
 import PostCardGrid from "@ui/components/post/PostCardGrid";
-import AppSideBar from "@ui/layouts/AppSidebar";
-import Main from "@ui/layouts/Main";
-import PageTopToolbar from "@ui/layouts/PageTopToolbar";
-import { Button } from "@ui/shadcn/components";
-import { cn } from "@ui/shadcn/lib/utils";
-import Link from "next/link";
+import CategorySidebar from "@ui/layouts/app-sidebar/CategorySidebar";
+import PageContainer from "@ui/layouts/PageContainer";
 
 const AdminPostPage = () => {
   // TODO: 실제 API 연동 전까지 임시 목업 데이터
-  const items: PostSummary[] = [
+  const _items: PostSummary[] = [
     {
       id: 1,
       slug: "hello-world",
@@ -33,8 +28,12 @@ const AdminPostPage = () => {
   ];
 
   return (
-    <Main>
-      <PageTopToolbar
+    <PageContainer.WithSidebar sidebarComponent={<CategorySidebar />}>
+      {/* --- 메인 컨텐츠 영역 --- */}
+      {/* 토픽 콘텐츠 */}
+      <div className="flex flex-col gap-12">
+        {/* 핫 토픽 */}
+        {/* <PageTopToolbar
         leftSideComponents={<span className="font-semibold">글 목록</span>}
         rightSideComponents={
           <Link href="/admin/post/create">
@@ -43,23 +42,16 @@ const AdminPostPage = () => {
             </Button>
           </Link>
         }
-      />
-      <div
-        className={cn(
-          "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6",
-        )}
-      >
-        <AppSideBar />
-        <div>
-          <PostCardGrid
-            items={items}
-            hrefBase="/admin/post"
-            hrefField="id"
-            className="mt-4"
-          />
-        </div>
+        /> */}
+        {/* NEW 토픽 */}
+        <PostCardGrid
+          items={_items}
+          hrefBase="/admin/post"
+          hrefField="id"
+          className="mt-4"
+        />
       </div>
-    </Main>
+    </PageContainer.WithSidebar>
   );
 };
 

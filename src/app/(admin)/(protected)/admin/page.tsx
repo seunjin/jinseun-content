@@ -1,11 +1,11 @@
-import Main from "@ui/layouts/Main";
+import PageContainer from "@ui/layouts/PageContainer";
 import { Separator } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import Link from "next/link";
 
 const AdminPage = () => {
   return (
-    <Main className={cn("flex flex-col gap-6")}>
+    <PageContainer.Default className={cn("flex flex-col gap-6")}>
       <div>
         <div>
           <Link
@@ -74,7 +74,7 @@ const AdminPage = () => {
           </Link>
         </div>
       </div>
-    </Main>
+    </PageContainer.Default>
   );
 };
 

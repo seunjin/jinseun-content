@@ -1,0 +1,35 @@
+import { cn } from "@ui/shadcn/lib/utils";
+import type React from "react";
+
+type AppSidebarProps = {
+  children: React.ReactNode;
+  sticky?: boolean;
+  className?: string;
+};
+
+const AppSidebar = ({
+  children,
+  sticky = true,
+  className,
+}: AppSidebarProps) => {
+  const stickyClasses = sticky
+    ? [
+        "sticky top-[calc(var(--header-height)+var(--main-container-padding-block-start))]",
+        "h-[calc(100dvh-var(--header-height)-var(--main-container-padding-block-start))]",
+      ]
+    : [];
+  return (
+    <aside
+      className={cn(
+        ...stickyClasses,
+        "w-[var(--sidebar-width)] pr-4 shrink-0",
+        "hidden lg:block",
+        className,
+      )}
+    >
+      {children}
+    </aside>
+  );
+};
+
+export default AppSidebar;

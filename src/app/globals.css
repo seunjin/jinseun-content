@@ -83,7 +83,8 @@
   --header-height: 3rem;
   --sidebar-width: 15rem;
   --global-inline-padding: 3rem;
-  --main-container-padding-block: 1.5rem;
+  --main-container-padding-block-start: 1.5rem;
+  --main-container-padding-block-end: 12rem;
   --main-container-padding-inline: var(--global-inline-padding);
   /* width */
   --content-width: 64rem;
@@ -166,13 +167,14 @@
   &.app-header {
     padding-inline: var(--main-container-padding-inline);
   }
-  &.app-main {
-    padding: var(--main-container-padding-block)
-      var(--main-container-padding-inline) 12rem;
+  &.page-container {
+    padding: var(--main-container-padding-block-start)
+      var(--main-container-padding-inline)
+      var(--main-container-padding-block-end);
   }
-  &.app-footer {
-    padding: var(--main-container-padding-block)
-      var(--main-container-padding-inline) 8rem;
+  &.page-container-with-sidebar {
+    padding: var(--main-container-padding-block-start)
+      var(--main-container-padding-inline) 0;
   }
 }
 

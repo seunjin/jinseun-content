@@ -1,56 +1,11 @@
-import AppSidebar from "@ui/layouts/AppSidebar";
-import Main from "@ui/layouts/Main";
-import { cn } from "@ui/shadcn/lib/utils";
-import { HotTopic } from "@ui/templates/hot-topic";
+import CategorySidebar from "@ui/layouts/app-sidebar/CategorySidebar";
+import PageContainer from "@ui/layouts/PageContainer";
 import { NewTopic } from "@ui/templates/new-topic";
-import Image from "next/image";
 
 const PubliRootPage = () => {
   return (
-    <Main
-      className={cn(
-        "grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6",
-      )}
-    >
-      {/* --- 사이드 바 영역 --- */}
-      <AppSidebar />
-
-      {/* --- 메인 컨텐츠 영역 --- */}
-
-      {/* 토픽 콘텐츠 */}
+    <PageContainer.WithSidebar sidebarComponent={<CategorySidebar />}>
       <div className="flex flex-col gap-12">
-        {/* 핫 토픽 */}
-        <section className="flex flex-col gap-5">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-conter gap-2">
-              <Image
-                src="/assets/gif/gif-001.gif"
-                alt="@fire logo"
-                width={24}
-                height={24}
-              />
-
-              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                HOT 토픽
-              </h4>
-            </div>
-            <p className="text-muted-foreground text-base md:text-sm">
-              지금 가장 주목받는 주제들을 살펴보고, 다양한 관점의 인사이트를
-              얻어보세요
-            </p>
-          </div>
-          <div className="overflow-hidden">
-            <div className="flex min-w-0 flex-nowrap gap-6 overflow-x-auto pb-2">
-              <HotTopic.Skeleton />
-              <HotTopic.Skeleton />
-              <HotTopic.Skeleton />
-              <HotTopic.Skeleton />
-              <HotTopic.Skeleton />
-              <HotTopic.Skeleton />
-              <HotTopic.Skeleton />
-            </div>
-          </div>
-        </section>
         {/* NEW 토픽 */}
         <section className="flex flex-col gap-5">
           <div className="flex flex-col gap-1">
@@ -83,7 +38,12 @@ const PubliRootPage = () => {
           </div>
         </section>
       </div>
-    </Main>
+      {/* --- 사이드 바 영역 --- */}
+
+      {/* --- 메인 컨텐츠 영역 --- */}
+
+      {/* 토픽 콘텐츠 */}
+    </PageContainer.WithSidebar>
   );
 };
 

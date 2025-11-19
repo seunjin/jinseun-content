@@ -1,6 +1,6 @@
 import { fetchCategoriesServer } from "@features/categories/server";
 import Icon from "@ui/components/lucide-icons/Icon";
-import Main from "@ui/layouts/Main";
+import PageContainer from "@ui/layouts/PageContainer";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
 import {
   Button,
@@ -22,26 +22,25 @@ const AdminCreatePostPage = async () => {
   // 서버에서 카테고리 목록을 조회해 정렬 순서대로 옵션을 구성합니다.
   const categories = await fetchCategoriesServer();
   return (
-    <Main>
-      <PageTopToolbar
-        leftSideComponents={
+    <PageContainer.Default>
+      {/* 툴바 */}
+      <PageTopToolbar>
+        <div className="flex gap-2">
           <Link href="/admin/post">
             <Button variant="outline" size="icon-sm">
               <Icon name="ArrowLeft" />
             </Button>
           </Link>
-        }
-        rightSideComponents={
-          <>
-            <Button variant="secondary" size="sm">
-              <Icon name="Save" /> 저장
-            </Button>
-            <Button variant="default" size="sm">
-              <Icon name="BookOpenCheck" /> 발행
-            </Button>
-          </>
-        }
-      />
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm">
+            <Icon name="Save" /> 저장
+          </Button>
+          <Button variant="default" size="sm">
+            <Icon name="BookOpenCheck" /> 발행
+          </Button>
+        </div>
+      </PageTopToolbar>
       <div
         className={cn(
           "flex flex-col items-start gap-6",
@@ -132,7 +131,7 @@ const AdminCreatePostPage = async () => {
           </div>
         </section>
       </div>
-    </Main>
+    </PageContainer.Default>
   );
 };
 
