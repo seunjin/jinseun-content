@@ -9,6 +9,10 @@ export type PostSummary = {
   slug: string;
   /** 제목 */
   title: string;
+  /** 간단 설명/요약 */
+  description?: string | null;
+  /** 관련 키워드(태그) 목록 */
+  keywords?: string[] | null;
   /** 카테고리 표시 이름 */
   categoryName?: string;
   /** 썸네일 이미지 URL (옵션) */

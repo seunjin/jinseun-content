@@ -4,6 +4,9 @@ import type { PostSummary } from "@features/posts/types";
 import { cn } from "@ui/shadcn/lib/utils";
 import PostCard, { PostCardSkeleton } from "./PostCard";
 
+// Post 카드 그리드 공통 클래스: 2열 레이아웃
+const GRID_CLASS = "grid gap-6 grid-cols-1 sm:grid-cols-2" as const;
+
 export type PostCardGridProps = {
   /** 렌더링할 게시글 목록 */
   items: PostSummary[];
@@ -31,7 +34,7 @@ const PostCardGrid = ({
   if (loading) {
     const skeletonKeys = ["s1", "s2", "s3", "s4", "s5", "s6"] as const;
     return (
-      <div className={cn("grid gap-6", className)}>
+      <div className={cn(GRID_CLASS, className)}>
         {skeletonKeys.map((k) => (
           <PostCardSkeleton key={k} />
         ))}
@@ -48,7 +51,7 @@ const PostCardGrid = ({
   }
 
   return (
-    <div className={cn("grid gap-6", className)}>
+    <div className={cn(GRID_CLASS, className)}>
       {items.map((item) => {
         const link = hrefBase
           ? `${hrefBase}/${hrefField === "slug" ? item.slug : item.id}`
