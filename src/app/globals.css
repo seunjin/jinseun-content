@@ -84,7 +84,7 @@
   --sidebar-width: 15rem;
   --page-toolbar-height: var(--header-height);
   --global-inline-padding: 3rem;
-  --main-container-padding-block-start: 1.5rem;
+  --main-container-padding-block-start: 3rem;
   --main-container-padding-block-end: 12rem;
   --main-container-padding-inline: var(--global-inline-padding);
   /* width */

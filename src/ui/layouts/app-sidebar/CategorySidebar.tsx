@@ -51,27 +51,25 @@ const CategorySidebar = async () => {
   // API 오류 또는 빈 결과인 경우, "전체"만 노출합니다.
   if (!categories || categories.length === 0) {
     return (
-      <div className="overflow-auto h-full overscroll-contain">
-        <div className="flex items-center gap-2 mb-2">
-          <button
-            type="button"
-            className={cn(
-              "flex w-full justify-start px-3 py-2",
-              "text-primary/35 rounded-lg",
-              "transition-[padding-left,color,background-color] duration-300",
-              "cursor-pointer",
-              "hover:text-primary hover:pl-5 hover:bg-border/30 dark:hover:bg-primary/20",
-            )}
-          >
-            전체 ({totalVisiblePostCount})
-          </button>
-        </div>
+      <div className="flex items-center gap-2 mb-2">
+        <button
+          type="button"
+          className={cn(
+            "flex w-full justify-start px-3 py-2",
+            "text-primary/35 rounded-lg",
+            "transition-[padding-left,color,background-color] duration-300",
+            "cursor-pointer",
+            "hover:text-primary hover:pl-5 hover:bg-border/30 dark:hover:bg-primary/20",
+          )}
+        >
+          전체 ({totalVisiblePostCount})
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="overflow-auto h-full overscroll-contain">
+    <>
       {/* 기본 전체 항목 */}
       <div className="flex items-center gap-2 mb-2">
         <button
@@ -105,7 +103,7 @@ const CategorySidebar = async () => {
           </button>
         </div>
       ))}
-    </div>
+    </>
   );
 };
 

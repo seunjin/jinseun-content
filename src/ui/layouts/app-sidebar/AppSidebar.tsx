@@ -27,7 +27,7 @@ const AppSidebar = ({
         className,
       )}
     >
-      {children}
+      <div className="overflow-auto h-full overscroll-contain">{children}</div>
     </aside>
   );
 };
