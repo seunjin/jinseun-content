@@ -22,7 +22,7 @@ const AppSidebar = ({
     <aside
       className={cn(
         ...stickyClasses,
-        "w-[var(--sidebar-width)] pr-4 shrink-0 border-r border-foreground/10",
+        "w-[var(--sidebar-width)] shrink-0 ",
         "hidden lg:block",
         className,
       )}

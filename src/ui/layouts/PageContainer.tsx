@@ -24,26 +24,51 @@ const PageContainerWithSidebar = ({
   sidebarComponent,
   sidebarSticky = true,
   sidebarClassName,
+  sidebarPostion = "left",
   ...rest
 }: MainProps & {
   sidebarComponent: React.ReactNode;
   sidebarSticky?: boolean;
   sidebarClassName?: string;
+  sidebarPostion?: "left" | "right";
 }) => {
   return (
     <MainShell
       className={cn(
         "page-container-with-sidebar grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-12",
+        sidebarPostion === "left" &&
+          "lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)]",
+        sidebarPostion === "right" &&
+          "lg:grid-cols-[minmax(0,1fr)_var(--sidebar-width)]",
         className,
       )}
       {...rest}
     >
-      <AppSidebar sticky={sidebarSticky} className={sidebarClassName}>
-        {sidebarComponent}
-      </AppSidebar>
+      {sidebarPostion === "left" && (
+        <AppSidebar
+          sticky={sidebarSticky}
+          className={cn(
+            "pr-4  border-r border-foreground/10",
+            sidebarClassName,
+          )}
+        >
+          {sidebarComponent}
+        </AppSidebar>
+      )}
       <div className="pb-[var(--main-container-padding-block-end)]">
         {children}
       </div>
+      {sidebarPostion === "right" && (
+        <AppSidebar
+          sticky={sidebarSticky}
+          className={cn(
+            "pl-4  border-l border-foreground/10",
+            sidebarClassName,
+          )}
+        >
+          {sidebarComponent}
+        </AppSidebar>
+      )}
     </MainShell>
   );
 };

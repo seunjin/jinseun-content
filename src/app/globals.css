@@ -88,7 +88,7 @@
   --main-container-padding-block-end: 12rem;
   --main-container-padding-inline: var(--global-inline-padding);
   /* width */
-  --content-width: 64rem;
+  --content-width: 80rem;
   /* width + padding */
   --content-size: calc(var(--content-width) + 2 * var(--global-inline-padding));
   @media (width <= 40rem) {
@@ -213,4 +213,13 @@
 /* 상세페이지에서 BlockNoteViewer 양쪽 54px padding 초기화 */
 .page-content-viwer .bn-editor {
   padding-inline: 0;
+}
+
+/* BlockNote heading 섹션이 고정 헤더/툴바 아래에 가려지지 않도록 스크롤 오프셋을 지정합니다. */
+.page-content-viwer [data-node-type="blockOuter"] {
+  scroll-margin-top: calc(
+    var(--header-height) +
+    var(--page-toolbar-height) +
+    var(--main-container-padding-block-start)
+  );
 }

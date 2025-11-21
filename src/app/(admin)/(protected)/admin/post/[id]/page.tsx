@@ -1,6 +1,7 @@
 import { fetchPostByIdServer } from "@features/posts/server";
 import { formatYmd } from "@shared/utils/date";
-import BlockNoteViewer from "@ui/components/editor/BlockNoteViewer";
+import BlockNoteToc from "@ui/components/editor/BlockNoteToc";
+import BlockNoteViewerClient from "@ui/components/editor/BlockNoteViewer.client";
 import Icon from "@ui/components/lucide-icons/Icon";
 import PageContainer from "@ui/layouts/PageContainer";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
@@ -43,8 +44,9 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
   const createdYmd = formatYmd(post.createdAt ?? undefined);
 
   return (
-    // Fragement로 안감싼 이유는 부모가  grid-rows-[auth_1fr] 이기 때문에 이 페이지가 하나의 div로 감싸져야한다
-    <div>
+    // 이유1. Fragement로 안감싼 이유는 부모가  grid-rows-[auth_1fr] 이기 때문에 이 페이지가 하나의 div로 감싸져야한다
+    // 이유2. with-page-toolbar를 준이유는 PageTopToolbar가 있기때문에 sticky offset을 수정해야하기 때문이다
+    <div className="with-page-toolbar">
       <PageTopToolbar>
         <div className="flex gap-2">
           <Link href="/admin/post">
@@ -62,8 +64,12 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
           </Link>
         </div>
       </PageTopToolbar>
-      <PageContainer.Default>
-        <article className="mx-auto flex  flex-col gap-6">
+      <PageContainer.WithSidebar
+        className="--sidebar-width: 15rem"
+        sidebarPostion="right"
+        sidebarComponent={<BlockNoteToc />}
+      >
+        <article className="mx-auto flex flex-col gap-6">
           {/* 타이틀 */}
           <header className="space-y-3 text-left">
             <h1 className="text-4xl font-semibold tracking-tight">
@@ -71,7 +77,7 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
             </h1>
             {/* 설명(옵션) */}
             {post.description && (
-              <p className=" text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground">
                 {post.description}
               </p>
             )}
@@ -112,15 +118,18 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
           </header>
 
           <Separator className="bg-foreground/30" />
-          {/* BlockNote 기반 본문(content) 뷰어 */}
-          <section className="page-content-viwer">
-            <BlockNoteViewer
-              contentJson={post.content ?? undefined}
-              className="px-0"
-            />
-          </section>
+
+          <div className="flex flex-col gap-6 lg:flex-row">
+            {/* BlockNote 기반 본문(content) 뷰어 */}
+            <section className="page-content-viwer flex-1">
+              <BlockNoteViewerClient
+                contentJson={post.content ?? undefined}
+                className="px-0"
+              />
+            </section>
+          </div>
         </article>
-      </PageContainer.Default>
+      </PageContainer.WithSidebar>
     </div>
   );
 };

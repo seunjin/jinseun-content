@@ -1,6 +1,6 @@
 import { fetchPostByIdServer } from "@features/posts/server";
 import { formatYmd } from "@shared/utils/date";
-import BlockNoteViewer from "@ui/components/editor/BlockNoteViewer";
+import BlockNoteViewerClient from "@ui/components/editor/BlockNoteViewer.client";
 import PageContainer from "@ui/layouts/PageContainer";
 import { Separator } from "@ui/shadcn/components";
 
@@ -72,7 +72,7 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
         <Separator className="bg-foreground/30" />
         {/* 본문 */}
         <section className="page-content-viwer">
-          <BlockNoteViewer
+          <BlockNoteViewerClient
             contentJson={post.content ?? undefined}
             className="px-0"
           />
