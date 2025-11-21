@@ -165,6 +165,8 @@
 .app-layout {
   width: min(100%, var(--content-size));
   margin: 0 auto;
+  height: 100%;
+
   &.app-header {
     padding-inline: var(--main-container-padding-inline);
   }

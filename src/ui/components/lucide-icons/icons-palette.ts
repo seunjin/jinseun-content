@@ -21,6 +21,7 @@ import {
   Moon,
   MoreVertical,
   Pencil,
+  Plus,
   RefreshCcw,
   Rocket,
   Save,
@@ -57,4 +58,5 @@ export const ICON_PALETTE = {
   MoreVertical,
   Pencil,
   Trash2,
+  Plus,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서

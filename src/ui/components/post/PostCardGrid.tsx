@@ -18,6 +18,8 @@ export type PostCardGridProps = {
   className?: string;
   /** 로딩 여부(스켈레톤 표시) */
   loading?: boolean;
+  /** 비공개 여부를 카드에서 표시할지 여부 */
+  showStatus?: boolean;
 };
 
 /**
@@ -30,6 +32,7 @@ const PostCardGrid = ({
   hrefField = "id",
   className,
   loading,
+  showStatus,
 }: PostCardGridProps) => {
   if (loading) {
     const skeletonKeys = ["s1", "s2", "s3", "s4", "s5", "s6"] as const;
@@ -56,7 +59,14 @@ const PostCardGrid = ({
         const link = hrefBase
           ? `${hrefBase}/${hrefField === "slug" ? item.slug : item.id}`
           : undefined;
-        return <PostCard key={item.id} item={item} href={link} />;
+        return (
+          <PostCard
+            key={item.id}
+            item={item}
+            href={link}
+            showStatus={showStatus}
+          />
+        );
       })}
     </div>
   );

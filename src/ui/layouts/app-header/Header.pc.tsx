@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { AppHeaderProps } from "./AppHeader";
 
 const PCHeader = ({ session, user }: AppHeaderProps) => {
+  console.log(user);
   const isAuthenticated = Boolean(session);
   const displayName = user?.name;
   return (

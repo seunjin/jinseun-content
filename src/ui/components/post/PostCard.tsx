@@ -13,13 +13,15 @@ export type PostCardProps = {
   href?: string;
   /** 카드 외부 클래스 네이밍 확장 */
   className?: string;
+  /** 비공개 여부를 시각적으로 표시할지 여부 */
+  showStatus?: boolean;
 };
 
 /**
  * 게시글 카드 UI 컴포넌트(공용)
  * - 관리자/퍼블릭 공용 사용을 고려해 중립적인 표기와 구조로 구성합니다.
  */
-const PostCard = ({ item, href, className }: PostCardProps) => {
+const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
   const createdDate = item.createdAt ? new Date(item.createdAt) : null;
   const createdYmd = createdDate
     ? `${createdDate.getFullYear()}.${String(
@@ -92,9 +94,16 @@ const PostCard = ({ item, href, className }: PostCardProps) => {
 
       {/* 본문 */}
       <div className="py-3">
-        <h3 className="text-base font-semibold text-foreground line-clamp-2">
-          {item.title}
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-semibold text-foreground line-clamp-2">
+            {item.title}
+          </h3>
+          {showStatus && !item.isPublished && (
+            <span className="inline-flex items-center rounded-full bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300 px-2 py-0.5 text-[10px] font-medium">
+              비공개
+            </span>
+          )}
+        </div>
         {item.description?.trim() && (
           <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
             {item.description}

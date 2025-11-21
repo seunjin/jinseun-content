@@ -77,6 +77,101 @@ export async function createTopic(payload: unknown) {
 - `supabase gen types typescript --local > src/types/supabase.ts`: 최신 DB 스키마 기반 TypeScript 타입 생성
 - `pnpm db:introspect`: Supabase 스키마를 기반으로 Drizzle schema 및 TypeScript 타입을 생성
 
+## 로컬/원격 Supabase DB 동기화 개념 정리
+
+Supabase CLI 명령은 **원격 프로젝트 DB**와 **로컬 개발용 DB(Postgres Docker)** 를 각각 대상으로 동작합니다. 헷갈리지 않도록 용도를 구분해 사용합니다.
+
+### 1. 원격 DB(웹 콘솔에서 보이는 DB)에 마이그레이션 적용
+
+- 사용 명령어:
+  ```bash
+  supabase db push
+  ```
+- 특징:
+  - Supabase Cloud 프로젝트(Studio에서 보는 DB)에 `supabase/migrations` 폴더의 새 SQL 파일들을 순서대로 적용합니다.
+  - 로그 예시:
+    - `Connecting to remote database...`
+    - `Applying migration 20251120081327_create_posts.sql`
+  - Git 브랜치/마이그레이션 버전이 어긋나면 `migration repair`를 통해 히스토리를 조정해야 할 수 있습니다:
+    ```bash
+    supabase migration repair --status reverted <version>
+    supabase db push
+    ```
+
+### 2. 로컬 개발용 DB에 마이그레이션 적용
+
+로컬에서 Next.js 앱을 Supabase와 함께 개발할 때는 **로컬 Supabase 스택(Postgres + API)** 를 먼저 띄우고, 해당 DB에 스키마를 재적용해야 합니다.
+
+1. 로컬 Supabase 스택 시작
+   ```bash
+   supabase start
+   ```
+   - Docker Desktop이 실행 중이어야 합니다.
+   - 로컬 Postgres(기본 54322), Supabase API(54321) 등이 컨테이너로 뜹니다.
+
+2. 로컬 DB를 현재 마이그레이션 기준으로 재구성
+   ```bash
+   supabase db reset
+   ```
+   - 로컬 Postgres DB를 드롭한 뒤 `supabase/migrations` 아래의 파일들을 순서대로 적용합니다.
+   - 새 테이블(예: `posts`)을 추가하는 경우, 이 단계 이후에야 로컬 Studio에서도 해당 테이블이 보입니다.
+
+3. Drizzle 스키마/타입 갱신 (선택)
+   ```bash
+   pnpm db:introspect
+   ```
+   - 실제 DB 구조를 기준으로 `drizzle/schema.ts`를 최신 상태로 맞춥니다.
+
+### 3. 예시: posts 테이블 추가 플로우
+
+1. 마이그레이션 템플릿 생성
+   ```bash
+   supabase migration new create_posts
+   ```
+   → `supabase/migrations/XXXXXXXXXXXXXX_create_posts.sql` 생성
+
+2. 새 SQL 파일에 posts 테이블 및 RLS 정책 작성
+   ```sql
+   create table if not exists public.posts (
+     id serial primary key,
+     category_id integer not null references public.categories(id),
+     title varchar(200) not null,
+     slug varchar(200) not null unique,
+     description text,
+     keywords text[],
+     thumbnail_url text,
+     content text,
+     is_published boolean not null default false,
+     created_at timestamptz not null default now(),
+     updated_at timestamptz not null default now()
+   );
+
+   alter table if exists public.posts enable row level security;
+   alter table if exists public.posts force row level security;
+
+   -- 발행된 글만 모든 사용자가 조회 가능
+   create policy "posts_select_published"
+     on public.posts
+     for select
+     using (is_published = true);
+   ```
+
+3. 원격 DB에 적용
+   ```bash
+   supabase db push
+   ```
+
+4. 로컬 개발 DB에 동일 스키마 적용
+   ```bash
+   supabase start
+   supabase db reset
+   pnpm db:introspect
+   ```
+
+이 과정을 거치면:
+- Supabase Studio(원격)와 로컬 Studio 모두에서 `posts` 테이블을 확인할 수 있고,
+- 애플리케이션 코드에서 Drizzle/Zod 스키마를 일관된 구조로 사용할 수 있습니다.
+
 ## 예시 시나리오: 신규 테이블 추가 후 타입 반영
 
 ### 1. 마이그레이션 생성 및 작성

@@ -1,18 +1,33 @@
 import type { CategoryRow } from "@features/categories/schemas";
 import { categoryRowSchema } from "@features/categories/schemas";
 import { cn } from "@ui/shadcn/lib/utils";
+import { z } from "zod";
+
+type CategoryWithCount = CategoryRow & {
+  /** 해당 카테고리에 속한 공개된(isPublished=true) 게시글 개수 */
+  visiblePostCount: number;
+};
 
 /**
  * @description 카테고리 목록을 API 라우트(`/api/categories`)에서 조회합니다.
  * - 응답 스키마를 Zod로 검증해 타입 안전성을 보장합니다.
  * - 오류가 발생하면 null을 반환해 상위 컴포넌트에서 폴백 렌더링을 할 수 있게 합니다.
  */
-const fetchCategoriesFromApi = async (): Promise<CategoryRow[] | null> => {
+const categoryWithCountSchema = categoryRowSchema.extend({
+  visiblePostCount: z.number().int().min(0),
+});
+
+/**
+ * @description 카테고리 목록 + 공개 글 개수를 API 라우트에서 조회합니다.
+ */
+const fetchCategoriesFromApi = async (): Promise<
+  CategoryWithCount[] | null
+> => {
   try {
     const appOrigin =
       process.env.NEXT_PUBLIC_APP_ORIGIN ?? "http://localhost:3000";
     const url = new URL(
-      "/api/categories?onlyVisible=true",
+      "/api/categories/with-post-counts?onlyVisible=true",
       appOrigin,
     ).toString();
 
@@ -31,7 +46,7 @@ const fetchCategoriesFromApi = async (): Promise<CategoryRow[] | null> => {
       traceId?: string;
     };
 
-    const parsed = categoryRowSchema.array().safeParse(json.data);
+    const parsed = categoryWithCountSchema.array().safeParse(json.data);
     if (!parsed.success) {
       return null;
     }
@@ -45,8 +60,9 @@ const fetchCategoriesFromApi = async (): Promise<CategoryRow[] | null> => {
 const CategorySidebar = async () => {
   const categories = await fetchCategoriesFromApi();
 
-  // 전체 카테고리는 "공개된 글" 전체 개수를 나타냅니다. (현재는 더미 값 0)
-  const totalVisiblePostCount = 0;
+  const totalVisiblePostCount =
+    categories?.reduce((sum, category) => sum + category.visiblePostCount, 0) ??
+    0;
 
   // API 오류 또는 빈 결과인 경우, "전체"만 노출합니다.
   if (!categories || categories.length === 0) {
@@ -99,7 +115,7 @@ const CategorySidebar = async () => {
               "hover:text-primary hover:pl-5 hover:bg-border/30 dark:hover:bg-primary/20",
             )}
           >
-            {category.name} (0)
+            {category.name} ({category.visiblePostCount})
           </button>
         </div>
       ))}
