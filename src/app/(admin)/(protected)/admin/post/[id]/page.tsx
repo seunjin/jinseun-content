@@ -4,7 +4,6 @@ import BlockNoteToc from "@ui/components/editor/BlockNoteToc";
 import BlockNoteViewerClient from "@ui/components/editor/BlockNoteViewer.client";
 import Icon from "@ui/components/lucide-icons/Icon";
 import PageContainer from "@ui/layouts/PageContainer";
-import PageTopToolbar from "@ui/layouts/PageTopToolbar";
 import { Button, Separator } from "@ui/shadcn/components";
 import Link from "next/link";
 
@@ -44,18 +43,19 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
   const createdYmd = formatYmd(post.createdAt ?? undefined);
 
   return (
-    // 이유1. Fragement로 안감싼 이유는 부모가  grid-rows-[auth_1fr] 이기 때문에 이 페이지가 하나의 div로 감싸져야한다
-    // 이유2. with-page-toolbar를 준이유는 PageTopToolbar가 있기때문에 sticky offset을 수정해야하기 때문이다
-    <div className="with-page-toolbar">
-      <PageTopToolbar>
-        <div className="flex gap-2">
+    <PageContainer.WithSidebar
+      className="--sidebar-width: 15rem"
+      sidebarPostion="right"
+      sidebarComponent={<BlockNoteToc />}
+    >
+      <article className="mx-auto flex flex-col gap-6">
+        {/* toolbar */}
+        <div className="flex justify-between  gap-2">
           <Link href="/admin/post">
             <Button variant="outline" size="icon-sm">
               <Icon name="ArrowLeft" />
             </Button>
           </Link>
-        </div>
-        <div className="flex gap-2">
           <Link href={`/admin/post/${post.id}/edit`}>
             <Button variant="default" size="sm">
               <Icon name="PenSquare" />
@@ -63,74 +63,65 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
             </Button>
           </Link>
         </div>
-      </PageTopToolbar>
-      <PageContainer.WithSidebar
-        className="--sidebar-width: 15rem"
-        sidebarPostion="right"
-        sidebarComponent={<BlockNoteToc />}
-      >
-        <article className="mx-auto flex flex-col gap-6">
-          {/* 타이틀 */}
-          <header className="space-y-3 text-left">
-            <h1 className="text-4xl font-semibold tracking-tight">
-              {post.title}
-            </h1>
-            {/* 설명(옵션) */}
-            {post.description && (
-              <p className="text-lg text-muted-foreground">
-                {post.description}
-              </p>
-            )}
+        {/* 타이틀 */}
 
-            {/* 키워드 */}
-            {post.keywords && post.keywords.length > 0 && (
-              <div className="flex flex-wrap items-center justify-start gap-2 text-xs text-muted-foreground">
-                {post.keywords.map((keyword) => (
-                  <span
-                    key={keyword}
-                    className="inline-flex items-center rounded-full border px-2 py-0.5"
-                  >
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-            )}
+        <header className="space-y-3 text-left">
+          <h1 className="text-4xl font-semibold tracking-tight">
+            {post.title}
+          </h1>
+          {/* 설명(옵션) */}
+          {post.description && (
+            <p className="text-lg text-muted-foreground">{post.description}</p>
+          )}
 
-            {/* 공개 여부 · 날짜 */}
-            <div className="flex items-center justify-end gap-3 text-xm text-muted-foreground">
-              <span
-                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                  post.isPublished
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
-                }`}
-              >
-                {post.isPublished ? "published" : "draft"}
-              </span>
-
-              {createdYmd && (
-                <>
-                  <span className="text-border">|</span>
-                  <span>{createdYmd}</span>
-                </>
-              )}
+          {/* 키워드 */}
+          {post.keywords && post.keywords.length > 0 && (
+            <div className="flex flex-wrap items-center justify-start gap-2 text-xs text-muted-foreground">
+              {post.keywords.map((keyword) => (
+                <span
+                  key={keyword}
+                  className="inline-flex items-center rounded-full border px-2 py-0.5"
+                >
+                  {keyword}
+                </span>
+              ))}
             </div>
-          </header>
+          )}
 
-          <Separator className="bg-foreground/30" />
+          {/* 공개 여부 · 날짜 */}
+          <div className="flex items-center justify-end gap-3 text-xm text-muted-foreground">
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                post.isPublished
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
+              }`}
+            >
+              {post.isPublished ? "published" : "draft"}
+            </span>
 
-          <div className="flex flex-col gap-6 lg:flex-row">
-            {/* BlockNote 기반 본문(content) 뷰어 */}
-            <section className="page-content-viwer flex-1">
-              <BlockNoteViewerClient
-                contentJson={post.content ?? undefined}
-                className="px-0"
-              />
-            </section>
+            {createdYmd && (
+              <>
+                <span className="text-border">|</span>
+                <span>{createdYmd}</span>
+              </>
+            )}
           </div>
-        </article>
-      </PageContainer.WithSidebar>
-    </div>
+        </header>
+
+        <Separator className="bg-foreground/10" />
+
+        <div className="flex flex-col gap-6 lg:flex-row">
+          {/* BlockNote 기반 본문(content) 뷰어 */}
+          <section className="page-content-viwer flex-1">
+            <BlockNoteViewerClient
+              contentJson={post.content ?? undefined}
+              className="px-0"
+            />
+          </section>
+        </div>
+      </article>
+    </PageContainer.WithSidebar>
   );
 };
 

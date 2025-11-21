@@ -28,6 +28,7 @@ const BlockNoteToc = ({
   className,
 }: BlockNoteTocProps) => {
   const [items, setItems] = useState<TocItem[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(rootSelector);
@@ -93,19 +94,83 @@ const BlockNoteToc = ({
     };
   }, [rootSelector]);
 
+  // 현재 스크롤 기준으로 "마지막으로 기준선을 지난 섹션"을 활성 목차 아이템으로 표시합니다.
+  useEffect(() => {
+    if (items.length === 0) return;
+
+    const root = document.querySelector<HTMLElement>(rootSelector);
+    if (!root) return;
+
+    const rootStyle = getComputedStyle(document.documentElement);
+    const headerHeight =
+      Number.parseFloat(rootStyle.getPropertyValue("--header-height")) || 0;
+    const toolbarHeight =
+      Number.parseFloat(rootStyle.getPropertyValue("--page-toolbar-height")) ||
+      0;
+    const paddingTop =
+      Number.parseFloat(
+        rootStyle.getPropertyValue("--main-container-padding-block-start"),
+      ) || 0;
+
+    const offset = headerHeight + toolbarHeight + paddingTop;
+
+    const getTargets = () =>
+      items
+        .map((item) => {
+          const el =
+            root.querySelector<HTMLElement>(`[data-id="${item.id}"]`) ??
+            root.querySelector<HTMLElement>(`#${item.id}`);
+          return el ? { item, el } : null;
+        })
+        .filter(
+          (value): value is { item: TocItem; el: HTMLElement } =>
+            value !== null,
+        );
+
+    const handleScroll = () => {
+      const targets = getTargets();
+      if (targets.length === 0) return;
+
+      let currentId: string | null = targets[0]?.item.id ?? null;
+
+      for (const { item, el } of targets) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top - offset <= 0) {
+          currentId = item.id;
+        } else {
+          break;
+        }
+      }
+
+      setActiveId(currentId);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [items, rootSelector]);
+
   if (items.length === 0) {
     return null;
   }
 
   return (
     <nav className={cn("text-xs text-muted-foreground", className)}>
-      <p className="mb-2 font-medium">목차</p>
+      <p className="mb-2 text-sm font-medium">INDEX</p>
       <ul className="space-y-1">
         {items.map((item) => (
-          <li key={item.id} className={item.level === 3 ? "pl-4" : undefined}>
+          <li key={item.id} className={item.level === 3 ? "pl-3" : undefined}>
             <button
               type="button"
-              className="w-full text-left hover:text-foreground"
+              className={cn(
+                "flex w-full items-center rounded px-1 py-0.5 text-left text-xs transition-colors",
+                activeId === item.id
+                  ? "font-semibold text-foreground underline underline-offset-2"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
               onClick={() => {
                 const root = document.querySelector<HTMLElement>(rootSelector);
                 if (!root) return;
@@ -122,7 +187,7 @@ const BlockNoteToc = ({
                 }
               }}
             >
-              {item.text}
+              <span className="block truncate">{item.text}</span>
             </button>
           </li>
         ))}

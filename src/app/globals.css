@@ -217,9 +217,5 @@
 
 /* BlockNote heading 섹션이 고정 헤더/툴바 아래에 가려지지 않도록 스크롤 오프셋을 지정합니다. */
 .page-content-viwer [data-node-type="blockOuter"] {
-  scroll-margin-top: calc(
-    var(--header-height) +
-    var(--page-toolbar-height) +
-    var(--main-container-padding-block-start)
-  );
+  scroll-margin-top: calc(var(--header-height));
 }

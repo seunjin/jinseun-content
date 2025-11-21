@@ -1,5 +1,6 @@
 import { fetchPostByIdServer } from "@features/posts/server";
 import { formatYmd } from "@shared/utils/date";
+import BlockNoteToc from "@ui/components/editor/BlockNoteToc";
 import BlockNoteViewerClient from "@ui/components/editor/BlockNoteViewer.client";
 import PageContainer from "@ui/layouts/PageContainer";
 import { Separator } from "@ui/shadcn/components";
@@ -39,15 +40,21 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
   const createdYmd = formatYmd(post.createdAt ?? undefined);
 
   return (
-    <PageContainer.Default>
-      <article className="mx-auto mt-8 flex max-w-3xl flex-col gap-6">
+    <PageContainer.WithSidebar
+      className="--sidebar-width: 15rem"
+      sidebarPostion="right"
+      sidebarComponent={<BlockNoteToc />}
+    >
+      <article className="mx-auto flex flex-col gap-6">
+        {/* 타이틀 */}
+
         <header className="space-y-3 text-left">
           <h1 className="text-4xl font-semibold tracking-tight">
             {post.title}
           </h1>
           {/* 설명(옵션) */}
           {post.description && (
-            <p className=" text-lg text-muted-foreground">{post.description}</p>
+            <p className="text-lg text-muted-foreground">{post.description}</p>
           )}
 
           {/* 키워드 */}
@@ -65,20 +72,39 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
           )}
 
           {/* 공개 여부 · 날짜 */}
-          <div className="text-xm text-end text-muted-foreground">
-            <span>{createdYmd}</span>
+          <div className="flex items-center justify-end gap-3 text-xm text-muted-foreground">
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                post.isPublished
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
+              }`}
+            >
+              {post.isPublished ? "published" : "draft"}
+            </span>
+
+            {createdYmd && (
+              <>
+                <span className="text-border">|</span>
+                <span>{createdYmd}</span>
+              </>
+            )}
           </div>
         </header>
-        <Separator className="bg-foreground/30" />
-        {/* 본문 */}
-        <section className="page-content-viwer">
-          <BlockNoteViewerClient
-            contentJson={post.content ?? undefined}
-            className="px-0"
-          />
-        </section>
+
+        <Separator className="bg-foreground/10" />
+
+        <div className="flex flex-col gap-6 lg:flex-row">
+          {/* BlockNote 기반 본문(content) 뷰어 */}
+          <section className="page-content-viwer flex-1">
+            <BlockNoteViewerClient
+              contentJson={post.content ?? undefined}
+              className="px-0"
+            />
+          </section>
+        </div>
       </article>
-    </PageContainer.Default>
+    </PageContainer.WithSidebar>
   );
 };
 
