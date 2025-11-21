@@ -49,17 +49,19 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
         {/* 타이틀 */}
 
         <header className="space-y-3 text-left">
-          <h1 className="text-4xl font-semibold tracking-tight">
+          <h1 className="text-4xl font-semibold tracking-tight break-keep">
             {post.title}
           </h1>
           {/* 설명(옵션) */}
           {post.description && (
-            <p className="text-lg text-muted-foreground">{post.description}</p>
+            <p className="text-lg text-muted-foreground break-keep">
+              {post.description}
+            </p>
           )}
 
           {/* 키워드 */}
           {post.keywords && post.keywords.length > 0 && (
-            <div className="flex flex-wrap items-center justify-start gap-2 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-start gap-2 text-sm text-muted-foreground">
               {post.keywords.map((keyword) => (
                 <span
                   key={keyword}
