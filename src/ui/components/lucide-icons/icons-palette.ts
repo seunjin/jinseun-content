@@ -21,6 +21,7 @@ import {
   Moon,
   MoreVertical,
   Pencil,
+  PenSquare,
   Plus,
   RefreshCcw,
   Rocket,
@@ -59,4 +60,5 @@ export const ICON_PALETTE = {
   Pencil,
   Trash2,
   Plus,
+  PenSquare,
 } satisfies Record<string, LucideIcon>; // icons-palette.ts에서

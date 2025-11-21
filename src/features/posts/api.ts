@@ -4,6 +4,8 @@ import {
   createPostInputSchema,
   type PostRow,
   postRowSchema,
+  type UpdatePostInput,
+  updatePostInputSchema,
 } from "./schemas";
 
 const POST_SELECT =
@@ -129,6 +131,40 @@ async function createPost(
 }
 
 /**
+ * @description 기존 게시글을 수정합니다.
+ * - 부분 업데이트가 아닌, 전달된 전체 필드 값으로 덮어씁니다.
+ */
+async function updatePost(
+  client: AnySupabaseClient,
+  payload: UpdatePostInput,
+): Promise<PostRow> {
+  const parsed = updatePostInputSchema.parse(payload);
+  const { id, ...patch } = parsed;
+
+  const { data, error } = await client
+    .from("posts")
+    .update({
+      category_id: patch.categoryId,
+      title: patch.title,
+      slug: patch.slug,
+      description: patch.description ?? null,
+      keywords:
+        patch.keywords && patch.keywords.length > 0 ? patch.keywords : null,
+      thumbnail_url: patch.thumbnailUrl ?? null,
+      content: patch.content ?? null,
+      is_published: patch.isPublished,
+    })
+    .eq("id", id)
+    .select(POST_SELECT)
+    .single();
+
+  if (error) throw error;
+  if (!data) throw new Error("게시글 업데이트에 실패했습니다.");
+
+  return postRowSchema.parse(mapPostRow(data as RawPostRow));
+}
+
+/**
  * @description 게시글 API 헬퍼를 생성합니다.
  * - 서버/클라이언트에서 동일하게 사용할 수 있도록 구성합니다.
  */
@@ -137,5 +173,6 @@ export function createPostsApi(client: AnySupabaseClient) {
     fetchPosts: (options?: FetchPostsOptions) => fetchPosts(client, options),
     fetchPostById: (id: number) => fetchPostById(client, id),
     createPost: (payload: CreatePostInput) => createPost(client, payload),
+    updatePost: (payload: UpdatePostInput) => updatePost(client, payload),
   };
 }

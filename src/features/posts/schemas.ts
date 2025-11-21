@@ -66,3 +66,20 @@ export const createPostInputSchema = z.object({
  * @description 게시글 생성 입력 타입입니다.
  */
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;
+
+/**
+ * @description 게시글 수정 입력을 검증하는 스키마입니다.
+ * - 생성 스키마(createPostInputSchema)에 ID 필드를 추가한 형태입니다.
+ * - 제목, 슬러그, 카테고리 ID 등은 모두 필수이며, 부분 업데이트는 지원하지 않습니다.
+ */
+export const updatePostInputSchema = createPostInputSchema.extend({
+  id: z
+    .number()
+    .int("게시글 ID는 정수여야 합니다.")
+    .positive("게시글 ID는 1 이상이어야 합니다."),
+});
+
+/**
+ * @description 게시글 수정 입력 타입입니다.
+ */
+export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;

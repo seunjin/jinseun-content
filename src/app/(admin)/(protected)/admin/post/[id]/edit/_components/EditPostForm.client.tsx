@@ -1,7 +1,7 @@
 "use client";
 
 import type { CategoryRow } from "@features/categories/schemas";
-import type { CreatePostInput, PostRow } from "@features/posts/schemas";
+import type { PostRow, UpdatePostInput } from "@features/posts/schemas";
 import { ApiClientError, clientHttp } from "@shared/lib/api/http-client";
 import Icon from "@ui/components/lucide-icons/Icon";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
@@ -23,7 +23,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import Editor from "./Editor.client";
+import Editor from "../../../create/_components/Editor.client";
 
 type KeywordField = {
   /** 키워드 입력 필드 고유 ID (리스트 key용) */
@@ -42,31 +42,37 @@ const createKeywordField = (value = ""): KeywordField => ({
   value,
 });
 
-type CreatePostFormProps = {
+type EditPostFormProps = {
   /** 서버에서 전달된 카테고리 목록(정렬 순서 포함) */
   categories: CategoryRow[];
+  /** 수정 대상 게시글 데이터 */
+  post: PostRow;
 };
 
 /**
- * @description 게시글 생성 폼 컴포넌트입니다.
- * - Step 01: 카테고리 및 썸네일(옵션) 선택
- * - Step 02: 제목, 설명, 키워드, 본문(BlockNote) 작성
- * - "저장" 클릭 시 isPublished=false, "발행" 클릭 시 isPublished=true로 `/api/posts`에 전송합니다.
+ * @description 게시글 수정 폼 컴포넌트입니다.
+ * - 기존 게시글 데이터를 초기값으로 사용해 제목, 설명, 키워드, 본문(BlockNote)을 수정합니다.
+ * - "저장" 클릭 시 현재 발행 상태를 유지하고, "발행" 클릭 시 isPublished=true로 업데이트합니다.
  */
-const CreatePostForm = ({ categories }: CreatePostFormProps) => {
+const EditPostForm = ({ categories, post }: EditPostFormProps) => {
   const router = useRouter();
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
-  const [keywords, setKeywords] = useState<KeywordField[]>([
-    createKeywordField(),
-  ]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    String(post.categoryId),
+  );
+  const [title, setTitle] = useState(post.title);
+  const [slug, setSlug] = useState(post.slug);
+  const [description, setDescription] = useState(post.description ?? "");
+  const [keywords, setKeywords] = useState<KeywordField[]>(() => {
+    if (post.keywords && post.keywords.length > 0) {
+      return post.keywords.map((kw) => createKeywordField(kw));
+    }
+    return [createKeywordField()];
+  });
   /**
    * @description BlockNote 에디터의 문서 JSON을 문자열로 직렬화한 값입니다.
-   * - Editor 컴포넌트에서 onChange 시점에 최신 값을 전달합니다.
+   * - 초기값은 기존 게시글의 content를 그대로 사용합니다.
    */
-  const [contentJson, setContentJson] = useState<string>("");
+  const [contentJson, setContentJson] = useState<string>(post.content ?? "");
   const [isSaving, setIsSaving] = useState(false);
 
   /**
@@ -116,7 +122,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
     });
   };
 
-  const handleSubmit = async (isPublished: boolean) => {
+  const handleSubmit = async (nextIsPublished: boolean) => {
     if (isSaving) return;
 
     const normalizedDescription = description.trim();
@@ -128,7 +134,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
     const trimmedTitle = title.trim();
     const trimmedSlug = slug.trim();
 
-    if (!categoryIdNum || Number.isNaN(categoryIdNum)) {
+    if (Number.isNaN(categoryIdNum)) {
       toast.error("카테고리를 선택하세요.");
       return;
     }
@@ -149,33 +155,36 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       return;
     }
 
-    const payload: CreatePostInput = {
+    const payload: UpdatePostInput = {
+      id: post.id,
       title: trimmedTitle,
       slug: trimmedSlug,
       categoryId: categoryIdNum,
       description: normalizedDescription || undefined,
       keywords: keywordValues.length > 0 ? keywordValues : undefined,
-      // 썸네일 업로드 기능은 아직 없으므로 undefined로 둡니다.
-      thumbnailUrl: undefined,
+      // 썸네일 업로드 기능은 아직 없으므로 기존 값을 유지합니다.
+      thumbnailUrl: post.thumbnailUrl ?? undefined,
       // BlockNote 문서 JSON 문자열(없으면 undefined로 처리)
       content: contentJson || undefined,
-      isPublished,
+      isPublished: nextIsPublished,
     };
 
     try {
       setIsSaving(true);
-      const result = await clientHttp.post<{
-        request: CreatePostInput;
-        response: PostRow;
-      }>("/api/posts", {
-        body: payload,
-      });
+      await clientHttp.put<{ request: UpdatePostInput; response: unknown }>(
+        `/api/posts/${post.id}`,
+        {
+          body: payload,
+        },
+      );
 
       toast.success(
-        isPublished ? "게시글을 발행했습니다." : "게시글을 저장했습니다.",
+        nextIsPublished
+          ? "게시글을 발행 상태로 저장했습니다."
+          : "게시글을 수정했습니다.",
       );
-      // 생성 후 상세 페이지로 이동합니다.
-      router.push(`/admin/post/${result.data.id}`);
+      // 수정 후 상세 페이지로 이동합니다.
+      router.push(`/admin/post/${post.id}`);
       router.refresh();
     } catch (error) {
       if (error instanceof ApiClientError) {
@@ -183,7 +192,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("게시글 저장 중 오류가 발생했습니다.");
+        toast.error("게시글 수정 중 오류가 발생했습니다.");
       }
     } finally {
       setIsSaving(false);
@@ -195,7 +204,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       {/* 툴바 */}
       <PageTopToolbar>
         <div className="flex gap-2">
-          <Link href="/admin/post">
+          <Link href={`/admin/post/${post.id}`}>
             <Button variant="outline" size="icon-sm">
               <Icon name="ArrowLeft" />
             </Button>
@@ -208,7 +217,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
             type="button"
             disabled={isSaving}
             onClick={() => {
-              void handleSubmit(false);
+              void handleSubmit(post.isPublished);
             }}
           >
             <Icon name="Save" /> 저장
@@ -246,7 +255,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
           <div className="flex flex-col pb-4 border-b">
             <span className="text-[#f96859] font-medium">Step 01</span>
             <span className="text-base font-semibold">
-              카테고리 및 썸네일 등록
+              카테고리 및 썸네일 수정
             </span>
           </div>
           <div className="flex flex-col gap-2">
@@ -290,7 +299,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
           </div>
         </section>
 
-        {/* 글 작성하기 */}
+        {/* 글 수정하기 */}
         <div className="w-full">
           <section
             className={cn(
@@ -301,7 +310,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
           >
             <div className="flex flex-col pb-4 border-b">
               <span className="text-[#f96859] font-medium">Step 02</span>
-              <span className="text-base font-semibold">글 작성하기</span>
+              <span className="text-base font-semibold">글 수정하기</span>
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1">
@@ -432,6 +441,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
               </div>
               {/* BlockNote Text Editor UI */}
               <Editor
+                initialContentJson={post.content ?? undefined}
                 onChange={(json) => {
                   setContentJson(json);
                 }}
@@ -444,4 +454,4 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
   );
 };
 
-export default CreatePostForm;
+export default EditPostForm;

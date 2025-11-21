@@ -11,7 +11,7 @@ import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
 import { cn } from "@ui/shadcn/lib/utils";
 import { useTheme } from "next-themes";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 const CODE_BLOCK_LANGUAGES: Record<
   string,
@@ -33,26 +33,23 @@ const CODE_BLOCK_LANGUAGES: Record<
 const CODE_BLOCK_LANGUAGE_KEYS = ["typescript", "javascript", "json"] as const;
 const CODE_BLOCK_THEME = "one-dark-pro" as const;
 
-export type BlockNoteEditorProps = {
+export type BlockNoteViewerProps = {
   /**
-   * @description 에디터 문서가 변경될 때마다 JSON 문자열 형태로 변경 내용을 전달합니다.
-   * - JSON.parse를 통해 BlockNote 문서 객체로 복원할 수 있습니다.
+   * @description BlockNote 에디터에서 직렬화한 문서 JSON 문자열입니다.
+   * - 유효한 JSON이 아닌 경우 뷰어는 빈 문서를 렌더링합니다.
    */
-  onChange?: (contentJson: string) => void;
-  /**
-   * @description 초기 BlockNote 문서 JSON 문자열입니다.
-   * - 편집 화면에서 기존 본문을 불러올 때 사용합니다.
-   */
-  initialContentJson?: string | null;
+  contentJson?: string | null;
+  /** @description 추가 컨테이너 클래스 이름입니다. */
+  className?: string;
 };
 
-export default function BlockNoteEditor({
-  onChange,
-  initialContentJson,
-}: BlockNoteEditorProps) {
+/**
+ * @description BlockNote 기반 문서 뷰어 컴포넌트입니다.
+ * - 에디터에서 저장한 JSON 문자열을 읽기 전용으로 렌더링합니다.
+ */
+const BlockNoteViewer = ({ contentJson, className }: BlockNoteViewerProps) => {
   const locale = ko;
   const { theme } = useTheme();
-  const [focus, setFocus] = useState<boolean>(false);
 
   const schema = useMemo(
     () =>
@@ -63,8 +60,6 @@ export default function BlockNoteEditor({
             indentLineWithTab: true,
             defaultLanguage: "typescript",
             supportedLanguages: CODE_BLOCK_LANGUAGES,
-
-            // 일단 createHighlighter는 비워 두고 언어만 테스트
             createHighlighter: async () => {
               const { createHighlighter } = await import("shiki");
 
@@ -116,58 +111,54 @@ export default function BlockNoteEditor({
     [],
   );
 
-  // 언어 설정
-  const dictionary = useMemo(
-    () => ({
-      ...locale,
-      placeholders: {
-        ...locale.placeholders,
-        emptyDocument: "텍스트를 입력하거나 '/' 를 눌러 명령어를 실행하세요.",
-      },
-    }),
-    [locale],
-  );
+  const dictionary = {
+    ...locale,
+  };
 
   const initialContent = useMemo(() => {
-    if (!initialContentJson) return undefined;
+    if (!contentJson) return undefined;
     try {
-      return JSON.parse(initialContentJson) as unknown;
+      return JSON.parse(contentJson) as unknown;
     } catch {
       return undefined;
     }
-  }, [initialContentJson]);
+  }, [contentJson]);
 
   const editor = useCreateBlockNote(
     {
       schema,
       dictionary,
-      ...(initialContent ? { initialContent: initialContent as never } : {}),
+      // BlockNote 문서 구조는 에디터에서 직렬화한 값을 그대로 사용합니다.
+      initialContent: initialContent as never,
     },
-    // 의도적으로 schema만 의존성에 포함해 에디터 인스턴스를 한 번만 생성합니다.
-    [schema],
+    [schema, dictionary, initialContent],
   );
+
+  if (!initialContent) {
+    return (
+      <div
+        className={cn(
+          "rounded-md border border-dashed px-4 py-6 text-sm text-muted-foreground",
+          className,
+        )}
+      >
+        작성된 본문이 없습니다.
+      </div>
+    );
+  }
 
   return (
     <BlockNoteView
       className={cn(
         "py-4",
-        "border-input rounded-md border dark:bg-input/30 bg-transparent shadow-xs transition-[color,box-shadow] outline-none",
-        focus && "border-ring ring-ring/50 ring-[3px] ",
+        "border-input rounded-md border dark:bg-input/30 bg-transparent shadow-xs",
+        className,
       )}
-      onFocus={() => setFocus(true)}
-      onBlur={() => setFocus(false)}
       theme={theme === "dark" ? "dark" : "light"}
       editor={editor}
-      onChange={() => {
-        if (!onChange) return;
-        try {
-          const doc = editor.document;
-          const json = JSON.stringify(doc);
-          onChange(json);
-        } catch {
-          // 직렬화 실패 시에는 조용히 무시합니다.
-        }
-      }}
+      editable={false}
     />
   );
-}
+};
+
+export default BlockNoteViewer;
