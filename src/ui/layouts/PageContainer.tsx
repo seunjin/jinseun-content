@@ -33,7 +33,7 @@ const PageContainerWithSidebar = ({
   return (
     <MainShell
       className={cn(
-        "page-container-with-sidebar grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-6",
+        "page-container-with-sidebar grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-12",
         className,
       )}
       {...rest}

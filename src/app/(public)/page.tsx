@@ -26,12 +26,7 @@ const PubliRootPage = async () => {
     <PageContainer.WithSidebar sidebarComponent={<CategorySidebar />}>
       {/* --- 메인 컨텐츠 영역 --- */}
       <div className="flex flex-col gap-12">
-        <PostCardGrid
-          items={items}
-          hrefBase="/post"
-          hrefField="id"
-          className="mt-4"
-        />
+        <PostCardGrid items={items} hrefBase="/post" hrefField="id" />
       </div>
     </PageContainer.WithSidebar>
   );

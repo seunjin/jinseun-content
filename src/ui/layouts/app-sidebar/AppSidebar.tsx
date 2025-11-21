@@ -15,14 +15,14 @@ const AppSidebar = ({
   const stickyClasses = sticky
     ? [
         "sticky top-[calc(var(--header-height)+var(--page-toolbar-offset,0px)+var(--main-container-padding-block-start))]",
-        "h-[calc(100dvh-var(--header-height)-var(--page-toolbar-offset,0px)-var(--main-container-padding-block-start))]",
+        "h-[calc(100dvh-var(--header-height)-var(--page-toolbar-offset,0px)-calc(var(--main-container-padding-block-start)*2))]",
       ]
     : [];
   return (
     <aside
       className={cn(
         ...stickyClasses,
-        "w-[var(--sidebar-width)] pr-4 shrink-0",
+        "w-[var(--sidebar-width)] pr-4 shrink-0 border-r border-foreground/10",
         "hidden lg:block",
         className,
       )}

@@ -32,7 +32,7 @@ const PCHeader = ({ session, user }: AppHeaderProps) => {
               className="cursor-pointer rounded-full"
             />
           </Link>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <Link href={"#"} className="font-medium text-base text-primary">
               Content
             </Link>
@@ -40,7 +40,7 @@ const PCHeader = ({ session, user }: AppHeaderProps) => {
             <Link href={"#"} className="font-medium text-base text-primary">
               Portfolio
             </Link>
-          </div>
+          </div> */}
         </div>
         <div className="flex items-center gap-2">
           {isAuthenticated && (

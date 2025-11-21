@@ -81,7 +81,7 @@
 
   /* Layout */
   --header-height: 3rem;
-  --sidebar-width: 15rem;
+  --sidebar-width: 12rem;
   --page-toolbar-height: var(--header-height);
   --global-inline-padding: 3rem;
   --main-container-padding-block-start: 3rem;

@@ -49,8 +49,8 @@ const AdminPostList = ({ items }: AdminPostListProps) => {
         >
           <Button
             type="button"
-            size="xs"
-            variant={filter === "all" ? "secondary" : "ghost"}
+            size="sm"
+            variant={filter === "all" ? "default" : "ghost"}
             className="rounded-full px-3"
             onClick={() => setFilter("all")}
           >
@@ -58,8 +58,8 @@ const AdminPostList = ({ items }: AdminPostListProps) => {
           </Button>
           <Button
             type="button"
-            size="xs"
-            variant={filter === "published" ? "secondary" : "ghost"}
+            size="sm"
+            variant={filter === "published" ? "default" : "ghost"}
             className="rounded-full px-3"
             onClick={() => setFilter("published")}
           >
@@ -67,8 +67,8 @@ const AdminPostList = ({ items }: AdminPostListProps) => {
           </Button>
           <Button
             type="button"
-            size="xs"
-            variant={filter === "draft" ? "secondary" : "ghost"}
+            size="sm"
+            variant={filter === "draft" ? "default" : "ghost"}
             className="rounded-full px-3"
             onClick={() => setFilter("draft")}
           >
