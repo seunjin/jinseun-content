@@ -74,11 +74,9 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
           {/* 공개 여부 · 날짜 */}
           <div className="flex items-center justify-end gap-3">
             {createdYmd && (
-              <>
-                <span className="text-sm text-muted-foreground/50">
-                  {createdYmd}
-                </span>
-              </>
+              <span className="text-sm text-muted-foreground/50">
+                {createdYmd}
+              </span>
             )}
           </div>
         </header>

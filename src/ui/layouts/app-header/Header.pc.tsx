@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import type { AppHeaderProps } from "./AppHeader";
 
-const PCHeader = ({ session, user }: AppHeaderProps) => {
+const PCHeader = ({ session }: AppHeaderProps) => {
   const isAuthenticated = Boolean(session);
-  const displayName = user?.name;
+  // const displayName = user?.name;
   return (
     <header
       className={cn(
@@ -45,10 +45,17 @@ const PCHeader = ({ session, user }: AppHeaderProps) => {
         <div className="flex items-center gap-2">
           {isAuthenticated && (
             <>
-              <span className="font-medium text-primary/70">{displayName}</span>
-              <Separator orientation="vertical" className="h-3 bg-border" />
-              <Link href="/admin" className="font-medium">
-                관리자 페이지
+              {/* <span className="font-medium text-primary/70">{displayName}</span> */}
+              {/* <Separator orientation="vertical" className="h-3 bg-border" /> */}
+              <Link
+                href="/admin"
+                className="font-medium 
+                text-foreground/50
+                transition-all duration-200
+                hover:text-foreground
+                hover:underline hover:underline-offset-2"
+              >
+                Admin
               </Link>
               <Separator orientation="vertical" className="h-3 bg-border" />
               <LogoutButton />
