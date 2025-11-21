@@ -173,6 +173,19 @@ async function updatePost(
 }
 
 /**
+ * @description 게시글을 삭제합니다.
+ * - ID 기준으로 단일 게시글을 영구 삭제합니다.
+ */
+async function deletePost(
+  client: AnySupabaseClient,
+  id: number,
+): Promise<void> {
+  const { error } = await client.from("posts").delete().eq("id", id);
+
+  if (error) throw error;
+}
+
+/**
  * @description 게시글 API 헬퍼를 생성합니다.
  * - 서버/클라이언트에서 동일하게 사용할 수 있도록 구성합니다.
  */
@@ -182,5 +195,6 @@ export function createPostsApi(client: AnySupabaseClient) {
     fetchPostById: (id: number) => fetchPostById(client, id),
     createPost: (payload: CreatePostInput) => createPost(client, payload),
     updatePost: (payload: UpdatePostInput) => updatePost(client, payload),
+    deletePost: (id: number) => deletePost(client, id),
   };
 }

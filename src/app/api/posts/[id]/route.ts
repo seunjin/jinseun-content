@@ -156,3 +156,64 @@ export async function PUT(
     return NextResponse.json(response, { status });
   }
 }
+
+/**
+ * @description ID 기준으로 게시글을 삭제합니다.
+ * - 존재하지 않는 ID인 경우 404를 반환합니다.
+ */
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<unknown> },
+) {
+  const requestId = request.headers.get("x-request-id") ?? undefined;
+  const traceId = request.headers.get("x-trace-id") ?? undefined;
+
+  const params = await context.params;
+  const parsedParams = paramsSchema.safeParse(params);
+  if (!parsedParams.success) {
+    const response = createApiError({
+      code: ApiErrorCode.BAD_REQUEST,
+      message: "게시글 ID가 유효하지 않습니다.",
+      details: z.treeifyError(parsedParams.error),
+      requestId,
+      traceId,
+    });
+
+    return NextResponse.json(response, { status: 400 });
+  }
+
+  try {
+    const supabase = await createServerSupabase();
+    const postsApi = createPostsApi(supabase);
+
+    // 먼저 게시글이 존재하는지 확인합니다.
+    const existing = await postsApi.fetchPostById(parsedParams.data.id);
+    if (!existing) {
+      const response = createApiError({
+        code: ApiErrorCode.NOT_FOUND,
+        message: "게시글을 찾을 수 없습니다.",
+        requestId,
+        traceId,
+      });
+
+      return NextResponse.json(response, { status: 404 });
+    }
+
+    await postsApi.deletePost(parsedParams.data.id);
+
+    return NextResponse.json(
+      createApiSuccess({ id: parsedParams.data.id }, { requestId, traceId }),
+      { status: 200 },
+    );
+  } catch (error) {
+    const response = createApiError({
+      code: ApiErrorCode.INTERNAL_SERVER_ERROR,
+      message: "게시글을 삭제하는 중 오류가 발생했습니다.",
+      details: error,
+      requestId,
+      traceId,
+    });
+
+    return NextResponse.json(response, { status: 500 });
+  }
+}

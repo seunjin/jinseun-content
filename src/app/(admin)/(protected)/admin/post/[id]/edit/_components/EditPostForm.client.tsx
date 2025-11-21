@@ -3,6 +3,8 @@
 import type { CategoryRow } from "@features/categories/schemas";
 import type { PostRow, UpdatePostInput } from "@features/posts/schemas";
 import { ApiClientError, clientHttp } from "@shared/lib/api/http-client";
+import { dialog } from "@shared/lib/react-layered-dialog/dialogs";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Icon from "@ui/components/lucide-icons/Icon";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
 import {
@@ -19,6 +21,7 @@ import {
   Switch,
   Textarea,
 } from "@ui/shadcn/components";
+import { Spinner } from "@ui/shadcn/components/spinner";
 import { cn } from "@ui/shadcn/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -40,6 +43,7 @@ type EditPostFormProps = {
  */
 const EditPostForm = ({ categories, post }: EditPostFormProps) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     String(post.categoryId),
   );
@@ -100,7 +104,6 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
    * - 스위치 컴포넌트로 공개/비공개를 전환합니다.
    */
   const [isPublished, setIsPublished] = useState<boolean>(post.isPublished);
-  const [isSaving, setIsSaving] = useState(false);
   /**
    * @description 썸네일 이미지의 공개 URL입니다.
    * - Supabase Storage 등에 업로드한 이미지의 URL을 수동으로 입력합니다.
@@ -108,6 +111,55 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string>(
     post.thumbnailUrl ?? "",
   );
+  // 게시글 삭제 뮤테이션
+  const { mutateAsync: deletePostAsync, isPending: isDeleting } = useMutation({
+    mutationFn: async () =>
+      clientHttp.delete<{ response: { id: number } }>(`/api/posts/${post.id}`),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success("게시글을 삭제했습니다.");
+      router.push("/admin/post");
+      router.refresh();
+    },
+    onError: (error) => {
+      if (error instanceof ApiClientError) {
+        toast.error(error.message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("게시글 삭제 중 오류가 발생했습니다.");
+      }
+    },
+  });
+  // 게시글 수정 뮤테이션
+  const { mutateAsync: updatePostAsync, isPending: isSaving } = useMutation({
+    mutationFn: async (payload: UpdatePostInput) =>
+      clientHttp.put<{ request: UpdatePostInput; response: unknown }>(
+        `/api/posts/${post.id}`,
+        {
+          body: payload,
+        },
+      ),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast.success(
+        isPublished
+          ? "게시글을 발행 상태로 저장했습니다."
+          : "게시글을 수정했습니다.",
+      );
+      router.push(`/admin/post/${post.id}`);
+      router.refresh();
+    },
+    onError: (error) => {
+      if (error instanceof ApiClientError) {
+        toast.error(error.message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("게시글 수정 중 오류가 발생했습니다.");
+      }
+    },
+  });
 
   /**
    * @description 제목을 기반으로 슬러그를 생성합니다.
@@ -225,62 +277,11 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
       isPublished,
     };
 
-    try {
-      setIsSaving(true);
-      await clientHttp.put<{ request: UpdatePostInput; response: unknown }>(
-        `/api/posts/${post.id}`,
-        {
-          body: payload,
-        },
-      );
-
-      toast.success(
-        isPublished
-          ? "게시글을 발행 상태로 저장했습니다."
-          : "게시글을 수정했습니다.",
-      );
-      // 수정 후 상세 페이지로 이동합니다.
-      router.push(`/admin/post/${post.id}`);
-      router.refresh();
-    } catch (error) {
-      if (error instanceof ApiClientError) {
-        toast.error(error.message);
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("게시글 수정 중 오류가 발생했습니다.");
-      }
-    } finally {
-      setIsSaving(false);
-    }
+    await updatePostAsync(payload);
   };
 
   return (
     <>
-      {/* 툴바 */}
-      <PageTopToolbar>
-        <div className="flex gap-2">
-          <Link href={`/admin/post/${post.id}`}>
-            <Button variant="outline" size="icon-sm">
-              <Icon name="ArrowLeft" />
-            </Button>
-          </Link>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="default"
-            size="sm"
-            type="button"
-            disabled={isSaving}
-            onClick={() => {
-              void handleSubmit();
-            }}
-          >
-            <Icon name="Save" /> 수정
-          </Button>
-        </div>
-      </PageTopToolbar>
-
       <div
         className={cn(
           "flex flex-col items-start gap-6",
@@ -288,6 +289,65 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
           // "lg:flex-row",
         )}
       >
+        <div className="flex w-full justify-between">
+          <div className="flex gap-2">
+            <Link href={`/admin/post/${post.id}`}>
+              <Button variant="outline" size="icon-sm">
+                <Icon name="ArrowLeft" />
+              </Button>
+            </Link>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              type="button"
+              disabled={isSaving || isDeleting}
+              onClick={async () => {
+                await dialog.confirm(({ setStatus, close }) => ({
+                  title: "게시글 삭제",
+                  message: "해당 글을 삭제하시겠습니까?",
+                  confirmButtonText: "삭제하기",
+                  cancelButtonText: "취소",
+                  onConfirm: async () => {
+                    setStatus("loading");
+                    await deletePostAsync();
+                    close();
+                  },
+                }));
+              }}
+            >
+              {isDeleting ? (
+                <Spinner className="mr-1 size-3" />
+              ) : (
+                <Icon name="Trash2" className="mr-1" />
+              )}
+              삭제
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              type="button"
+              disabled={isSaving || isDeleting}
+              onClick={async () => {
+                await dialog.confirm(({ setStatus, close }) => ({
+                  title: "게시글 수정",
+                  message: "수정하시겠습니까?",
+                  confirmButtonText: "수정하기",
+                  cancelButtonText: "취소",
+                  onConfirm: async () => {
+                    setStatus("loading");
+                    await handleSubmit();
+                    close();
+                  },
+                }));
+              }}
+            >
+              <Icon name="Save" /> 수정
+            </Button>
+          </div>
+        </div>
+
         {/* 카테고리 및 썸네일 등록 */}
         <section
           className={cn(
