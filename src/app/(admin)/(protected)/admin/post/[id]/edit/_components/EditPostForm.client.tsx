@@ -16,6 +16,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  Switch,
   Textarea,
 } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
@@ -94,6 +95,11 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
    * - 초기값은 기존 게시글의 content를 그대로 사용합니다.
    */
   const [contentJson, setContentJson] = useState<string>(post.content ?? "");
+  /**
+   * @description 게시글 발행 여부입니다.
+   * - 스위치 컴포넌트로 공개/비공개를 전환합니다.
+   */
+  const [isPublished, setIsPublished] = useState<boolean>(post.isPublished);
   const [isSaving, setIsSaving] = useState(false);
 
   /**
@@ -151,7 +157,7 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
     setKeywords((prev) => prev.filter((keyword) => keyword !== value));
   };
 
-  const handleSubmit = async (nextIsPublished: boolean) => {
+  const handleSubmit = async () => {
     if (isSaving) return;
 
     const normalizedDescription = description.trim();
@@ -195,7 +201,7 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
       thumbnailUrl: post.thumbnailUrl ?? undefined,
       // BlockNote 문서 JSON 문자열(없으면 undefined로 처리)
       content: contentJson || undefined,
-      isPublished: nextIsPublished,
+      isPublished,
     };
 
     try {
@@ -208,7 +214,7 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
       );
 
       toast.success(
-        nextIsPublished
+        isPublished
           ? "게시글을 발행 상태로 저장했습니다."
           : "게시글을 수정했습니다.",
       );
@@ -241,26 +247,15 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
         </div>
         <div className="flex gap-2">
           <Button
-            variant="secondary"
-            size="sm"
-            type="button"
-            disabled={isSaving}
-            onClick={() => {
-              void handleSubmit(post.isPublished);
-            }}
-          >
-            <Icon name="Save" /> 저장
-          </Button>
-          <Button
             variant="default"
             size="sm"
             type="button"
             disabled={isSaving}
             onClick={() => {
-              void handleSubmit(true);
+              void handleSubmit();
             }}
           >
-            <Icon name="BookOpenCheck" /> 발행
+            <Icon name="Save" /> 수정
           </Button>
         </div>
       </PageTopToolbar>
@@ -269,7 +264,7 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
         className={cn(
           "flex flex-col items-start gap-6",
           // 반응형 스타일
-          "lg:flex-row",
+          // "lg:flex-row",
         )}
       >
         {/* 카테고리 및 썸네일 등록 */}
@@ -278,14 +273,12 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
             "relative",
             "w-full flex flex-col gap-6 shrink-0",
             // 반응형 스타일
-            "lg:sticky lg:top-[calc(var(--header-height)*2+1.5rem)] lg:w-[320px]",
+            // "lg:sticky lg:top-[calc(var(--header-height)*2+1.5rem)] lg:w-[320px]",
           )}
         >
           <div className="flex flex-col pb-4 border-b">
             <span className="text-[#f96859] font-medium">Step 01</span>
-            <span className="text-base font-semibold">
-              카테고리 및 썸네일 수정
-            </span>
+            <span className="text-base font-semibold">글 메타정보 수정</span>
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1">
@@ -317,14 +310,145 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
               </SelectContent>
             </Select>
           </div>
+          {/* 제목 (필수 입력) */}
           <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1">
+              <Icon name="Asterisk" size={14} className="text-[#f96859]" />
+              <Label className="text-muted-foreground">제목</Label>
+            </div>
+            <Input
+              placeholder="글 제목을 입력하세요."
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+          </div>
+
+          {/* 설명 입력 (옵션) */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1">
+              <Label className="text-muted-foreground">
+                설명 (선택, 최대 200자)
+              </Label>
+            </div>
+            <Textarea
+              value={description}
+              maxLength={200}
+              onChange={handleChangeDescription}
+              placeholder="글 목록 카드에서 보여줄 간단한 요약을 입력하세요."
+              rows={4}
+            />
+            <p className="self-end text-xs text-muted-foreground">
+              {description.length} / 200
+            </p>
+          </div>
+
+          {/* 슬러그 (필수 입력) */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1">
+              <Icon name="Asterisk" size={14} className="text-[#f96859]" />
+              <Label className="text-muted-foreground">슬러그</Label>
+            </div>
+            <Input
+              placeholder="예: my-first-post"
+              value={slug}
+              onFocus={() => {
+                if (!slug && title.trim()) {
+                  const nextSlug = slugifyFromTitle(title.trim());
+                  if (nextSlug) {
+                    setSlug(nextSlug);
+                  }
+                }
+              }}
+              onChange={(event) => {
+                const raw = event.target.value;
+                const normalized = raw
+                  .toLowerCase()
+                  .replace(/[^a-z0-9-]/g, "")
+                  .replace(/-+/g, "-");
+                setSlug(normalized);
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-2 w-[min(100%,200px)]">
             <div className="flex items-center gap-1">
               <Label className="text-muted-foreground">썸네일 (선택)</Label>
             </div>
-            <div className="aspect-video rounded-md bg-accent" />
-            <Button variant="default" type="button" disabled>
-              <Icon name="ImageOff" /> 썸네일 기능 준비 중
-            </Button>
+            {/* 썸네일 영역 */}
+            <div className="aspect-video rounded-md bg-accent " />
+          </div>
+
+          {/* 공개 여부 스위치 */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1">
+              <Label className="text-muted-foreground">공개 여부</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="isPublished"
+                checked={isPublished}
+                onCheckedChange={(checked) => setIsPublished(!!checked)}
+              />
+              <Label htmlFor="isPublished">
+                {isPublished ? "공개" : "비공개(초안)"}
+              </Label>
+            </div>
+          </div>
+
+          {/* 키워드 입력 (옵션) */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1">
+                <Label className="text-muted-foreground">
+                  키워드 (선택, 최대 5개)
+                </Label>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                목록 카드 하단에 #태그로 표기됩니다.
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Input
+                value={keywordInput}
+                onChange={(event) => setKeywordInput(event.target.value)}
+                onKeyDown={handleKeywordKeyDown}
+                placeholder="키워드를 입력 후 Enter 키를 눌러 추가하세요. 예: react, ui, nextjs"
+              />
+
+              <div className="flex flex-wrap gap-2">
+                {keywords.length === 0 ? (
+                  <span className="text-xs text-muted-foreground">
+                    아직 추가된 키워드가 없습니다.
+                  </span>
+                ) : (
+                  keywords.map((value) => (
+                    <div
+                      key={value}
+                      className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
+                    >
+                      <span>#{value}</span>
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center rounded-full hover:bg-accent/60 transition-colors"
+                        onClick={() => handleRemoveKeyword(value)}
+                        aria-label={`${value} 키워드 제거`}
+                      >
+                        <Icon name="X" size={12} />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs text-muted-foreground">
+                  Enter 키로 키워드를 추가하세요.
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {keywords.length} / 5
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -334,130 +458,12 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
             className={cn(
               "w-full h-full flex flex-col gap-6",
               // 반응형 스타일
-              "lg:flex-1",
+              // "lg:flex-1"
             )}
           >
             <div className="flex flex-col pb-4 border-b">
               <span className="text-[#f96859] font-medium">Step 02</span>
               <span className="text-base font-semibold">글 수정하기</span>
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1">
-                <Icon name="Asterisk" size={14} className="text-[#f96859]" />
-                <Label className="text-muted-foreground">제목</Label>
-              </div>
-              <Input
-                placeholder="글 제목을 입력하세요."
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-              />
-            </div>
-
-            {/* 슬러그 (필수 입력) */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-1">
-                <Icon name="Asterisk" size={14} className="text-[#f96859]" />
-                <Label className="text-muted-foreground">슬러그</Label>
-              </div>
-              <Input
-                placeholder="예: my-first-post"
-                value={slug}
-                onFocus={() => {
-                  if (!slug && title.trim()) {
-                    const nextSlug = slugifyFromTitle(title.trim());
-                    if (nextSlug) {
-                      setSlug(nextSlug);
-                    }
-                  }
-                }}
-                onChange={(event) => {
-                  const raw = event.target.value;
-                  const normalized = raw
-                    .toLowerCase()
-                    .replace(/[^a-z0-9-]/g, "")
-                    .replace(/-+/g, "-");
-                  setSlug(normalized);
-                }}
-              />
-            </div>
-
-            {/* 설명/키워드 (선택 입력) */}
-            <div className="flex flex-col gap-6">
-              {/* 설명 입력 (옵션) */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-1">
-                  <Label className="text-muted-foreground">
-                    설명 (선택, 최대 200자)
-                  </Label>
-                </div>
-                <Textarea
-                  value={description}
-                  maxLength={200}
-                  onChange={handleChangeDescription}
-                  placeholder="글 목록 카드에서 보여줄 간단한 요약을 입력하세요."
-                  rows={4}
-                />
-                <p className="self-end text-xs text-muted-foreground">
-                  {description.length} / 200
-                </p>
-              </div>
-
-              {/* 키워드 입력 (옵션) */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1">
-                    <Label className="text-muted-foreground">
-                      키워드 (선택, 최대 5개)
-                    </Label>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    목록 카드 하단에 #태그로 표기됩니다.
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <Input
-                    value={keywordInput}
-                    onChange={(event) => setKeywordInput(event.target.value)}
-                    onKeyDown={handleKeywordKeyDown}
-                    placeholder="키워드를 입력 후 Enter 키를 눌러 추가하세요. 예: react, ui, nextjs"
-                  />
-
-                  <div className="flex flex-wrap gap-2">
-                    {keywords.length === 0 ? (
-                      <span className="text-xs text-muted-foreground">
-                        아직 추가된 키워드가 없습니다.
-                      </span>
-                    ) : (
-                      keywords.map((value) => (
-                        <div
-                          key={value}
-                          className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
-                        >
-                          <span>#{value}</span>
-                          <button
-                            type="button"
-                            className="inline-flex items-center justify-center rounded-full hover:bg-accent/60 transition-colors"
-                            onClick={() => handleRemoveKeyword(value)}
-                            aria-label={`${value} 키워드 제거`}
-                          >
-                            <Icon name="X" size={12} />
-                          </button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs text-muted-foreground">
-                      Enter 키로 키워드를 추가하세요.
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {keywords.length} / 5
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div className="flex flex-col gap-2">
