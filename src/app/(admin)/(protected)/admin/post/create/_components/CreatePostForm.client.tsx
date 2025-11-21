@@ -25,23 +25,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import Editor from "./Editor.client";
 
-type KeywordField = {
-  /** 키워드 입력 필드 고유 ID (리스트 key용) */
-  id: string;
-  /** 입력된 키워드 값 */
-  value: string;
-};
-
-let keywordIdSeed = 0;
-
-/**
- * @description 신규 키워드 입력 필드를 생성합니다.
- */
-const createKeywordField = (value = ""): KeywordField => ({
-  id: `kw-${keywordIdSeed++}`,
-  value,
-});
-
 type CreatePostFormProps = {
   /** 서버에서 전달된 카테고리 목록(정렬 순서 포함) */
   categories: CategoryRow[];
@@ -59,9 +42,16 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
-  const [keywords, setKeywords] = useState<KeywordField[]>([
-    createKeywordField(),
-  ]);
+  /**
+   * @description 입력된 키워드 문자열 목록입니다.
+   * - 개별 키워드는 최대 5개까지 허용합니다.
+   */
+  const [keywords, setKeywords] = useState<string[]>([]);
+  /**
+   * @description 키워드 입력 인풋의 현재 값입니다.
+   * - Enter 키 입력 시 keywords 배열에 추가됩니다.
+   */
+  const [keywordInput, setKeywordInput] = useState<string>("");
   /**
    * @description BlockNote 에디터의 문서 JSON을 문자열로 직렬화한 값입니다.
    * - Editor 컴포넌트에서 onChange 시점에 최신 값을 전달합니다.
@@ -89,31 +79,39 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
     setDescription(nextValue);
   };
 
-  /** 키워드 단일 항목 값 변경 핸들러 */
-  const handleChangeKeyword = (id: string, value: string) => {
-    setKeywords((prev) =>
-      prev.map((field) => (field.id === id ? { ...field, value } : field)),
-    );
+  /**
+   * @description 키워드 인풋에서 Enter 키를 눌렀을 때 새 키워드를 추가합니다.
+   * - 공백/중복 값은 무시합니다.
+   * - 최대 5개까지만 추가할 수 있습니다.
+   */
+  const handleKeywordKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
+    event,
+  ) => {
+    if (event.key !== "Enter") return;
+
+    event.preventDefault();
+    const raw = keywordInput.trim();
+    if (!raw) return;
+
+    if (keywords.includes(raw)) {
+      toast.error("이미 추가된 키워드입니다.");
+      return;
+    }
+
+    if (keywords.length >= 5) {
+      toast.error("키워드는 최대 5개까지 입력할 수 있습니다.");
+      return;
+    }
+
+    setKeywords((prev) => [...prev, raw]);
+    setKeywordInput("");
   };
 
-  /** 키워드 필드 추가 (최대 5개) */
-  const handleAddKeyword = () => {
-    setKeywords((prev) => {
-      if (prev.length >= 5) {
-        return prev;
-      }
-      return [...prev, createKeywordField()];
-    });
-  };
-
-  /** 키워드 필드 삭제 */
-  const handleRemoveKeyword = (id: string) => {
-    setKeywords((prev) => {
-      if (prev.length === 1) {
-        return [createKeywordField()];
-      }
-      return prev.filter((field) => field.id !== id);
-    });
+  /**
+   * @description 개별 키워드를 제거합니다.
+   */
+  const handleRemoveKeyword = (value: string) => {
+    setKeywords((prev) => prev.filter((keyword) => keyword !== value));
   };
 
   const handleSubmit = async (isPublished: boolean) => {
@@ -121,7 +119,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
 
     const normalizedDescription = description.trim();
     const keywordValues = keywords
-      .map((field) => field.value.trim())
+      .map((value) => value.trim())
       .filter((value) => value.length > 0);
 
     const categoryIdNum = Number.parseInt(selectedCategoryId, 10);
@@ -378,49 +376,46 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  {keywords.map((field) => (
-                    <div
-                      key={field.id}
-                      className={cn(
-                        "flex items-center gap-2",
-                        "group/keyword-row",
-                      )}
-                    >
-                      <Input
-                        value={field.value}
-                        onChange={(event) =>
-                          handleChangeKeyword(field.id, event.target.value)
-                        }
-                        placeholder="키워드를 입력하세요. 예: react, ui, nextjs"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        className="shrink-0 text-muted-foreground"
-                        onClick={() => handleRemoveKeyword(field.id)}
-                        aria-label="키워드 제거"
-                      >
-                        <Icon name="X" size={14} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+                  <Input
+                    value={keywordInput}
+                    onChange={(event) => setKeywordInput(event.target.value)}
+                    onKeyDown={handleKeywordKeyDown}
+                    placeholder="키워드를 입력 후 Enter 키를 눌러 추가하세요. 예: react, ui, nextjs"
+                  />
 
-                <div className="flex items-center justify-between gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="mt-1"
-                    onClick={handleAddKeyword}
-                    disabled={keywords.length >= 5}
-                  >
-                    <Icon name="Plus" size={14} />
-                    키워드 추가
-                  </Button>
-                  <span className="text-xs text-muted-foreground">
-                    {keywords.length} / 5
-                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {keywords.length === 0 ? (
+                      <span className="text-xs text-muted-foreground">
+                        아직 추가된 키워드가 없습니다.
+                      </span>
+                    ) : (
+                      keywords.map((value) => (
+                        <div
+                          key={value}
+                          className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
+                        >
+                          <span>#{value}</span>
+                          <button
+                            type="button"
+                            className="inline-flex items-center justify-center rounded-full hover:bg-accent/60 transition-colors"
+                            onClick={() => handleRemoveKeyword(value)}
+                            aria-label={`${value} 키워드 제거`}
+                          >
+                            <Icon name="X" size={12} />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-muted-foreground">
+                      Enter 키로 키워드를 추가하세요.
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {keywords.length} / 5
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
