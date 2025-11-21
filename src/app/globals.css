@@ -88,7 +88,7 @@
   --main-container-padding-block-end: 12rem;
   --main-container-padding-inline: var(--global-inline-padding);
   /* width */
-  --content-width: 80rem;
+  --content-width: 64rem;
   /* width + padding */
   --content-size: calc(var(--content-width) + 2 * var(--global-inline-padding));
   @media (width <= 40rem) {

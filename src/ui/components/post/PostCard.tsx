@@ -43,11 +43,7 @@ const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
       className="relative aspect-video w-full"
       style={{ perspective: "800px" }}
     >
-      <div
-        className="relative h-full w-full overflow-hidden rounded-lg  bg-accent transform-gpu will-change-transform
-          transition-transform duration-300 [transform-style:preserve-3d]
-          group-hover:[transform:rotateX(4deg)_rotateY(-4deg)]"
-      >
+      <div className="relative h-full w-full overflow-hidden rounded-lg  bg-accent transition-transform group-hover:scale-102">
         {item.thumbnailUrl ? (
           <Image
             src={item.thumbnailUrl}
