@@ -101,6 +101,13 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
    */
   const [isPublished, setIsPublished] = useState<boolean>(post.isPublished);
   const [isSaving, setIsSaving] = useState(false);
+  /**
+   * @description 썸네일 이미지의 공개 URL입니다.
+   * - Supabase Storage 등에 업로드한 이미지의 URL을 수동으로 입력합니다.
+   */
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>(
+    post.thumbnailUrl ?? "",
+  );
 
   /**
    * @description 제목을 기반으로 슬러그를 생성합니다.
@@ -190,6 +197,20 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
       return;
     }
 
+    const trimmedThumbnailUrl = thumbnailUrl.trim();
+    if (trimmedThumbnailUrl) {
+      try {
+        const parsed = new URL(trimmedThumbnailUrl);
+        if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+          toast.error("썸네일 URL은 http 또는 https 형식이어야 합니다.");
+          return;
+        }
+      } catch {
+        toast.error("썸네일 URL 형식이 올바르지 않습니다.");
+        return;
+      }
+    }
+
     const payload: UpdatePostInput = {
       id: post.id,
       title: trimmedTitle,
@@ -197,8 +218,8 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
       categoryId: categoryIdNum,
       description: normalizedDescription || undefined,
       keywords: keywordValues.length > 0 ? keywordValues : undefined,
-      // 썸네일 업로드 기능은 아직 없으므로 기존 값을 유지합니다.
-      thumbnailUrl: post.thumbnailUrl ?? undefined,
+      // Supabase Storage 등에서 발급된 썸네일 공개 URL (선택)
+      thumbnailUrl: trimmedThumbnailUrl || undefined,
       // BlockNote 문서 JSON 문자열(없으면 undefined로 처리)
       content: contentJson || undefined,
       isPublished,
@@ -369,12 +390,22 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
               }}
             />
           </div>
-          <div className="flex flex-col gap-2 w-[min(100%,200px)]">
+          {/* 썸네일 URL (선택) */}
+          <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1">
-              <Label className="text-muted-foreground">썸네일 (선택)</Label>
+              <Label className="text-muted-foreground">썸네일 URL (선택)</Label>
             </div>
-            {/* 썸네일 영역 */}
-            <div className="aspect-video rounded-md bg-accent " />
+            <Input
+              placeholder="https://... (Supabase Storage 이미지 URL)"
+              value={thumbnailUrl}
+              onChange={(event) => {
+                setThumbnailUrl(event.target.value);
+              }}
+            />
+            <p className="text-xs text-muted-foreground">
+              카드에 표시할 대표 이미지 주소입니다. Supabase Storage에 업로드한
+              이미지 URL을 붙여넣어 주세요.
+            </p>
           </div>
 
           {/* 공개 여부 스위치 */}
