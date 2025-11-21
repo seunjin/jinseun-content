@@ -2,7 +2,6 @@
 
 import type { PostSummary } from "@features/posts/types";
 import PostCardGrid from "@ui/components/post/PostCardGrid";
-import { Button } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import { useMemo, useState } from "react";
 
@@ -39,41 +38,40 @@ const AdminPostList = ({ items }: AdminPostListProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* 필터 바: 전체 / 공개 / 비공개 + 카운트 */}
-      <div className="flex items-center justify-between">
-        <div
-          className={cn(
-            "inline-flex rounded-full border bg-muted/40 p-1",
-            "text-xs",
-          )}
-        >
-          <Button
+      {/* 상태 필터 탭: 전체 / 공개 / 비공개 + 카운트 */}
+      <div className="flex items-center justify-end text-xs">
+        <div className="flex gap-4">
+          <button
             type="button"
-            size="sm"
-            variant={filter === "all" ? "default" : "ghost"}
-            className="rounded-full px-3"
+            className={cn(
+              "border-b-2 border-transparent pb-1 text-muted-foreground hover:text-foreground",
+              filter === "all" && "border-primary text-primary font-semibold",
+            )}
             onClick={() => setFilter("all")}
           >
             전체 ({totalCount})
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            size="sm"
-            variant={filter === "published" ? "default" : "ghost"}
-            className="rounded-full px-3"
+            className={cn(
+              "border-b-2 border-transparent pb-1 text-muted-foreground hover:text-foreground",
+              filter === "published" &&
+                "border-primary text-primary font-semibold",
+            )}
             onClick={() => setFilter("published")}
           >
             공개 ({publishedCount})
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            size="sm"
-            variant={filter === "draft" ? "default" : "ghost"}
-            className="rounded-full px-3"
+            className={cn(
+              "border-b-2 border-transparent pb-1 text-muted-foreground hover:text-foreground",
+              filter === "draft" && "border-primary text-primary font-semibold",
+            )}
             onClick={() => setFilter("draft")}
           >
             비공개 ({draftCount})
-          </Button>
+          </button>
         </div>
       </div>
 
