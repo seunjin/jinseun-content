@@ -61,7 +61,7 @@ const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
             />
             <div className="absolute inset-0 bg-black/25" />
             <div className="absolute inset-0 flex items-center justify-center px-4">
-              <h3 className="text-[clamp(0.9rem,2.6vw,1.1rem)] leading-snug text-center font-semibold text-white line-clamp-2">
+              <h3 className="text-[clamp(0.9rem,2.6vw,1.1rem)] leading-snug text-center font-semibold text-white line-clamp-2 text-balance">
                 {item.title}
               </h3>
             </div>

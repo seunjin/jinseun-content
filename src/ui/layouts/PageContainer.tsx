@@ -36,9 +36,9 @@ const PageContainerWithSidebar = ({
   return (
     <MainShell
       className={cn(
-        "page-container-with-sidebar grid grid-cols-1 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:gap-12",
+        "page-container-with-sidebar grid grid-cols-1 sm:gap-4 lg:gap-12",
         sidebarPostion === "left" &&
-          "lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)]",
+          "sm:grid-cols-[var(--sidebar-width)_minmax(0,1fr)]",
         sidebarPostion === "right" &&
           "lg:grid-cols-[minmax(0,1fr)_var(--sidebar-width)]",
         className,
@@ -48,7 +48,10 @@ const PageContainerWithSidebar = ({
       {sidebarPostion === "left" && (
         <AppSidebar
           sticky={sidebarSticky}
-          className={cn("   border-foreground/10", sidebarClassName)}
+          className={cn(
+            "border-foreground/10 hidden sm:block",
+            sidebarClassName,
+          )}
         >
           {sidebarComponent}
         </AppSidebar>
@@ -67,7 +70,10 @@ const PageContainerWithSidebar = ({
       {sidebarPostion === "right" && (
         <AppSidebar
           sticky={sidebarSticky}
-          className={cn("  border-foreground/10", sidebarClassName)}
+          className={cn(
+            "border-foreground/10 hidden lg:block",
+            sidebarClassName,
+          )}
         >
           {sidebarComponent}
         </AppSidebar>

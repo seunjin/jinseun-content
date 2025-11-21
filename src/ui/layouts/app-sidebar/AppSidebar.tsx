@@ -23,7 +23,7 @@ const AppSidebar = ({
       className={cn(
         ...stickyClasses,
         "w-[var(--sidebar-width)] shrink-0 ",
-        "hidden lg:block",
+
         className,
       )}
     >

@@ -3,6 +3,7 @@ import type { PostRow } from "@features/posts/schemas";
 import { fetchPostsServer } from "@features/posts/server";
 import type { PostSummary } from "@features/posts/types";
 import PostCardGrid from "@ui/components/post/PostCardGrid";
+import CategoryMobileFilter from "@ui/layouts/app-sidebar/CategoryMobileFilter";
 import CategorySidebar from "@ui/layouts/app-sidebar/CategorySidebar";
 import PageContainer from "@ui/layouts/PageContainer";
 
@@ -52,7 +53,7 @@ const PubliRootPage = async ({ searchParams }: PublicRootPageProps) => {
       }
     >
       {/* --- 메인 컨텐츠 영역 --- */}
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-6 sm:gap-10">
         {/* 블로그 / 카테고리 소개 인용문 섹션 */}
         <section className="relative overflow-hidden border-b border-foreground/10 ">
           <div className="relative space-y-2 mb-6">
@@ -65,7 +66,7 @@ const PubliRootPage = async ({ searchParams }: PublicRootPageProps) => {
                 <p className="text-base font-medium text-foreground">
                   {category.name.toUpperCase()}{" "}
                 </p>
-                <p className="text-muted-foreground/80">
+                <p className="text-muted-foreground/80 text-balance break-keep">
                   {category.description ??
                     `${category.name} 카테고리에 속한 글들을 모아봤어요.`}
                 </p>
@@ -78,18 +79,23 @@ const PubliRootPage = async ({ searchParams }: PublicRootPageProps) => {
                 <p className="text-base font-medium text-foreground">
                   배우고, 만들고, 기록합니다.
                 </p>
-                <p className="text-muted-foreground/80">
+                <p className="text-muted-foreground/80 text-balance break-keep">
                   새로운 기술을 탐구하고 직접 구현해보는 과정, 문제 해결 경험,
-                  프로젝트 회고, 그리고 나만의 개발 철학을 정리합니다.
-                  <br />
-                  “오늘의 배움이 내일의 기반이 된다”는 마음으로, 꾸준히 생각을
-                  쌓고 기록합니다.
+                  프로젝트 회고, 그리고 나만의 개발 철학을 정리합니다. “오늘의
+                  배움이 내일의 기반이 된다”는 마음으로, 꾸준히 생각을 쌓고
+                  기록합니다.
                 </p>
               </>
             )}
           </div>
         </section>
-        <PostCardGrid items={items} hrefBase="/post" hrefField="id" />
+        <div>
+          {/* 모바일 카테고리 필터 (작은 화면에서만 노출) */}
+          <section className="mb-4 sm:hidden">
+            <CategoryMobileFilter basePath="/" activeSlug={categorySlug} />
+          </section>
+          <PostCardGrid items={items} hrefBase="/post" hrefField="id" />
+        </div>
       </div>
     </PageContainer.WithSidebar>
   );

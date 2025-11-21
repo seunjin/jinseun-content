@@ -85,13 +85,18 @@
   --page-toolbar-height: var(--header-height);
   --global-inline-padding: 3rem;
   --main-container-padding-block-start: 3rem;
-  --main-container-padding-block-end: 12rem;
+  --main-container-padding-block-end: 8rem;
   --main-container-padding-inline: var(--global-inline-padding);
   /* width */
   --content-width: 60rem;
   /* width + padding */
   --content-size: calc(var(--content-width) + 2 * var(--global-inline-padding));
-  @media (width <= 40rem) {
+  @media (width <= 64rem) {
+    --global-inline-padding: 1.5rem;
+    --main-container-padding-block-start: 1.5rem;
+    --main-container-padding-block-end: 4rem;
+  }
+  @media (width <= 48rem) {
     --global-inline-padding: 1rem;
   }
 }
@@ -202,6 +207,10 @@
 .bn-block-content[data-content-type="codeBlock"] pre code {
   white-space: pre-wrap; /* 공백 유지 + 자동 줄바꿈 */
   word-break: break-word; /* 공백 없는 긴 토큰도 줄바꿈 */
+}
+
+.bn-block-content[data-content-type="table"] .tableWrapper {
+  padding: 0 !important;
 }
 
 /* react-layered-dialogs */

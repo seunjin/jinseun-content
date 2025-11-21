@@ -5,7 +5,7 @@ import { cn } from "@ui/shadcn/lib/utils";
 import PostCard, { PostCardSkeleton } from "./PostCard";
 
 // Post 카드 그리드 공통 클래스: 2열 레이아웃
-const GRID_CLASS = "grid gap-6 grid-cols-1 sm:grid-cols-2" as const;
+const GRID_CLASS = "grid gap-6 grid-cols-1 lg:grid-cols-2" as const;
 
 export type PostCardGridProps = {
   /** 렌더링할 게시글 목록 */

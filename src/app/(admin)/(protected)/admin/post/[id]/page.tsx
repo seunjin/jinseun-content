@@ -5,6 +5,7 @@ import BlockNoteViewerClient from "@ui/components/editor/BlockNoteViewer.client"
 import Icon from "@ui/components/lucide-icons/Icon";
 import PageContainer from "@ui/layouts/PageContainer";
 import { Button, Separator } from "@ui/shadcn/components";
+import { cn } from "@ui/shadcn/lib/utils";
 import Link from "next/link";
 
 type AdminPostDetailPageProps = {
@@ -44,8 +45,9 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
 
   return (
     <PageContainer.WithSidebar
-      className="--sidebar-width: 15rem"
+      className={cn("--sidebar-width: 15rem")}
       sidebarPostion="right"
+      sidebarClassName="hidden"
       sidebarComponent={<BlockNoteToc />}
     >
       <article className="mx-auto flex flex-col gap-6">
