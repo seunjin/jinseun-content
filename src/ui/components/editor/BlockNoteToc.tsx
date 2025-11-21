@@ -60,10 +60,15 @@ const BlockNoteToc = ({
         let targetId = dataId ?? outer?.id ?? headingEl?.id ?? "";
         if (!targetId) {
           targetId = `heading-${index}`;
+        }
+
+        // BlockNote에서 data-id를 항상 기준으로 사용하므로
+        // data-id가 없는 경우에는 우리가 계산한 targetId로 data-id를 보강합니다.
+        if (!dataId && targetId) {
           if (outer) {
-            outer.setAttribute("id", targetId);
+            outer.setAttribute("data-id", targetId);
           } else if (headingEl) {
-            headingEl.setAttribute("id", targetId);
+            headingEl.setAttribute("data-id", targetId);
           }
         }
 
@@ -117,9 +122,7 @@ const BlockNoteToc = ({
     const getTargets = () =>
       items
         .map((item) => {
-          const el =
-            root.querySelector<HTMLElement>(`[data-id="${item.id}"]`) ??
-            root.querySelector<HTMLElement>(`#${item.id}`);
+          const el = root.querySelector<HTMLElement>(`[data-id="${item.id}"]`);
           return el ? { item, el } : null;
         })
         .filter(
@@ -175,9 +178,9 @@ const BlockNoteToc = ({
                 const root = document.querySelector<HTMLElement>(rootSelector);
                 if (!root) return;
 
-                const target =
-                  root.querySelector<HTMLElement>(`[data-id="${item.id}"]`) ??
-                  root.querySelector<HTMLElement>(`#${item.id}`);
+                const target = root.querySelector<HTMLElement>(
+                  `[data-id="${item.id}"]`,
+                );
 
                 if (target) {
                   target.scrollIntoView({

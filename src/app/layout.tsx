@@ -26,6 +26,7 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css"
         />
+        <meta name="copyright" content="2025 Jin seun. All Rights Reserved." />
       </head>
       <body className="antialiased">
         {/* <ThemeProvider

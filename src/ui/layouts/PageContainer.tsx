@@ -1,5 +1,6 @@
 import { cn } from "@ui/shadcn/lib/utils";
 import type React from "react";
+import AppFooter from "./AppFooter";
 import AppSidebar from "./app-sidebar/AppSidebar";
 
 interface MainProps
@@ -55,8 +56,16 @@ const PageContainerWithSidebar = ({
           {sidebarComponent}
         </AppSidebar>
       )}
-      <div className="pb-[var(--main-container-padding-block-end)]">
-        {children}
+      <div
+        className={cn(
+          "grid grid-rows-[1fr_auto] h-full pb-",
+          "pb-[var(--main-container-padding-block-start)]",
+        )}
+      >
+        <div className="h-full pb-[var(--main-container-padding-block-end)]">
+          {children}
+        </div>
+        <AppFooter />
       </div>
       {sidebarPostion === "right" && (
         <AppSidebar

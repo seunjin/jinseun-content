@@ -2,6 +2,7 @@ import type { PostRow } from "@features/posts/schemas";
 import { fetchPostsServer } from "@features/posts/server";
 import type { PostSummary } from "@features/posts/types";
 import PostCardGrid from "@ui/components/post/PostCardGrid";
+import AppFooter from "@ui/layouts/AppFooter";
 import CategorySidebar from "@ui/layouts/app-sidebar/CategorySidebar";
 import PageContainer from "@ui/layouts/PageContainer";
 
