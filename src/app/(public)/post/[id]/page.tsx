@@ -72,21 +72,12 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
           )}
 
           {/* 공개 여부 · 날짜 */}
-          <div className="flex items-center justify-end gap-3 text-xm text-muted-foreground">
-            <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                post.isPublished
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
-              }`}
-            >
-              {post.isPublished ? "published" : "draft"}
-            </span>
-
+          <div className="flex items-center justify-end gap-3">
             {createdYmd && (
               <>
-                <span className="text-border">|</span>
-                <span>{createdYmd}</span>
+                <span className="text-sm text-muted-foreground/50">
+                  {createdYmd}
+                </span>
               </>
             )}
           </div>

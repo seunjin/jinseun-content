@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import type { AppHeaderProps } from "./AppHeader";
 import MobileAside from "./Aside.mobile";
-import AsideOpenButton from "./AsideOpenButton.mobile";
 
 const MobileHeader = ({ session, user }: AppHeaderProps) => {
   // const isAuthenticated = Boolean(session);

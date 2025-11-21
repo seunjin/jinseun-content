@@ -89,7 +89,7 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
           )}
 
           {/* 공개 여부 · 날짜 */}
-          <div className="flex items-center justify-end gap-3 text-xm text-muted-foreground">
+          <div className="flex items-center justify-end gap-3">
             <span
               className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                 post.isPublished
@@ -103,7 +103,9 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
             {createdYmd && (
               <>
                 <span className="text-border">|</span>
-                <span>{createdYmd}</span>
+                <span className="text-sm text-muted-foreground/50">
+                  {createdYmd}
+                </span>
               </>
             )}
           </div>
