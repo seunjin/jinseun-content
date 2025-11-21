@@ -48,10 +48,7 @@ const PageContainerWithSidebar = ({
       {sidebarPostion === "left" && (
         <AppSidebar
           sticky={sidebarSticky}
-          className={cn(
-            "pr-4  border-r border-foreground/10",
-            sidebarClassName,
-          )}
+          className={cn("   border-foreground/10", sidebarClassName)}
         >
           {sidebarComponent}
         </AppSidebar>
@@ -70,10 +67,7 @@ const PageContainerWithSidebar = ({
       {sidebarPostion === "right" && (
         <AppSidebar
           sticky={sidebarSticky}
-          className={cn(
-            "pl-4  border-l border-foreground/10",
-            sidebarClassName,
-          )}
+          className={cn("  border-foreground/10", sidebarClassName)}
         >
           {sidebarComponent}
         </AppSidebar>

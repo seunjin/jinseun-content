@@ -162,7 +162,6 @@ const BlockNoteToc = ({
 
   return (
     <nav className={cn("text-xs text-muted-foreground", className)}>
-      <p className="mb-2 text-sm font-medium">INDEX</p>
       <ul className="space-y-1">
         {items.map((item) => (
           <li key={item.id} className={item.level === 3 ? "pl-3" : undefined}>

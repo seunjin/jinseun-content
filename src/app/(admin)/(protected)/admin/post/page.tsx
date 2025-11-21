@@ -1,3 +1,4 @@
+import { fetchCategoryBySlugServer } from "@features/categories/server";
 import type { PostRow } from "@features/posts/schemas";
 import { fetchPostsServer } from "@features/posts/server";
 import type { PostSummary } from "@features/posts/types";
@@ -19,12 +20,36 @@ const mapPostRowToSummary = (row: PostRow): PostSummary => ({
   updatedAt: row.updatedAt,
 });
 
-const AdminPostPage = async () => {
-  const posts = await fetchPostsServer();
+type AdminPostPageProps = {
+  /**
+   * @description URL 쿼리 스트링으로 전달되는 검색 파라미터입니다.
+   * - category: 카테고리 슬러그(예: "frontend", "til")
+   */
+  searchParams: Promise<{
+    category?: string;
+  }>;
+};
+
+const AdminPostPage = async ({ searchParams }: AdminPostPageProps) => {
+  const resolvedSearchParams = await searchParams;
+  const categorySlug = resolvedSearchParams.category;
+
+  const category = categorySlug
+    ? await fetchCategoryBySlugServer(categorySlug)
+    : null;
+
+  const posts = await fetchPostsServer({
+    ...(category ? { categoryId: category.id } : {}),
+  });
+
   const items = posts.map(mapPostRowToSummary);
 
   return (
-    <PageContainer.WithSidebar sidebarComponent={<CategorySidebar />}>
+    <PageContainer.WithSidebar
+      sidebarComponent={
+        <CategorySidebar basePath="/admin/post" activeSlug={categorySlug} />
+      }
+    >
       {/* --- 메인 컨텐츠 영역 --- */}
       <div className="flex flex-col gap-6">
         <AdminPostList items={items} />

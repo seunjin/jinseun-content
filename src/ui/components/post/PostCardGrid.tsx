@@ -47,7 +47,7 @@ const PostCardGrid = ({
 
   if (!items || items.length === 0) {
     return (
-      <div className="rounded-lg border p-6 text-center text-muted-foreground">
+      <div className="p-6 text-center text-muted-foreground">
         아직 작성된 글이 없습니다.
       </div>
     );

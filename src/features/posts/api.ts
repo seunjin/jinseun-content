@@ -51,6 +51,10 @@ export type FetchPostsOptions = {
    * - false 또는 생략: 모든 게시글을 반환합니다. (추후 관리자 전용으로 사용 예정)
    */
   onlyPublished?: boolean;
+  /**
+   * @description 특정 카테고리에 속한 글만 조회할 때 사용하는 카테고리 ID입니다.
+   */
+  categoryId?: number;
 };
 
 /**
@@ -68,6 +72,10 @@ async function fetchPosts(
 
   if (options.onlyPublished) {
     query.eq("is_published", true);
+  }
+
+  if (options.categoryId !== undefined) {
+    query.eq("category_id", options.categoryId);
   }
 
   const { data, error } = await query;

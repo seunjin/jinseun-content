@@ -25,14 +25,14 @@ const MobileHeader = ({ session, user }: AppHeaderProps) => {
           )}
         >
           <div className="flex items-center gap-2">
-            <AsideOpenButton />
+            {/* <AsideOpenButton /> */}
             <Link href={"/"}>
               <Image
-                src="https://avatars.githubusercontent.com/seunjin"
+                src="/assets/images/logo.svg"
                 alt="@LOGO"
-                width={24}
-                height={24}
-                className="cursor-pointer rounded-full"
+                width={80}
+                height={34}
+                className="cursor-pointer"
               />
             </Link>
             {/* <div className="flex items-center gap-4">

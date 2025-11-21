@@ -80,7 +80,7 @@
   --sidebar-ring: oklch(0.707 0.022 261.325);
 
   /* Layout */
-  --header-height: 3rem;
+  --header-height: 3.6rem;
   --sidebar-width: 12rem;
   --page-toolbar-height: var(--header-height);
   --global-inline-padding: 3rem;
@@ -88,7 +88,7 @@
   --main-container-padding-block-end: 12rem;
   --main-container-padding-inline: var(--global-inline-padding);
   /* width */
-  --content-width: 64rem;
+  --content-width: 60rem;
   /* width + padding */
   --content-size: calc(var(--content-width) + 2 * var(--global-inline-padding));
   @media (width <= 40rem) {

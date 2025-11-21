@@ -11,7 +11,7 @@ const PCHeader = ({ session, user }: AppHeaderProps) => {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex items-center w-full bg-background/10 backdrop-blur-md border-b border-border/50 dark:border-border h-[var(--header-height)]",
+        "sticky top-0 z-10 flex items-center w-full bg-background/10 backdrop-blur-md  border-border/50 dark:border-border h-[var(--header-height)]",
         "hidden lg:block",
       )}
     >
@@ -25,11 +25,11 @@ const PCHeader = ({ session, user }: AppHeaderProps) => {
         <div className="flex items-center gap-6">
           <Link href={"/"}>
             <Image
-              src="https://avatars.githubusercontent.com/seunjin"
+              src="/assets/images/logo.svg"
               alt="@LOGO"
-              width={24}
-              height={24}
-              className="cursor-pointer rounded-full"
+              width={80}
+              height={34}
+              className="cursor-pointer"
             />
           </Link>
           {/* <div className="flex items-center gap-4">
