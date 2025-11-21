@@ -1,9 +1,10 @@
 import { fetchPostByIdServer } from "@features/posts/server";
+import { formatYmd } from "@shared/utils/date";
 import BlockNoteViewer from "@ui/components/editor/BlockNoteViewer";
 import Icon from "@ui/components/lucide-icons/Icon";
 import PageContainer from "@ui/layouts/PageContainer";
 import PageTopToolbar from "@ui/layouts/PageTopToolbar";
-import { Button } from "@ui/shadcn/components";
+import { Button, Separator } from "@ui/shadcn/components";
 import Link from "next/link";
 
 type AdminPostDetailPageProps = {
@@ -39,8 +40,11 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
     );
   }
 
+  const createdYmd = formatYmd(post.createdAt ?? undefined);
+
   return (
-    <PageContainer.Default>
+    // Fragement로 안감싼 이유는 부모가  grid-rows-[auth_1fr] 이기 때문에 이 페이지가 하나의 div로 감싸져야한다
+    <div>
       <PageTopToolbar>
         <div className="flex gap-2">
           <Link href="/admin/post">
@@ -53,31 +57,71 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
           <Link href={`/admin/post/${post.id}/edit`}>
             <Button variant="default" size="sm">
               <Icon name="PenSquare" />
-              편집하기
+              수정하기
             </Button>
           </Link>
         </div>
       </PageTopToolbar>
+      <PageContainer.Default>
+        <article className="mx-auto flex  flex-col gap-6">
+          {/* 타이틀 */}
+          <header className="space-y-3 text-left">
+            <h1 className="text-4xl font-semibold tracking-tight">
+              {post.title}
+            </h1>
+            {/* 설명(옵션) */}
+            {post.description && (
+              <p className=" text-lg text-muted-foreground">
+                {post.description}
+              </p>
+            )}
 
-      {/* 게시글 기본 메타 정보 영역 */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">{post.title}</h1>
-        <p className="text-sm text-muted-foreground">
-          ID: {post.id} · 슬러그: {post.slug} ·{" "}
-          {post.isPublished ? "공개" : "비공개"}
-        </p>
-        {post.description && (
-          <p className="mt-2 text-sm text-muted-foreground">
-            {post.description}
-          </p>
-        )}
-      </div>
+            {/* 키워드 */}
+            {post.keywords && post.keywords.length > 0 && (
+              <div className="flex flex-wrap items-center justify-start gap-2 text-xs text-muted-foreground">
+                {post.keywords.map((keyword) => (
+                  <span
+                    key={keyword}
+                    className="inline-flex items-center rounded-full border px-2 py-0.5"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            )}
 
-      {/* BlockNote 기반 본문(content) 뷰어 */}
-      <div className="mt-6">
-        <BlockNoteViewer contentJson={post.content ?? undefined} />
-      </div>
-    </PageContainer.Default>
+            {/* 공개 여부 · 날짜 */}
+            <div className="flex items-center justify-end gap-3 text-xm text-muted-foreground">
+              <span
+                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                  post.isPublished
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300"
+                }`}
+              >
+                {post.isPublished ? "published" : "draft"}
+              </span>
+
+              {createdYmd && (
+                <>
+                  <span className="text-border">|</span>
+                  <span>{createdYmd}</span>
+                </>
+              )}
+            </div>
+          </header>
+
+          <Separator className="bg-foreground/30" />
+          {/* BlockNote 기반 본문(content) 뷰어 */}
+          <section className="page-content-viwer">
+            <BlockNoteViewer
+              contentJson={post.content ?? undefined}
+              className="px-0"
+            />
+          </section>
+        </article>
+      </PageContainer.Default>
+    </div>
   );
 };
 

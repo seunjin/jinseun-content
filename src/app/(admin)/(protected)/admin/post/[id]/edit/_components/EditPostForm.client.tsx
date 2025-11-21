@@ -396,21 +396,21 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
 
           {/* 키워드 입력 (옵션) */}
           <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1">
-                <Label className="text-muted-foreground">
-                  키워드 (선택, 최대 5개)
-                </Label>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                목록 카드 하단에 #태그로 표기됩니다.
-              </span>
+            <div className="flex items-center gap-1">
+              <Label className="text-muted-foreground">
+                키워드 (선택, 최대 5개)
+              </Label>
             </div>
 
             <div className="flex flex-col gap-2">
               <Input
                 value={keywordInput}
-                onChange={(event) => setKeywordInput(event.target.value)}
+                onChange={(event) => {
+                  const raw = event.target.value;
+                  // 쉼표(,)는 키워드 구분자로 오해될 수 있으므로 입력 단계에서 제거합니다.
+                  const sanitized = raw.replace(/,/g, "");
+                  setKeywordInput(sanitized);
+                }}
                 onKeyDown={handleKeywordKeyDown}
                 placeholder="키워드를 입력 후 Enter 키를 눌러 추가하세요. 예: react, ui, nextjs"
               />
@@ -426,7 +426,7 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
                       key={value}
                       className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
                     >
-                      <span>#{value}</span>
+                      <span>{value}</span>
                       <button
                         type="button"
                         className="inline-flex items-center justify-center rounded-full hover:bg-accent/60 transition-colors"
@@ -438,15 +438,6 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
                     </div>
                   ))
                 )}
-              </div>
-
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">
-                  Enter 키로 키워드를 추가하세요.
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {keywords.length} / 5
-                </span>
               </div>
             </div>
           </div>

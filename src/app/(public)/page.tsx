@@ -28,7 +28,7 @@ const PubliRootPage = async () => {
       <div className="flex flex-col gap-12">
         <PostCardGrid
           items={items}
-          hrefBase="/admin/post"
+          hrefBase="/post"
           hrefField="id"
           className="mt-4"
         />

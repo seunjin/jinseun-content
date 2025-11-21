@@ -149,11 +149,7 @@ const BlockNoteViewer = ({ contentJson, className }: BlockNoteViewerProps) => {
 
   return (
     <BlockNoteView
-      className={cn(
-        "py-4",
-        "border-input rounded-md border dark:bg-input/30 bg-transparent shadow-xs",
-        className,
-      )}
+      className={cn("py-4", "  dark:bg-input/30 bg-transparent ", className)}
       theme={theme === "dark" ? "dark" : "light"}
       editor={editor}
       editable={false}
