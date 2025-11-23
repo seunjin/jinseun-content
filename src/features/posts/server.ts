@@ -14,6 +14,17 @@ export async function fetchPostsServer(options: FetchPostsOptions = {}) {
 }
 
 /**
+ * @description 서버에서 게시글 목록과 총 개수를 함께 조회합니다.
+ * - 페이지네이션을 구성할 때 사용합니다.
+ */
+export async function fetchPostsWithCountServer(
+  options: FetchPostsOptions = {},
+) {
+  const supabase = await createServerSupabase();
+  return createPostsApi(supabase).fetchPostsWithCount(options);
+}
+
+/**
  * @description ID 기준으로 단일 게시글을 조회합니다.
  */
 export async function fetchPostByIdServer(id: number) {

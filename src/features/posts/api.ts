@@ -55,6 +55,16 @@ export type FetchPostsOptions = {
    * @description 특정 카테고리에 속한 글만 조회할 때 사용하는 카테고리 ID입니다.
    */
   categoryId?: number;
+  /**
+   * @description 페이지네이션을 위한 조회 개수입니다.
+   * - limit와 offset을 함께 사용해 부분 목록을 조회합니다.
+   */
+  limit?: number;
+  /**
+   * @description 페이지네이션을 위한 시작 인덱스입니다(0부터 시작).
+   * - limit와 함께 사용할 때, offset부터 offset+limit-1까지의 행을 조회합니다.
+   */
+  offset?: number;
 };
 
 /**
@@ -65,7 +75,7 @@ async function fetchPosts(
   client: AnySupabaseClient,
   options: FetchPostsOptions = {},
 ): Promise<PostRow[]> {
-  const query = client
+  let query = client
     .from("posts")
     .select(POST_SELECT)
     .order("created_at", { ascending: false });
@@ -78,12 +88,58 @@ async function fetchPosts(
     query.eq("category_id", options.categoryId);
   }
 
+  if (typeof options.limit === "number") {
+    const start = options.offset ?? 0;
+    const end = start + options.limit - 1;
+    query = query.range(start, end);
+  }
+
   const { data, error } = await query;
 
   if (error) throw error;
   if (!data) return [];
 
   return postRowSchema.array().parse(data.map(mapPostRow));
+}
+
+/**
+ * @description 게시글 목록과 총 개수를 함께 조회합니다.
+ * - 페이지네이션 UI를 구성할 때 사용합니다.
+ */
+async function fetchPostsWithCount(
+  client: AnySupabaseClient,
+  options: FetchPostsOptions = {},
+): Promise<{ items: PostRow[]; totalCount: number }> {
+  let query = client
+    .from("posts")
+    .select(POST_SELECT, { count: "exact" })
+    .order("created_at", { ascending: false });
+
+  if (options.onlyPublished) {
+    query.eq("is_published", true);
+  }
+
+  if (options.categoryId !== undefined) {
+    query.eq("category_id", options.categoryId);
+  }
+
+  if (typeof options.limit === "number") {
+    const start = options.offset ?? 0;
+    const end = start + options.limit - 1;
+    query = query.range(start, end);
+  }
+
+  const { data, error, count } = await query;
+
+  if (error) throw error;
+
+  const rows = data ?? [];
+  const items = postRowSchema.array().parse(rows.map(mapPostRow));
+
+  return {
+    items,
+    totalCount: count ?? items.length,
+  };
 }
 
 /**
@@ -194,6 +250,8 @@ async function deletePost(
 export function createPostsApi(client: AnySupabaseClient) {
   return {
     fetchPosts: (options?: FetchPostsOptions) => fetchPosts(client, options),
+    fetchPostsWithCount: (options?: FetchPostsOptions) =>
+      fetchPostsWithCount(client, options),
     fetchPostById: (id: number) => fetchPostById(client, id),
     createPost: (payload: CreatePostInput) => createPost(client, payload),
     updatePost: (payload: UpdatePostInput) => updatePost(client, payload),
