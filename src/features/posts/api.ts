@@ -128,6 +128,7 @@ async function createPost(
       thumbnail_url: parsed.thumbnailUrl ?? null,
       content: parsed.content ?? null,
       is_published: parsed.isPublished,
+      created_at: parsed.createdAt ?? undefined,
     })
     .select(POST_SELECT)
     .single();
@@ -161,6 +162,7 @@ async function updatePost(
       thumbnail_url: patch.thumbnailUrl ?? null,
       content: patch.content ?? null,
       is_published: patch.isPublished,
+      created_at: patch.createdAt ?? undefined,
     })
     .eq("id", id)
     .select(POST_SELECT)

@@ -49,6 +49,12 @@ export const createPostInputSchema = z.object({
     .url("썸네일은 올바른 URL 형식이어야 합니다.")
     .optional(),
   /**
+   * @description 게시글의 생성 일시입니다.
+   * - 기본값은 서버에서 now()로 채워지며, 필요할 때만 과거 글 마이그레이션 용도로 수동 설정합니다.
+   * - ISO 8601 형식의 문자열을 기대합니다. (예: "2024-01-02T00:00:00.000Z")
+   */
+  createdAt: z.string().optional(),
+  /**
    * @description BlockNote 에디터에서 생성된 문서 JSON입니다.
    * - 프런트엔드에서는 BlockNote의 `editor` 인스턴스에서 JSON을 추출한 뒤 문자열로 직렬화해 전달합니다.
    * - 서버에서는 이 문자열을 그대로 DB에 저장합니다.

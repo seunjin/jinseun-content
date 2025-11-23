@@ -110,6 +110,16 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string>(
     post.thumbnailUrl ?? "",
   );
+  /**
+   * @description 수동으로 지정할 게시글 생성일(YYYY-MM-DD)입니다.
+   * - 초기값은 기존 createdAt을 사용합니다.
+   */
+  const [createdDate, setCreatedDate] = useState<string>(() => {
+    if (!post.createdAt) return "";
+    const date = new Date(post.createdAt);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toISOString().slice(0, 10);
+  });
   // 게시글 삭제 뮤테이션
   const { mutateAsync: deletePostAsync, isPending: isDeleting } = useMutation({
     mutationFn: async () =>
@@ -248,6 +258,16 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
       return;
     }
 
+    let createdAt: string | undefined;
+    if (createdDate) {
+      const date = new Date(`${createdDate}T00:00:00Z`);
+      if (Number.isNaN(date.getTime())) {
+        toast.error("작성일 형식이 올바르지 않습니다.");
+        return;
+      }
+      createdAt = date.toISOString();
+    }
+
     const trimmedThumbnailUrl = thumbnailUrl.trim();
     if (trimmedThumbnailUrl) {
       try {
@@ -273,6 +293,8 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
       thumbnailUrl: trimmedThumbnailUrl || undefined,
       // BlockNote 문서 JSON 문자열(없으면 undefined로 처리)
       content: contentJson || undefined,
+      // 수동 지정 생성일(없으면 기존 값 유지 또는 서버 기본값)
+      createdAt,
       isPublished,
     };
 
@@ -444,6 +466,23 @@ const EditPostForm = ({ categories, post }: EditPostFormProps) => {
               setSlug(normalized);
             }}
           />
+        </div>
+        {/* 작성일 (옵션) */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1">
+            <Label className="text-muted-foreground">작성일 (선택)</Label>
+          </div>
+          <Input
+            type="date"
+            value={createdDate}
+            onChange={(event) => {
+              setCreatedDate(event.target.value);
+            }}
+          />
+          <p className="text-xs text-muted-foreground">
+            과거에 작성한 글을 옮길 때만 사용하세요. 비워두면 기존 생성일을
+            유지합니다.
+          </p>
         </div>
         {/* 썸네일 URL (선택) */}
         <div className="flex flex-col gap-2">
