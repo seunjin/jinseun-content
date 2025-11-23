@@ -10,7 +10,7 @@ import AsideCloseButton from "./AsideCloseButton";
 
 const AppHeaderAside = ({ session, user }: AppHeaderProps) => {
   const { sidebarTrigger, sidebarClose } = useSidebar();
-  useBodyScrollLock(true);
+  useBodyScrollLock(sidebarTrigger);
 
   return (
     <AnimatePresence>

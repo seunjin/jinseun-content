@@ -1,7 +1,5 @@
 import type { ProfileRow } from "@features/profiles/schemas";
 import type { Session } from "@supabase/supabase-js";
-import { LogoutButton } from "@ui/components/LogoutButton";
-import { Separator } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,7 +29,7 @@ const AppHeader = ({ session, user }: AppHeaderProps) => {
           )}
         >
           <div className="flex items-center gap-6">
-            <Link href={"/"}>
+            <Link href="/">
               <Image
                 src="/assets/images/logo.svg"
                 alt="@LOGO"
