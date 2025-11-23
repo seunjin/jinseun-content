@@ -162,6 +162,25 @@ async function fetchPostById(
 }
 
 /**
+ * @description 슬러그 기준으로 단일 게시글을 조회합니다.
+ */
+async function fetchPostBySlug(
+  client: AnySupabaseClient,
+  slug: string,
+): Promise<PostRow | null> {
+  const { data, error } = await client
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  return postRowSchema.parse(mapPostRow(data as RawPostRow));
+}
+
+/**
  * @description 게시글을 신규 생성합니다.
  * - description은 최대 200자, keywords는 최대 5개까지 허용합니다.
  * - content는 BlockNote JSON 문자열로 저장합니다.
@@ -253,6 +272,7 @@ export function createPostsApi(client: AnySupabaseClient) {
     fetchPostsWithCount: (options?: FetchPostsOptions) =>
       fetchPostsWithCount(client, options),
     fetchPostById: (id: number) => fetchPostById(client, id),
+    fetchPostBySlug: (slug: string) => fetchPostBySlug(client, slug),
     createPost: (payload: CreatePostInput) => createPost(client, payload),
     updatePost: (payload: UpdatePostInput) => updatePost(client, payload),
     deletePost: (id: number) => deletePost(client, id),

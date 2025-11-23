@@ -8,6 +8,7 @@ import PostListIntro from "@ui/components/post/PostListIntro";
 import CategoryMobileFilter from "@ui/layouts/app-sidebar/CategoryMobileFilter";
 import CategorySidebar from "@ui/layouts/app-sidebar/CategorySidebar";
 import PageContainer from "@ui/layouts/PageContainer";
+import type { Metadata } from "next";
 
 const mapPostRowToSummary = (row: PostRow): PostSummary => ({
   id: row.id,
@@ -33,6 +34,95 @@ type PublicRootPageProps = {
     category?: string;
     page?: string;
   }>;
+};
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteTitle = "Jinseun Dev Blog";
+const siteDescription =
+  "새로운 기술을 탐구하고 직접 구현해보는 과정, 문제 해결 경험, 프로젝트 회고, 그리고 나만의 개발 철학을 정리합니다.";
+
+/**
+ * @description 블로그 루트/목록 페이지용 메타데이터를 생성합니다.
+ * - 카테고리 필터가 적용된 경우 카테고리 이름을 타이틀에 포함합니다.
+ */
+export const generateMetadata = async ({
+  searchParams,
+}: {
+  searchParams?: {
+    category?: string;
+    page?: string;
+  };
+}): Promise<Metadata> => {
+  const categorySlug = searchParams?.category;
+  const pageParam = searchParams?.page;
+
+  const page = Number.isNaN(Number(pageParam))
+    ? 1
+    : Math.max(1, Number.parseInt(pageParam ?? "1", 10));
+
+  const url = new URL("/", siteUrl);
+  if (categorySlug) {
+    url.searchParams.set("category", categorySlug);
+  }
+  if (page > 1) {
+    url.searchParams.set("page", String(page));
+  }
+
+  if (!categorySlug) {
+    return {
+      title: siteTitle,
+      description: siteDescription,
+      openGraph: {
+        title: siteTitle,
+        description: siteDescription,
+        url: url.toString(),
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: siteTitle,
+        description: siteDescription,
+      },
+    };
+  }
+
+  try {
+    const category = await fetchCategoryBySlugServer(categorySlug);
+    if (!category) {
+      return {
+        title: siteTitle,
+        description: siteDescription,
+      };
+    }
+
+    const baseTitle = `${category.name} 글 모음`;
+    const fullTitle = `${baseTitle} | ${siteTitle}`;
+    const description =
+      category.description ??
+      `${category.name}에 관한 글들을 모아서 정리한 목록입니다.`;
+
+    return {
+      title: fullTitle,
+      description,
+      keywords: [category.name],
+      openGraph: {
+        title: baseTitle,
+        description,
+        url: url.toString(),
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: baseTitle,
+        description,
+      },
+    };
+  } catch {
+    return {
+      title: siteTitle,
+      description: siteDescription,
+    };
+  }
 };
 
 const PubliRootPage = async ({ searchParams }: PublicRootPageProps) => {
@@ -117,7 +207,7 @@ const PubliRootPage = async ({ searchParams }: PublicRootPageProps) => {
               주세요.
             </div>
           ) : (
-            <PostCardGrid items={items} hrefBase="/post" hrefField="id" />
+            <PostCardGrid items={items} hrefBase="/post" hrefField="slug" />
           )}
           <Pagination
             className="mt-20"

@@ -33,6 +33,14 @@ export async function fetchPostByIdServer(id: number) {
 }
 
 /**
+ * @description 슬러그 기준으로 단일 게시글을 조회합니다.
+ */
+export async function fetchPostBySlugServer(slug: string) {
+  const supabase = await createServerSupabase();
+  return createPostsApi(supabase).fetchPostBySlug(slug);
+}
+
+/**
  * @description 신규 게시글을 생성합니다.
  * - isPublished 값에 따라 비공개(초안) 또는 공개(발행) 상태로 저장됩니다.
  */
