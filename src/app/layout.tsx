@@ -3,6 +3,7 @@ import "./globals.css";
 import NextQueryClientProvider from "@providers/QueryClient.provider";
 import ClientDialogRenderer from "@ui/components/dialogs/ClientDialogRenderer";
 import { Toaster } from "@ui/shadcn/components";
+import { Analytics } from "@vercel/analytics/next";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const siteTitle = "Jinseun Dev Blog";
@@ -80,6 +81,7 @@ export default function RootLayout({
           <ClientDialogRenderer />
         </NextQueryClientProvider>
         <Toaster expand position={`top-center`} />
+        <Analytics />
       </body>
     </html>
   );
