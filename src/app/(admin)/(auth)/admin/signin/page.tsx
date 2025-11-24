@@ -7,13 +7,9 @@ import { Button } from "@ui/shadcn/components/button";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 
-/**
- * @description /admin 영역 전용 Google OAuth 로그인 페이지입니다.
- * - 개별 버튼만 제공하고, 성공 시 Supabase OAuth 콜백으로 이동합니다.
- */
-export default function AdminSignInPage() {
+const AdminSignInContent = () => {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -111,5 +107,18 @@ export default function AdminSignInPage() {
         </section>
       </div>
     </PageContainer.Default>
+  );
+};
+
+/**
+ * @description /admin 영역 전용 Google OAuth 로그인 페이지입니다.
+ * - 개별 버튼만 제공하고, 성공 시 Supabase OAuth 콜백으로 이동합니다.
+ * - useSearchParams 훅 사용을 위해 Suspense 경계로 감쌉니다.
+ */
+export default function AdminSignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminSignInContent />
+    </Suspense>
   );
 }

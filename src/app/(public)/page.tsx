@@ -48,13 +48,14 @@ const siteDescription =
 export const generateMetadata = async ({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams?: Promise<{
     category?: string;
     page?: string;
-  };
+  }>;
 }): Promise<Metadata> => {
-  const categorySlug = searchParams?.category;
-  const pageParam = searchParams?.page;
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const categorySlug = resolvedSearchParams.category;
+  const pageParam = resolvedSearchParams.page;
 
   const page = Number.isNaN(Number(pageParam))
     ? 1

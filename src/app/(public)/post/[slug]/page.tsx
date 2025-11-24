@@ -31,13 +31,12 @@ const authorName = "Jinseun";
  */
 export const generateMetadata = async ({
   params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> => {
+}: PublicPostDetailPageProps): Promise<Metadata> => {
   try {
+    const resolvedParams = await params;
     const supabase = await createServerSupabase();
     const postsApi = createPostsApi(supabase);
-    const post = await postsApi.fetchPostBySlug(params.slug);
+    const post = await postsApi.fetchPostBySlug(resolvedParams.slug);
 
     if (!post || !post.isPublished) {
       return {
