@@ -26,7 +26,7 @@ const fetchCategoriesFromApi = async (): Promise<
 > => {
   try {
     const appOrigin =
-      process.env.NEXT_PUBLIC_APP_ORIGIN ?? "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
     const url = new URL(
       "/api/categories/with-post-counts?onlyVisible=true",
       appOrigin,

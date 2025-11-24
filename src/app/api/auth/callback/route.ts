@@ -12,8 +12,7 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const error = requestUrl.searchParams.get("error");
   const errorDescription = requestUrl.searchParams.get("error_description");
-  const appOrigin =
-    process.env.NEXT_PUBLIC_APP_ORIGIN ?? "http://localhost:3000";
+  const appOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const next = requestUrl.searchParams.get("next") ?? "/admin";
 
   const redirectUrl = new URL(next, appOrigin);

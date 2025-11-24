@@ -17,8 +17,7 @@ export default function AdminSignInPage() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const appOrigin =
-    process.env.NEXT_PUBLIC_APP_ORIGIN ?? "http://localhost:3000";
+  const appOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   const nextPath = useMemo(
     () => searchParams.get("next") ?? "/admin",
