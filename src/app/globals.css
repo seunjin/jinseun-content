@@ -212,6 +212,12 @@
 .bn-block-content[data-content-type="table"] .tableWrapper {
   padding: 0 !important;
 }
+span[data-style-type="backgroundColor"] {
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 1px 8px;
+  display: inline-block;
+}
 
 /* react-layered-dialogs */
 .scroll-locked {
