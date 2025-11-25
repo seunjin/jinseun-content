@@ -40,7 +40,7 @@ const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
       className="relative aspect-video w-full"
       style={{ perspective: "800px" }}
     >
-      <div className="relative h-full w-full overflow-hidden rounded-lg  bg-accent transition-transform group-hover:scale-102">
+      <div className="relative h-full w-full overflow-hidden rounded-lg border  bg-accent transition-transform group-hover:scale-102">
         {item.thumbnailUrl ? (
           <Image
             src={item.thumbnailUrl}
@@ -76,20 +76,9 @@ const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
   );
 
   const CardInner = (
-    <article
-      className={cn("group grid grid-rows-[auto_1fr] rounded-lg", className)}
-    >
-      {/* 썸네일 (이미지 영역만 링크로 이동) */}
-      {href ? (
-        <Link
-          href={href}
-          className="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-        >
-          {Thumbnail}
-        </Link>
-      ) : (
-        Thumbnail
-      )}
+    <article className={cn("grid grid-rows-[auto_1fr] rounded-lg", className)}>
+      {/* 썸네일 */}
+      {Thumbnail}
 
       {/* 본문 */}
       <div className="py-3">
@@ -114,7 +103,18 @@ const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
     </article>
   );
 
-  return CardInner;
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      >
+        {CardInner}
+      </Link>
+    );
+  }
+
+  return <div className="group">{CardInner}</div>;
 };
 
 export default PostCard;
