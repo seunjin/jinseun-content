@@ -19,6 +19,11 @@ const imageRemotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] =
       hostname: "localhost",
       port: "54321",
     },
+    // 기본 Supabase Storage 호스트(프로젝트별 서브도메인 허용)
+    {
+      protocol: "https",
+      hostname: "**.supabase.co",
+    },
   ];
 
 if (supabaseUrl) {

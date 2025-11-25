@@ -1,7 +1,6 @@
 "use client";
 
 import type { PostSummary } from "@features/posts/types";
-import { formatYmd } from "@shared/utils/date";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,8 +22,6 @@ export type PostCardProps = {
  * - 관리자/퍼블릭 공용 사용을 고려해 중립적인 표기와 구조로 구성합니다.
  */
 const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
-  const createdYmd = formatYmd(item.createdAt ?? undefined);
-
   // 썸네일이 없을 때 일관된(랜덤 아님) 그라디언트를 생성하기 위한 hue 해시
   const fallbackGradient = useMemo(() => {
     const base = item.slug || String(item.id);
@@ -67,16 +64,10 @@ const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
             </div>
           </>
         )}
-        {createdYmd && (
-          <div className="absolute bottom-2 right-2 flex gap-2">
-            {showStatus && !item.isPublished && (
-              <span className="rounded-full border bg-background/80 px-2 py-0.5 text-[10px] text-muted-foreground shadow-sm">
-                비공개
-              </span>
-            )}
-
+        {showStatus && !item.isPublished && (
+          <div className="absolute bottom-2 right-2">
             <span className="rounded-full border bg-background/80 px-2 py-0.5 text-[10px] text-muted-foreground shadow-sm">
-              {createdYmd}
+              비공개
             </span>
           </div>
         )}
@@ -107,11 +98,6 @@ const PostCard = ({ item, href, className, showStatus }: PostCardProps) => {
             {item.title}
           </h3>
         </div>
-        {item.description?.trim() && (
-          <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-            {item.description}
-          </p>
-        )}
         {item.keywords && item.keywords.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {item.keywords.map((kw) => (
@@ -140,8 +126,6 @@ export const PostCardSkeleton = ({ className }: { className?: string }) => {
       <div className="aspect-video rounded-lg border bg-accent/30" />
       <div className="py-3">
         <div className="h-4 w-3/4 rounded bg-accent/50" />
-        <div className="mt-2 h-3 w-5/6 rounded bg-accent/40" />
-        <div className="mt-2 h-3 w-2/3 rounded bg-accent/40" />
         <div className="mt-3 flex gap-2 text-[11px]">
           <div className="h-3 w-12 rounded-full bg-accent/40" />
           <div className="h-3 w-10 rounded-full bg-accent/40" />
