@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@ui/shadcn/lib/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type BlockNoteTocProps = {
   /**
