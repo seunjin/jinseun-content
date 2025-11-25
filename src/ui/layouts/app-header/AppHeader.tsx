@@ -1,5 +1,4 @@
 import type { ProfileRow } from "@features/profiles/schemas";
-import type { Session } from "@supabase/supabase-js";
 import { cn } from "@ui/shadcn/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,13 +6,11 @@ import AppHeaderAside from "./AppHeaderAside";
 import AsideOpenButton from "./AsideOpenButton";
 
 export type AppHeaderProps = {
-  session: Session | null;
   user: ProfileRow | null;
 };
 
-const AppHeader = ({ session, user }: AppHeaderProps) => {
-  const isAuthenticated = Boolean(session);
-  // const displayName = user?.name;
+const AppHeader = ({ user }: AppHeaderProps) => {
+  const isAuthenticated = Boolean(user);
   return (
     <>
       <header
@@ -46,7 +43,7 @@ const AppHeader = ({ session, user }: AppHeaderProps) => {
           </div>
         </div>
       </header>
-      <AppHeaderAside session={session} user={user} />
+      <AppHeaderAside user={user} />
     </>
   );
 };

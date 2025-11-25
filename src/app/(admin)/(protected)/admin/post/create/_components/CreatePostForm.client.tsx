@@ -442,7 +442,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
                 keywords.map((value) => (
                   <div
                     key={value}
-                    className="inline-flex w-fit flex-1 items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
+                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
                   >
                     <span>{value}</span>
                     <button

@@ -8,13 +8,13 @@ import Link from "next/link";
 import type { AppHeaderProps } from "./AppHeader";
 import AsideCloseButton from "./AsideCloseButton";
 
-const AppHeaderAside = ({ session, user }: AppHeaderProps) => {
+const AppHeaderAside = ({ user }: AppHeaderProps) => {
   const { sidebarTrigger, sidebarClose } = useSidebar();
   useBodyScrollLock(sidebarTrigger);
 
   return (
     <AnimatePresence>
-      {sidebarTrigger && session && (
+      {sidebarTrigger && user && (
         <aside className={"fixed scroll-lock inset-0 z-20"}>
           {/* Overlay */}
           <motion.div

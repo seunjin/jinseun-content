@@ -29,6 +29,34 @@ const BlockNoteToc = ({
 }: BlockNoteTocProps) => {
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const getScrollOffset = useCallback(() => {
+    const rootStyle = getComputedStyle(document.documentElement);
+    const fontSize =
+      Number.parseFloat(rootStyle.getPropertyValue("font-size")) || 16;
+    const toPx = (value: string) => {
+      const trimmed = value.trim();
+      if (!trimmed) return 0;
+
+      const numeric = Number.parseFloat(trimmed);
+      if (!Number.isFinite(numeric)) return 0;
+
+      if (trimmed.endsWith("rem")) {
+        return numeric * fontSize;
+      }
+
+      return numeric;
+    };
+
+    const headerHeight = toPx(rootStyle.getPropertyValue("--header-height"));
+    const toolbarHeight = toPx(
+      rootStyle.getPropertyValue("--page-toolbar-height"),
+    );
+    const paddingTop = toPx(
+      rootStyle.getPropertyValue("--main-container-padding-block-start"),
+    );
+
+    return headerHeight + toolbarHeight + paddingTop;
+  }, []);
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(rootSelector);
@@ -106,18 +134,7 @@ const BlockNoteToc = ({
     const root = document.querySelector<HTMLElement>(rootSelector);
     if (!root) return;
 
-    const rootStyle = getComputedStyle(document.documentElement);
-    const headerHeight =
-      Number.parseFloat(rootStyle.getPropertyValue("--header-height")) || 0;
-    const toolbarHeight =
-      Number.parseFloat(rootStyle.getPropertyValue("--page-toolbar-height")) ||
-      0;
-    const paddingTop =
-      Number.parseFloat(
-        rootStyle.getPropertyValue("--main-container-padding-block-start"),
-      ) || 0;
-
-    const offset = headerHeight + toolbarHeight + paddingTop;
+    const offset = getScrollOffset();
 
     const getTargets = () =>
       items
@@ -135,6 +152,8 @@ const BlockNoteToc = ({
       if (targets.length === 0) return;
 
       let currentId: string | null = targets[0]?.item.id ?? null;
+      const scrollBottom = window.scrollY + window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
 
       for (const { item, el } of targets) {
         const rect = el.getBoundingClientRect();
@@ -143,6 +162,11 @@ const BlockNoteToc = ({
         } else {
           break;
         }
+      }
+
+      // 페이지 하단 근처에서는 기준선을 넘기지 못하는 마지막 헤딩을 강제로 활성화합니다.
+      if (documentHeight - scrollBottom <= 4 && targets.length > 0) {
+        currentId = targets[targets.length - 1]?.item.id ?? currentId;
       }
 
       setActiveId(currentId);
@@ -154,7 +178,7 @@ const BlockNoteToc = ({
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [items, rootSelector]);
+  }, [items, rootSelector, getScrollOffset]);
 
   if (items.length === 0) {
     return null;
@@ -182,9 +206,14 @@ const BlockNoteToc = ({
                 );
 
                 if (target) {
-                  target.scrollIntoView({
+                  const offset = getScrollOffset();
+                  const rect = target.getBoundingClientRect();
+                  const absoluteTop = window.scrollY + rect.top;
+
+                  // 헤더/툴바 높이만큼 보정해 원하는 위치에 정렬합니다.
+                  window.scrollTo({
+                    top: absoluteTop - offset + 1,
                     behavior: "smooth",
-                    block: "start",
                   });
                 }
               }}

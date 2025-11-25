@@ -2,7 +2,6 @@ import { createProfilesApi } from "@features/profiles/api";
 import type { ProfileRow } from "@features/profiles/schemas";
 import { requireEnv } from "@shared/utils/env";
 import { createServerClient } from "@supabase/ssr";
-import type { Session } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
 /**
@@ -36,9 +35,9 @@ export async function createServerSupabase() {
 }
 
 /**
- * @description 서버 환경에서 현재 세션을 조회합니다. 서버 컴포넌트/Route Handler에서 사용하세요.
+ * @description 서버 환경에서 현재 사용자 정보를 조회합니다. 서버 컴포넌트/Route Handler에서 사용하세요.
  */
-export const getServerSession = async (): Promise<Session | null> => {
+export const getServerSession = async () => {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.auth.getUser();
 
@@ -46,9 +45,7 @@ export const getServerSession = async (): Promise<Session | null> => {
     return null;
   }
 
-  const sessionResponse = await supabase.auth.getSession();
-
-  return sessionResponse.data.session;
+  return data.user;
 };
 
 /**
@@ -57,7 +54,6 @@ export const getServerSession = async (): Promise<Session | null> => {
  */
 export const getSessionWithUser = async (): Promise<{
   user: ProfileRow | null;
-  session: Session | null;
 }> => {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.auth.getUser();
@@ -65,14 +61,12 @@ export const getSessionWithUser = async (): Promise<{
   if (error || !data.user?.email) {
     return {
       user: null,
-      session: null,
     };
   }
 
-  const sessionResponse = await supabase.auth.getSession();
   const user = await createProfilesApi(supabase).fetchProfileByEmail(
     data.user.email,
   );
 
-  return { session: sessionResponse.data.session, user };
+  return { user };
 };

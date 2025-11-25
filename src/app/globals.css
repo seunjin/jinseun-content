@@ -198,6 +198,19 @@
   padding: 0 !important;
 }
 
+/* 인라인 code 토큰 스타일 */
+.bn-inline-content code {
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+  padding: 1px 6px;
+  background-color: rgba(135, 131, 120, 0.15);
+  font-family:
+    "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  vertical-align: text-bottom;
+}
+
 /* Shiki 색상을 그대로 적용 */
 .bn-block-content[data-content-type="codeBlock"] {
   background-color: var(--prosemirror-highlight-bg, rgb(22 22 22));
@@ -217,18 +230,6 @@
   padding: 0 !important;
 }
 
-.bn-inline-content code {
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-block;
-  padding: 1px 6px;
-  background-color: rgba(135, 131, 120, 0.15);
-  font-family:
-    "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-  vertical-align: text-bottom;
-}
-
 /* react-layered-dialogs */
 .scroll-locked {
   overflow: hidden;
@@ -242,5 +243,5 @@
 
 /* BlockNote heading 섹션이 고정 헤더/툴바 아래에 가려지지 않도록 스크롤 오프셋을 지정합니다. */
 .page-content-viwer [data-node-type="blockOuter"] {
-  scroll-margin-top: calc(var(--header-height));
+  scroll-margin-top: calc(var(--header-height) + var(--page-toolbar-height));
 }
