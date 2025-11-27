@@ -235,6 +235,10 @@
   color: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
 }
 
+/* h3 사이즈  */
+[data-content-type="heading"][data-level="3"] {
+  --level: 1.6rem;
+}
 /* react-layered-dialogs */
 .scroll-locked {
   overflow: hidden;
