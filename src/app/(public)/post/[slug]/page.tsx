@@ -179,7 +179,8 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
               src={post.thumbnailUrl}
               alt={post.title}
               fill
-              objectFit="cover"
+              className="object-cover"
+              sizes="(min-width: 1200px) 1056px, (min-width: 768px) calc(100vw - 48px), 100vw"
             />
           </div>
         )}
