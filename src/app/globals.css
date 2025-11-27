@@ -231,6 +231,10 @@
   padding: 0 !important;
 }
 
+[data-file-block] .bn-file-caption {
+  color: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
+}
+
 /* react-layered-dialogs */
 .scroll-locked {
   overflow: hidden;
