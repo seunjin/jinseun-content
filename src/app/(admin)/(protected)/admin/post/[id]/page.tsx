@@ -68,7 +68,7 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
         {/* 타이틀 */}
 
         <header className="space-y-3 text-left">
-          <h1 className="text-4xl font-semibold tracking-tight break-keep">
+          <h1 className="text-4xl font-semibold tracking-tight break-keep leading-1.5">
             {post.title}
           </h1>
           {/* 설명(옵션) */}
