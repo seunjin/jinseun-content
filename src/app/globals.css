@@ -141,6 +141,7 @@
 
     margin: 0;
     padding: 0;
+
     box-sizing: border-box;
 
     /* scrollbar-width: none; */
@@ -195,7 +196,7 @@
 }
 
 .bn-block-content {
-  padding: 0 !important;
+  /* padding: 0 !important; */
 }
 
 /* 인라인 code 토큰 스타일 */
