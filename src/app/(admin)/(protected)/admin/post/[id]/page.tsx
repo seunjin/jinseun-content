@@ -6,6 +6,7 @@ import Icon from "@ui/components/lucide-icons/Icon";
 import PageContainer from "@ui/layouts/PageContainer";
 import { Button, Separator } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 
 type AdminPostDetailPageProps = {
@@ -65,10 +66,10 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
             </Button>
           </Link>
         </div>
-        {/* 타이틀 */}
 
         <header className="space-y-3 text-left">
-          <h1 className="text-4xl font-semibold tracking-tight break-keep leading-1.5">
+          {/* 타이틀 */}
+          <h1 className="text-4xl font-semibold tracking-tight break-keep leading-[1.3]">
             {post.title}
           </h1>
           {/* 설명(옵션) */}
@@ -117,6 +118,17 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
 
         <Separator className="bg-foreground/10" />
 
+        {/* 썸네일 */}
+        {post.thumbnailUrl && (
+          <div className="relative aspect-video">
+            <Image
+              src={post.thumbnailUrl}
+              alt={post.title}
+              fill
+              objectFit="cover"
+            />
+          </div>
+        )}
         <div className="flex flex-col gap-6 lg:flex-row">
           {/* BlockNote 기반 본문(content) 뷰어 */}
           <section className="page-content-viwer flex-1">

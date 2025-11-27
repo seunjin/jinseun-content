@@ -7,6 +7,7 @@ import BlockNoteViewerClient from "@ui/components/editor/BlockNoteViewer.client"
 import PageContainer from "@ui/layouts/PageContainer";
 import { Separator } from "@ui/shadcn/components";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 type PublicPostDetailPageProps = {
   /**
@@ -132,12 +133,12 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
       sidebarComponent={<BlockNoteToc />}
     >
       <article className="mx-auto flex flex-col gap-6">
-        {/* 타이틀 */}
-
         <header className="space-y-3 text-left">
-          <h1 className="text-4xl font-semibold tracking-tight break-keep leading-1.5">
+          {/* 타이틀 */}
+          <h1 className="text-4xl font-semibold tracking-tight break-keep leading-[1.3]">
             {post.title}
           </h1>
+
           {/* 설명(옵션) */}
           {post.description && (
             <p className="text-lg text-muted-foreground break-keep">
@@ -170,6 +171,18 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
         </header>
 
         <Separator className="bg-foreground/10" />
+
+        {/* 썸네일 */}
+        {post.thumbnailUrl && (
+          <div className="relative aspect-video">
+            <Image
+              src={post.thumbnailUrl}
+              alt={post.title}
+              fill
+              objectFit="cover"
+            />
+          </div>
+        )}
 
         <div className="flex flex-col gap-6 lg:flex-row">
           {/* BlockNote 기반 본문(content) 뷰어 */}
