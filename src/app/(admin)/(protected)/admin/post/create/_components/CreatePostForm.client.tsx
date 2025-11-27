@@ -234,7 +234,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
   return (
     <div
       className={cn(
-        "flex flex-col items-start gap-6",
+        "flex flex-col items-start gap-6 w-full max-w-[720px] mx-auto",
         // 반응형 스타일
         // "lg:flex-row",
       )}
