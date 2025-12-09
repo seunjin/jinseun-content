@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 const ADMIN_BASE_PATH = "/admin";
 const ADMIN_PUBLIC_PATHS = new Set(["/admin/signin"]);
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   if (!pathname.startsWith(ADMIN_BASE_PATH)) {

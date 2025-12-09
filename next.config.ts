@@ -1,3 +1,6 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import type { NextConfig } from "next";
 
 // Supabase Storage(로컬/프로덕션)에서 제공하는 이미지 도메인을 Next Image에 허용합니다.
@@ -38,9 +41,14 @@ if (supabaseUrl) {
   }
 }
 
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+
 const nextConfig: NextConfig = {
   /* config options here */
 
+  turbopack: {
+    root: currentDir,
+  },
   reactStrictMode: false, //BlockNote는 아직 React 19 / Next 15 StrictMode와 호환되지 않습니다. 지금은 다음에서 StrictMode를 비활성화하세요
   images: {
     remotePatterns: imageRemotePatterns,
