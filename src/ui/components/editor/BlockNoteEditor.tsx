@@ -101,9 +101,14 @@ const CalloutBlock = createReactBlockSpec(
 /**
  * @description 슬래시 메뉴에 Callout 항목 추가를 위한 유틸리티
  */
-const insertCallout = (editor: any) => {
+// biome-ignore lint/suspicious/noExplicitAny: BlockNote editor types can be complex with custom schemas
+const insertCallout = (
+  editor: any,
+  type: "info" | "warning" | "error" | "success" = "info",
+) => {
   insertOrUpdateBlock(editor, {
     type: "callout",
+    props: { type } as any,
   });
 };
 
@@ -252,18 +257,42 @@ export default function BlockNoteEditor({
             [
               ...getDefaultReactSlashMenuItems(editor),
               {
-                title: "콜아웃",
-                onItemClick: () => insertCallout(editor),
-                aliases: ["callout", "notice", "info", "warning"],
-                group: "기타",
-                icon: <Lightbulb size={18} />,
-                subtext: "강조하고 싶은 정보를 입력하세요.",
+                title: "정보 콜아웃",
+                onItemClick: () => insertCallout(editor, "info"),
+                aliases: ["callout", "info", "notice", "정보", "공지"],
+                group: "콜아웃",
+                icon: <Info size={18} />,
+                subtext: "정보 전달을 위한 파란색 콜아웃을 삽입합니다.",
+              },
+              {
+                title: "경고 콜아웃",
+                onItemClick: () => insertCallout(editor, "warning"),
+                aliases: ["callout", "warning", "warn", "경고", "주의"],
+                group: "콜아웃",
+                icon: <AlertTriangle size={18} />,
+                subtext: "주의가 필요한 내용을 위한 노란색 콜아웃을 삽입합니다.",
+              },
+              {
+                title: "에러 콜아웃",
+                onItemClick: () => insertCallout(editor, "error"),
+                aliases: ["callout", "error", "fail", "danger", "에러", "위험"],
+                group: "콜아웃",
+                icon: <AlertCircle size={18} />,
+                subtext: "심각한 오류나 경고를 위한 빨간색 콜아웃을 삽입합니다.",
+              },
+              {
+                title: "성공 콜아웃",
+                onItemClick: () => insertCallout(editor, "success"),
+                aliases: ["callout", "success", "check", "done", "성공", "완료"],
+                group: "콜아웃",
+                icon: <CheckCircle size={18} />,
+                subtext: "완료나 긍정적인 메시지를 위한 초록색 콜아웃을 삽입합니다.",
               },
             ],
             query,
           )
         }
       />
-    </BlockNoteView>
+    </BlockNoteView >
   );
 }
