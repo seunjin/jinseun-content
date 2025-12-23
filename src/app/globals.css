@@ -236,12 +236,12 @@
 }
 
 [data-content-type="divider"] hr {
-  border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+  border-color: color-mix(in oklab, var(--foreground) 10%, transparent) !important;
 }
 
 [data-content-type="quote"] blockquote {
-  color: #3f3f3f;
-  border-left: 2px solid #3f3f3f;
+  color: #3f3f3f !important;
+  border-left: 2px solid #3f3f3f !important;
 }
 
 /* h1 사이즈  */
