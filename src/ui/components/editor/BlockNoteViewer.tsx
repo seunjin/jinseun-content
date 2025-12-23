@@ -1,17 +1,13 @@
 "use client";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/shadcn/style.css";
-import {
-  BlockNoteSchema,
-  createCodeBlockSpec,
-  defaultBlockSpecs,
-} from "@blocknote/core";
 import { ko } from "@blocknote/core/locales";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
 import { cn } from "@ui/shadcn/lib/utils";
 import { useTheme } from "next-themes";
 import { useMemo } from "react";
+import { createCustomSchema } from "./schema";
 
 const CODE_BLOCK_LANGUAGES: Record<
   string,
@@ -51,65 +47,7 @@ const BlockNoteViewer = ({ contentJson, className }: BlockNoteViewerProps) => {
   const locale = ko;
   const { theme } = useTheme();
 
-  const schema = useMemo(
-    () =>
-      BlockNoteSchema.create({
-        blockSpecs: {
-          ...defaultBlockSpecs,
-          codeBlock: createCodeBlockSpec({
-            indentLineWithTab: true,
-            defaultLanguage: "typescript",
-            supportedLanguages: CODE_BLOCK_LANGUAGES,
-            createHighlighter: async () => {
-              const { createHighlighter } = await import("shiki");
-
-              const highlighter = await createHighlighter({
-                themes: [CODE_BLOCK_THEME],
-                langs: [...CODE_BLOCK_LANGUAGE_KEYS],
-              });
-              const originalCodeToTokens =
-                highlighter.codeToTokens.bind(highlighter);
-
-              type OriginalOptions = Parameters<typeof originalCodeToTokens>[1];
-
-              const ensureThemeOption = (
-                options?: OriginalOptions,
-              ): OriginalOptions => {
-                if (options && "themes" in options && options.themes) {
-                  return {
-                    ...options,
-                    themes: {
-                      ...options.themes,
-                      light: CODE_BLOCK_THEME,
-                      dark: CODE_BLOCK_THEME,
-                    },
-                  };
-                }
-
-                return {
-                  ...(options ?? {}),
-                  theme: CODE_BLOCK_THEME,
-                } as OriginalOptions;
-              };
-
-              const patchedCodeToTokens: typeof highlighter.codeToTokens = (
-                code,
-                options,
-              ) => {
-                const finalOptions = ensureThemeOption(options);
-
-                return originalCodeToTokens(code, finalOptions);
-              };
-
-              highlighter.codeToTokens = patchedCodeToTokens;
-
-              return highlighter;
-            },
-          }),
-        },
-      }),
-    [],
-  );
+  const schema = useMemo(() => createCustomSchema(), []);
 
   const dictionary = {
     ...locale,
