@@ -1,6 +1,6 @@
 "use client";
 import "@blocknote/core/fonts/inter.css";
-import "@blocknote/shadcn/style.css";
+
 import {
   BlockNoteSchema,
   createCodeBlockSpec,
@@ -270,7 +270,8 @@ export default function BlockNoteEditor({
                 aliases: ["callout", "warning", "warn", "경고", "주의"],
                 group: "콜아웃",
                 icon: <AlertTriangle size={18} />,
-                subtext: "주의가 필요한 내용을 위한 노란색 콜아웃을 삽입합니다.",
+                subtext:
+                  "주의가 필요한 내용을 위한 노란색 콜아웃을 삽입합니다.",
               },
               {
                 title: "에러 콜아웃",
@@ -278,21 +279,30 @@ export default function BlockNoteEditor({
                 aliases: ["callout", "error", "fail", "danger", "에러", "위험"],
                 group: "콜아웃",
                 icon: <AlertCircle size={18} />,
-                subtext: "심각한 오류나 경고를 위한 빨간색 콜아웃을 삽입합니다.",
+                subtext:
+                  "심각한 오류나 경고를 위한 빨간색 콜아웃을 삽입합니다.",
               },
               {
                 title: "성공 콜아웃",
                 onItemClick: () => insertCallout(editor, "success"),
-                aliases: ["callout", "success", "check", "done", "성공", "완료"],
+                aliases: [
+                  "callout",
+                  "success",
+                  "check",
+                  "done",
+                  "성공",
+                  "완료",
+                ],
                 group: "콜아웃",
                 icon: <CheckCircle size={18} />,
-                subtext: "완료나 긍정적인 메시지를 위한 초록색 콜아웃을 삽입합니다.",
+                subtext:
+                  "완료나 긍정적인 메시지를 위한 초록색 콜아웃을 삽입합니다.",
               },
             ],
             query,
           )
         }
       />
-    </BlockNoteView >
+    </BlockNoteView>
   );
 }
