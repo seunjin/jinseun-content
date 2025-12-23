@@ -15,7 +15,7 @@ export type BlockNoteTocProps = {
 
 type TocItem = {
   id: string;
-  level: 2 | 3;
+  level: 2 | 3 | 4;
   text: string;
 };
 
@@ -67,14 +67,14 @@ const BlockNoteToc = ({
 
     const computeToc = () => {
       const headingBlocks = root.querySelectorAll<HTMLElement>(
-        '.bn-block-content[data-content-type="heading"][data-level="2"], .bn-block-content[data-content-type="heading"][data-level="3"]',
+        '.bn-block-content[data-content-type="heading"][data-level="2"], .bn-block-content[data-content-type="heading"][data-level="3"], .bn-block-content[data-content-type="heading"][data-level="4"]',
       );
 
       const nextItems: TocItem[] = [];
 
       headingBlocks.forEach((block, index) => {
         const headingEl =
-          block.querySelector<HTMLHeadingElement>("h2, h3") ?? undefined;
+          block.querySelector<HTMLHeadingElement>("h2, h3, h4") ?? undefined;
         const text = headingEl?.textContent?.trim();
         if (!text) return;
 
@@ -101,7 +101,7 @@ const BlockNoteToc = ({
         }
 
         const levelAttr = block.getAttribute("data-level");
-        const level: 2 | 3 = levelAttr === "3" ? 3 : 2;
+        const level = (Number.parseInt(levelAttr ?? "2") as 2 | 3 | 4) || 2;
 
         nextItems.push({ id: targetId, level, text });
       });
@@ -188,7 +188,13 @@ const BlockNoteToc = ({
     <nav className={cn("text-xs text-muted-foreground", className)}>
       <ul className="space-y-1">
         {items.map((item) => (
-          <li key={item.id} className={item.level === 3 ? "pl-3" : undefined}>
+          <li
+            key={item.id}
+            className={cn(
+              item.level === 3 && "pl-3",
+              item.level === 4 && "pl-6",
+            )}
+          >
             <button
               type="button"
               className={cn(
