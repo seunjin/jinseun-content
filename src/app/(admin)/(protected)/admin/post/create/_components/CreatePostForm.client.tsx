@@ -1,8 +1,8 @@
 "use client";
 
 import type { CategoryRow } from "@features/categories/schemas";
-import type { CreatePostInput, PostRow } from "@features/posts/schemas";
-import { ApiClientError, clientHttp } from "@shared/lib/api/http-client";
+import type { CreatePostInput } from "@features/posts/schemas";
+import { createPostAction } from "@features/posts/actions";
 import Icon from "@ui/components/lucide-icons/Icon";
 import {
   Button,
@@ -32,9 +32,6 @@ type CreatePostFormProps = {
 
 /**
  * @description 게시글 생성 폼 컴포넌트입니다.
- * - Step 01: 카테고리 및 썸네일(옵션) 선택
- * - Step 02: 제목, 설명, 키워드, 본문(BlockNote) 작성
- * - "저장" 클릭 시 isPublished=false, "발행" 클릭 시 isPublished=true로 `/api/posts`에 전송합니다.
  */
 const CreatePostForm = ({ categories }: CreatePostFormProps) => {
   const router = useRouter();
@@ -42,44 +39,14 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
-  /**
-   * @description 입력된 키워드 문자열 목록입니다.
-   * - 개별 키워드는 최대 5개까지 허용합니다.
-   */
   const [keywords, setKeywords] = useState<string[]>([]);
-  /**
-   * @description 키워드 입력 인풋의 현재 값입니다.
-   * - Enter 키 입력 시 keywords 배열에 추가됩니다.
-   */
   const [keywordInput, setKeywordInput] = useState<string>("");
-  /**
-   * @description BlockNote 에디터의 문서 JSON을 문자열로 직렬화한 값입니다.
-   * - Editor 컴포넌트에서 onChange 시점에 최신 값을 전달합니다.
-   */
   const [contentJson, setContentJson] = useState<string>("");
-  /**
-   * @description 게시글 발행 여부입니다.
-   * - 스위치 컴포넌트로 공개/비공개를 전환합니다.
-   */
   const [isPublished, setIsPublished] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  /**
-   * @description 썸네일 이미지의 공개 URL입니다.
-   * - Supabase Storage 등에 업로드한 이미지의 URL을 수동으로 입력합니다.
-   */
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(
-    undefined,
-  );
-  /**
-   * @description 수동으로 지정할 게시글 생성일(YYYY-MM-DD)입니다.
-   * - 비워두면 서버에서 now()로 채워집니다.
-   */
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(undefined);
   const [createdDate, setCreatedDate] = useState<string>("");
 
-  /**
-   * @description 제목을 기반으로 슬러그를 생성합니다.
-   * - 영문 소문자/숫자/하이픈만 허용하고, 연속 하이픈과 앞뒤 하이픈을 정리합니다.
-   */
   const slugifyFromTitle = (input: string) =>
     input
       .toLowerCase()
@@ -88,45 +55,28 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
 
-  /** description 변경 핸들러 */
-  const handleChangeDescription: React.ChangeEventHandler<
-    HTMLTextAreaElement
-  > = (event) => {
+  const handleChangeDescription: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const nextValue = event.target.value.slice(0, 200);
     setDescription(nextValue);
   };
 
-  /**
-   * @description 키워드 인풋에서 Enter 키를 눌렀을 때 새 키워드를 추가합니다.
-   * - 공백/중복 값은 무시합니다.
-   * - 최대 5개까지만 추가할 수 있습니다.
-   */
-  const handleKeywordKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
-    event,
-  ) => {
+  const handleKeywordKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key !== "Enter") return;
-
     event.preventDefault();
     const raw = keywordInput.trim();
     if (!raw) return;
-
     if (keywords.includes(raw)) {
       toast.error("이미 추가된 키워드입니다.");
       return;
     }
-
     if (keywords.length >= 5) {
       toast.error("키워드는 최대 5개까지 입력할 수 있습니다.");
       return;
     }
-
     setKeywords((prev) => [...prev, raw]);
     setKeywordInput("");
   };
 
-  /**
-   * @description 개별 키워드를 제거합니다.
-   */
   const handleRemoveKeyword = (value: string) => {
     setKeywords((prev) => prev.filter((keyword) => keyword !== value));
   };
@@ -135,10 +85,7 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
     if (isSaving) return;
 
     const normalizedDescription = description.trim();
-    const keywordValues = keywords
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0);
-
+    const keywordValues = keywords.map((v) => v.trim()).filter((v) => v.length > 0);
     const categoryIdNum = Number.parseInt(selectedCategoryId, 10);
     const trimmedTitle = title.trim();
     const trimmedSlug = slug.trim();
@@ -147,20 +94,12 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       toast.error("카테고리를 선택하세요.");
       return;
     }
-
     if (!trimmedTitle) {
       toast.error("제목을 입력하세요.");
       return;
     }
-
     if (!trimmedSlug) {
       toast.error("슬러그를 입력하세요.");
-      return;
-    }
-
-    const slugPattern = /^[a-z0-9-]+$/;
-    if (!slugPattern.test(trimmedSlug)) {
-      toast.error("슬러그는 영문 소문자, 숫자, 하이픈만 허용합니다.");
       return;
     }
 
@@ -174,72 +113,33 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       createdAt = date.toISOString();
     }
 
-    const trimmedThumbnailUrl = thumbnailUrl?.trim() ?? "";
-    if (trimmedThumbnailUrl) {
-      try {
-        const parsed = new URL(trimmedThumbnailUrl);
-        if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-          toast.error("썸네일 URL은 http 또는 https 형식이어야 합니다.");
-          return;
-        }
-      } catch {
-        toast.error("썸네일 URL 형식이 올바르지 않습니다.");
-        return;
-      }
-    }
-
     const payload: CreatePostInput = {
       title: trimmedTitle,
       slug: trimmedSlug,
       categoryId: categoryIdNum,
       description: normalizedDescription || undefined,
       keywords: keywordValues.length > 0 ? keywordValues : undefined,
-      // Supabase Storage 등에서 발급된 썸네일 공개 URL (선택)
-      thumbnailUrl: trimmedThumbnailUrl || undefined,
-      // 수동 지정 생성일(없으면 서버 now() 사용)
+      thumbnailUrl: thumbnailUrl?.trim() || undefined,
       createdAt,
-      // BlockNote 문서 JSON 문자열(없으면 undefined로 처리)
       content: contentJson || undefined,
       isPublished,
     };
 
     try {
       setIsSaving(true);
-      const result = await clientHttp.post<{
-        request: CreatePostInput;
-        response: PostRow;
-      }>("/api/posts", {
-        body: payload,
-      });
-
-      toast.success(
-        isPublished ? "게시글을 발행했습니다." : "게시글을 저장했습니다.",
-      );
-      // 생성 후 상세 페이지로 이동합니다.
-      router.push(`/admin/post/${result.data.id}`);
+      const result = await createPostAction(payload);
+      toast.success(isPublished ? "게시글을 발행했습니다." : "게시글을 저장했습니다.");
+      router.push(`/admin/post/${result.id}`);
       router.refresh();
     } catch (error) {
-      if (error instanceof ApiClientError) {
-        toast.error(error.message);
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("게시글 저장 중 오류가 발생했습니다.");
-      }
+      toast.error(error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.");
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <div
-      className={cn(
-        "flex flex-col items-start gap-6 w-full max-w-[720px] mx-auto",
-        // 반응형 스타일
-        // "lg:flex-row",
-      )}
-    >
-      {/* 툴바 */}
+    <div className="flex flex-col items-start gap-6 w-full max-w-[720px] mx-auto">
       <div className="flex w-full justify-between">
         <div className="flex gap-2">
           <Link href="/admin/post">
@@ -254,256 +154,86 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
             size="sm"
             type="button"
             disabled={isSaving}
-            onClick={() => {
-              void handleSubmit();
-            }}
+            onClick={() => void handleSubmit()}
           >
             <Icon name="BookOpenCheck" /> 발행
           </Button>
         </div>
       </div>
 
-      {/* 글 메타정보 작성 */}
-      <section
-        className={cn("relative", "w-full flex flex-col gap-6 shrink-0")}
-      >
+      <section className="w-full flex flex-col gap-6">
         <div className="flex flex-col pb-4 border-b">
           <span className="text-[#f96859] font-medium">Step 01</span>
           <span className="text-base font-semibold">글 메타정보 작성</span>
         </div>
+
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Icon name="Asterisk" size={14} className="text-[#f96859]" />
-            <Label className="text-muted-foreground">카테고리</Label>
-          </div>
-          <Select
-            value={selectedCategoryId}
-            onValueChange={(value) => setSelectedCategoryId(value)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="카테고리를 선택하세요" />
-            </SelectTrigger>
+          <Label className="text-muted-foreground">카테고리</Label>
+          <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
+            <SelectTrigger><SelectValue placeholder="카테고리를 선택하세요" /></SelectTrigger>
             <SelectContent>
-              <SelectGroup>
-                <SelectLabel>카테고리(주제)</SelectLabel>
-                {categories.map(
-                  (category) =>
-                    category.isVisible && (
-                      <SelectItem key={category.id} value={String(category.id)}>
-                        {category.name}
-                      </SelectItem>
-                    ),
-                )}
-              </SelectGroup>
+              {categories.map((c) => c.isVisible && (
+                <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
-        {/* 제목 (필수 입력) */}
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Icon name="Asterisk" size={14} className="text-[#f96859]" />
-            <Label className="text-muted-foreground">제목</Label>
-          </div>
-          <Input
-            placeholder="글 제목을 입력하세요."
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-          />
+          <Label className="text-muted-foreground">제목</Label>
+          <Input placeholder="글 제목을 입력하세요." value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
 
-        {/* 설명 입력 (옵션) */}
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Label className="text-muted-foreground">
-              설명 (선택, 최대 200자)
-            </Label>
-          </div>
-          <Textarea
-            value={description}
-            maxLength={200}
-            onChange={handleChangeDescription}
-            placeholder="글 목록 카드에서 보여줄 간단한 요약을 입력하세요."
-            rows={4}
-          />
-          <p className="self-end text-xs text-muted-foreground">
-            {description.length} / 200
-          </p>
-        </div>
-
-        {/* 슬러그 (필수 입력) */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Icon name="Asterisk" size={14} className="text-[#f96859]" />
-            <Label className="text-muted-foreground">슬러그</Label>
-          </div>
+          <Label className="text-muted-foreground">슬러그</Label>
           <Input
             placeholder="예: my-first-post"
             value={slug}
-            onFocus={() => {
-              if (!slug && title.trim()) {
-                const nextSlug = slugifyFromTitle(title.trim());
-                if (nextSlug) {
-                  setSlug(nextSlug);
-                }
-              }
-            }}
-            onChange={(event) => {
-              const raw = event.target.value;
-              const normalized = raw
-                .toLowerCase()
-                .replace(/[^a-z0-9-]/g, "")
-                .replace(/-+/g, "-");
-              setSlug(normalized);
-            }}
+            onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+            onFocus={() => { if (!slug && title.trim()) setSlug(slugifyFromTitle(title.trim())); }}
           />
         </div>
 
-        {/* 작성일 (옵션) */}
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Label className="text-muted-foreground">작성일 (선택)</Label>
-          </div>
-          <Input
-            type="date"
-            value={createdDate}
-            onChange={(event) => {
-              setCreatedDate(event.target.value);
-            }}
-          />
-          <p className="text-xs text-muted-foreground">
-            과거에 작성한 글을 옮길 때만 사용하세요. 비워두면 오늘 날짜로
-            기록됩니다.
-          </p>
+          <Label className="text-muted-foreground">설명 (최대 200자)</Label>
+          <Textarea value={description} onChange={handleChangeDescription} rows={4} />
         </div>
 
-        {/* 썸네일 URL (선택) */}
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Label className="text-muted-foreground">썸네일 URL (선택)</Label>
-          </div>
-          <Input
-            placeholder="https://... (Supabase Storage 이미지 URL)"
-            value={thumbnailUrl ?? ""}
-            onChange={(event) => {
-              setThumbnailUrl(event.target.value);
-            }}
-          />
+          <Label className="text-muted-foreground">썸네일 URL</Label>
+          <Input value={thumbnailUrl ?? ""} onChange={(e) => setThumbnailUrl(e.target.value)} />
           {thumbnailUrl && (
-            <div className="mt-2 w-full overflow-hidden rounded-lg border bg-muted/20">
-              <div className="relative w-full max-h-[300px] flex items-center justify-center p-2">
-                <img
-                  src={thumbnailUrl}
-                  alt="Thumbnail preview"
-                  className="max-w-full max-h-[280px] object-contain rounded shadow-sm"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = "none";
-                  }}
-                />
-              </div>
+            <div className="mt-2 border rounded p-2 flex justify-center bg-muted/20">
+              <img src={thumbnailUrl} alt="preview" className="max-h-[200px] object-contain" />
             </div>
           )}
-          <p className="text-xs text-muted-foreground">
-            카드에 표시할 대표 이미지 주소입니다. Supabase Storage에 업로드한
-            이미지 URL을 붙여넣어 주세요.
-          </p>
         </div>
 
-        {/* 공개 여부 스위치 */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Label className="text-muted-foreground">공개 여부</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="isPublished"
-              checked={isPublished}
-              onCheckedChange={(checked) => setIsPublished(!!checked)}
-            />
-            <Label htmlFor="isPublished">
-              {isPublished ? "공개" : "비공개(초안)"}
-            </Label>
-          </div>
+        <div className="flex items-center gap-2">
+          <Switch id="isPublished" checked={isPublished} onCheckedChange={setIsPublished} />
+          <Label htmlFor="isPublished">{isPublished ? "공개" : "비공개(초안)"}</Label>
         </div>
 
-        {/* 키워드 입력 (옵션) */}
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <Label className="text-muted-foreground">
-              키워드 (선택, 최대 5개)
-            </Label>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Input
-              value={keywordInput}
-              onChange={(event) => {
-                const raw = event.target.value;
-                // 쉼표(,)는 키워드 구분자로 오해될 수 있으므로 입력 단계에서 제거합니다.
-                const sanitized = raw.replace(/,/g, "");
-                setKeywordInput(sanitized);
-              }}
-              onKeyDown={handleKeywordKeyDown}
-              placeholder="키워드를 입력 후 Enter 키를 눌러 추가하세요. 예: react, ui, nextjs"
-            />
-
-            <div className="flex flex-wrap gap-2">
-              {keywords.length === 0 ? (
-                <span className="text-xs text-muted-foreground">
-                  아직 추가된 키워드가 없습니다.
-                </span>
-              ) : (
-                keywords.map((value) => (
-                  <div
-                    key={value}
-                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground"
-                  >
-                    <span>{value}</span>
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center rounded-full hover:bg-accent/60 transition-colors"
-                      onClick={() => handleRemoveKeyword(value)}
-                      aria-label={`${value} 키워드 제거`}
-                    >
-                      <Icon name="X" size={12} />
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
+          <Label className="text-muted-foreground">키워드 (최대 5개)</Label>
+          <Input value={keywordInput} onChange={(e) => setKeywordInput(e.target.value.replace(/,/g, ""))} onKeyDown={handleKeywordKeyDown} />
+          <div className="flex flex-wrap gap-1">
+            {keywords.map((k) => (
+              <div key={k} className="bg-accent px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                {k} <button onClick={() => handleRemoveKeyword(k)}><Icon name="X" size={12} /></button>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 글 작성하기 */}
-      <div className="w-full">
-        <section
-          className={cn(
-            "w-full h-full flex flex-col gap-6",
-            // 반응형 스타일
-            // "lg:flex-1"
-          )}
-        >
-          <div className="flex flex-col pb-4 border-b">
-            <span className="text-[#f96859] font-medium">Step 02</span>
-            <span className="text-base font-semibold">글 작성하기</span>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-1">
-              <Icon name="Asterisk" size={14} className="text-[#f96859]" />
-              <Label className="text-muted-foreground">본문</Label>
-            </div>
-            {/* BlockNote Text Editor UI */}
-            <Editor
-              onChange={(json) => {
-                setContentJson(json);
-              }}
-            />
-          </div>
-        </section>
-      </div>
+      <section className="w-full flex flex-col gap-6">
+        <div className="flex flex-col pb-4 border-b">
+          <span className="text-[#f96859] font-medium">Step 02</span>
+          <span className="text-base font-semibold">글 작성하기</span>
+        </div>
+        <Editor onChange={setContentJson} />
+      </section>
     </div>
   );
 };

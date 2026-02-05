@@ -22,13 +22,16 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type {
   CategoryRow,
-  ReorderCategoriesInput,
 } from "@features/categories/schemas";
-import { clientHttp } from "@shared/lib/api/http-client";
+import {
+  reorderCategoriesAction,
+  deleteCategoryAction
+} from "@features/categories/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Icon from "@ui/components/lucide-icons/Icon";
 import { Button, Switch } from "@ui/shadcn/components";
 import { Spinner } from "@ui/shadcn/components/spinner";
+import { cn } from "@ui/shadcn/lib/utils";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import AdminCategoryItem from "../_components/AdminCategoryItem";
@@ -38,10 +41,6 @@ export interface AdminCategoryListProps {
   initialCategories: CategoryRow[];
 }
 
-/**
- * 정렬 가능한 카드 래퍼 컴포넌트
- * - dnd-kit useSortable을 사용해 변환/전환 스타일과 드래그 이벤트 바인딩을 적용합니다.
- */
 const SortableCard = ({
   id,
   children,
@@ -77,30 +76,26 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     useCategoriesQuery(initialCategories);
   const queryClient = useQueryClient();
 
-  // 삭제 뮤테이션
   const { mutateAsync: deleteAsync, isPending: isDeleting } = useMutation({
-    mutationFn: (categoryId: number) =>
-      clientHttp.delete<{ response: { deleted: true } }>(
-        `/api/categories/${categoryId}`,
-      ),
+    mutationFn: (categoryId: number) => deleteCategoryAction(categoryId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["categories"] });
       toast.success("카테고리 삭제에 성공했습니다.");
     },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "삭제 중 오류가 발생했습니다.")
   });
 
-  // 표시용 정렬 상태(드래그 앤 드랍)
   const [ordered, setOrdered] = useState<CategoryRow[]>(categories);
   useEffect(() => {
     setOrdered(categories);
   }, [categories]);
 
-  // dnd-kit 센서(마우스 이동 일정 거리 후 활성화)
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
   const itemIds = useMemo(() => ordered.map((c) => c.id), [ordered]);
   const [isEditOrder, setIsEditOrder] = useState(false);
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -114,17 +109,13 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     }
   };
 
-  // 정렬 저장 뮤테이션
   const { mutate: saveOrder, isPending: isSavingOrder } = useMutation({
     mutationFn: async (nextOrder: CategoryRow[]) => {
       const orderings = nextOrder.map((c, idx) => ({
         id: c.id,
         sortOrder: idx,
       }));
-      await clientHttp.post<{
-        request: ReorderCategoriesInput;
-        response: CategoryRow[];
-      }>("/api/categories/reorder", { body: { orderings } });
+      await reorderCategoriesAction({ orderings });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -139,19 +130,9 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
   if (error) {
     return (
       <div className="flex flex-col items-center gap-4 border rounded-lg p-6 text-center">
-        <div className="text-destructive">{error}</div>
-        <Button
-          variant="outline"
-          onClick={() => refetch()}
-          disabled={isRefetching}
-          size="sm"
-        >
-          {isRefetching ? (
-            <Spinner className="mr-2 size-4" />
-          ) : (
-            <Icon name="RefreshCcw" className="mr-2 size-4" />
-          )}
-          다시 시도
+        <div className="text-destructive font-medium">{error}</div>
+        <Button variant="outline" onClick={() => { void refetch(); }} disabled={isRefetching} size="sm">
+          {isRefetching ? <Spinner className="size-4" /> : <Icon name="RefreshCcw" className="size-4" />} 다시 시도
         </Button>
       </div>
     );
@@ -173,75 +154,40 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
           <div className="flex items-center gap-2 text-xs text-muted-foreground select-none">
             <Switch
               checked={isEditOrder}
-              onCheckedChange={(checked) => setIsEditOrder(Boolean(checked))}
+              onCheckedChange={(checked) => setIsEditOrder(!!checked)}
               disabled={isSavingOrder}
               id="toggle-reorder-mode"
             />
-            <label htmlFor="toggle-reorder-mode">정렬 모드</label>
+            <label htmlFor="toggle-reorder-mode" className="cursor-pointer">정렬 모드</label>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => refetch()}
-            disabled={isRefetching ?? false}
-            size="sm"
-          >
-            {isRefetching ? (
-              <Spinner className="size-3" />
-            ) : (
-              <Icon name="RefreshCcw" className="size-3" />
-            )}
-            새로고침
+          <Button variant="outline" onClick={() => { void refetch(); }} disabled={isRefetching} size="sm">
+            {isRefetching ? <Spinner className="size-3" /> : <Icon name="RefreshCcw" className="size-3" />} 새로고침
           </Button>
         </div>
       </div>
 
-      {isEditOrder ? (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          modifiers={[
-            restrictToParentElement,
-            restrictToFirstScrollableAncestor,
-            restrictToWindowEdges,
-          ]}
-        >
-          <SortableContext items={itemIds} strategy={rectSortingStrategy}>
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3", isSavingOrder && "opacity-50 pointer-events-none")}>
+        {isEditOrder ? (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToParentElement, restrictToFirstScrollableAncestor, restrictToWindowEdges]}>
+            <SortableContext items={itemIds} strategy={rectSortingStrategy}>
               {ordered.map((item, idx) => (
                 <SortableCard key={item.id} id={item.id}>
                   <div className="relative">
-                    {/* 순번 배지 (편집 모드에서만 표시) */}
                     <span className="absolute -top-2 -left-2 z-10 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground shadow">
                       {idx + 1}
                     </span>
-                    <AdminCategoryItem
-                      item={item}
-                      isPending={isDeleting || isSavingOrder}
-                      onDelete={async (id) => {
-                        await deleteAsync(id);
-                      }}
-                    />
+                    <AdminCategoryItem item={item} isPending={isDeleting || isSavingOrder} onDelete={(id) => deleteAsync(id)} />
                   </div>
                 </SortableCard>
               ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {ordered.map((item) => (
-            <AdminCategoryItem
-              key={item.id}
-              item={item}
-              isPending={isDeleting}
-              onDelete={async (id) => {
-                await deleteAsync(id);
-              }}
-            />
-          ))}
-        </div>
-      )}
+            </SortableContext>
+          </DndContext>
+        ) : (
+          ordered.map((item) => (
+            <AdminCategoryItem key={item.id} item={item} isPending={isDeleting} onDelete={(id) => deleteAsync(id)} />
+          ))
+        )}
+      </div>
     </div>
   );
 };
