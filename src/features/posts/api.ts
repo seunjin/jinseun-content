@@ -1,3 +1,4 @@
+import type { Database } from "@lib/supabase/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   type CreatePostInput,
@@ -9,40 +10,15 @@ import {
 } from "./schemas";
 
 const POST_SELECT =
-  "id, category_id, title, slug, description, keywords, thumbnail_url, content, is_published, created_at, updated_at";
+  "id, categoryId:category_id, title, slug, description, keywords, thumbnailUrl:thumbnail_url, content, isPublished:is_published, createdAt:created_at, updatedAt:updated_at" as const;
 
-type AnySupabaseClient = SupabaseClient;
+type AnySupabaseClient = SupabaseClient<Database>;
 
-type RawPostRow = {
-  id: number;
-  category_id: number;
-  title: string;
-  slug: string;
-  description: string | null;
-  keywords: string[] | null;
-  thumbnail_url: string | null;
-  content: string | null;
-  is_published: boolean;
-  created_at: string | null;
-  updated_at: string | null;
-};
-
+// Supabase alias 결과를 위한 타입 정의 (또는 schemas.ts의 PostRow와 동기화)
 /**
- * @description Supabase가 반환한 게시글 행을 Drizzle 스키마 형태로 변환합니다.
+ * @description API에서 반환하는 결과 타입 (Alias 적용 모델)
  */
-const mapPostRow = (row: RawPostRow) => ({
-  id: row.id,
-  categoryId: row.category_id,
-  title: row.title,
-  slug: row.slug,
-  description: row.description,
-  keywords: row.keywords,
-  thumbnailUrl: row.thumbnail_url,
-  content: row.content,
-  isPublished: row.is_published,
-  createdAt: row.created_at,
-  updatedAt: row.updated_at,
-});
+export type PostResult = PostRow;
 
 export type FetchPostsOptions = {
   /**
@@ -99,7 +75,7 @@ async function fetchPosts(
   if (error) throw error;
   if (!data) return [];
 
-  return postRowSchema.array().parse(data.map(mapPostRow));
+  return postRowSchema.array().parse(data);
 }
 
 /**
@@ -134,7 +110,7 @@ async function fetchPostsWithCount(
   if (error) throw error;
 
   const rows = data ?? [];
-  const items = postRowSchema.array().parse(rows.map(mapPostRow));
+  const items = postRowSchema.array().parse(rows);
 
   return {
     items,
@@ -158,7 +134,7 @@ async function fetchPostById(
   if (error) throw error;
   if (!data) return null;
 
-  return postRowSchema.parse(mapPostRow(data as RawPostRow));
+  return postRowSchema.parse(data);
 }
 
 /**
@@ -177,7 +153,7 @@ async function fetchPostBySlug(
   if (error) throw error;
   if (!data) return null;
 
-  return postRowSchema.parse(mapPostRow(data as RawPostRow));
+  return postRowSchema.parse(data);
 }
 
 /**
@@ -211,7 +187,7 @@ async function createPost(
   if (error) throw error;
   if (!data) throw new Error("게시글 생성에 실패했습니다.");
 
-  return postRowSchema.parse(mapPostRow(data as RawPostRow));
+  return postRowSchema.parse(data);
 }
 
 /**
@@ -246,7 +222,7 @@ async function updatePost(
   if (error) throw error;
   if (!data) throw new Error("게시글 업데이트에 실패했습니다.");
 
-  return postRowSchema.parse(mapPostRow(data as RawPostRow));
+  return postRowSchema.parse(data);
 }
 
 /**

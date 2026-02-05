@@ -389,6 +389,21 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
               setThumbnailUrl(event.target.value);
             }}
           />
+          {thumbnailUrl && (
+            <div className="mt-2 w-full overflow-hidden rounded-lg border bg-muted/20">
+              <div className="relative w-full max-h-[300px] flex items-center justify-center p-2">
+                <img
+                  src={thumbnailUrl}
+                  alt="Thumbnail preview"
+                  className="max-w-full max-h-[280px] object-contain rounded shadow-sm"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                  }}
+                />
+              </div>
+            </div>
+          )}
           <p className="text-xs text-muted-foreground">
             카드에 표시할 대표 이미지 주소입니다. Supabase Storage에 업로드한
             이미지 URL을 붙여넣어 주세요.

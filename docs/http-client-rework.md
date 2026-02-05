@@ -1,8 +1,9 @@
-# HTTP 클라이언트 재설계 메모
+# HTTP 클라이언트 재설계 메모 (Deprecated)
 
-## 목표
-- Supabase SDK를 데이터 소스로 사용하되, API Route/서버 액션/클라이언트에서 동일한 HTTP 클라이언트 패턴을 사용합니다.
-- HTTP 통신은 `ky`를 래핑해 사용하고, 클라이언트 상태 관리는 React Query v5를 기준으로 합니다.
+> [!WARNING]
+> 이 문서는 `ky` 기반의 API Route 통신 방식을 설명하고 있습니다. 현재 프로젝트는 **Server Actions 및 Direct Supabase Client 호출** 방식으로 전환되었으므로, 새로운 아키텍처는 [architecture-guide.md](./architecture-guide.md)를 참조하세요.
+
+## 기존 목표 (참고용)
 - `clientHttp.get`·`post`·`put`·`patch`·`delete` 형태로 메서드를 분리합니다.
 - 제네릭은 `<{ request: Request; response: Response; meta: Meta }>` 형태로 주고, 생략 가능한 타입은 `never`를 기본값으로 둡니다.
 - `schema` 옵션을 사용해 응답 검증을 붙일 수 있도록 하되, 필수는 아닙니다.

@@ -1,18 +1,40 @@
-import type { InferSelectModel } from "drizzle-orm";
-import { createSelectSchema } from "drizzle-zod";
+import type { Database } from "@lib/supabase/database.types";
 import { z } from "zod";
-import { posts } from "../../../drizzle/schema";
 
 /**
- * @description 게시글 조회 결과 타입입니다.
- * - Supabase에서 반환된 posts 레코드를 타입 안전하게 다루기 위해 사용합니다.
+ * @description 게시글 조회 결과 타입입니다 (Frontend Domain Model).
+ * - Database Row(snake_case)를 Alias를 통해 camelCase로 매핑한 형태입니다.
  */
-export type PostRow = InferSelectModel<typeof posts>;
+export type PostRow = {
+  id: number;
+  categoryId: number;
+  title: string;
+  slug: string;
+  description: string | null;
+  keywords: string[] | null;
+  thumbnailUrl: string | null;
+  content: string | null;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 
 /**
  * @description posts 행을 검증하는 스키마입니다.
  */
-export const postRowSchema = createSelectSchema(posts);
+export const postRowSchema = z.object({
+  id: z.number(),
+  categoryId: z.number(),
+  title: z.string(),
+  slug: z.string(),
+  description: z.string().nullable(),
+  keywords: z.array(z.string()).nullable(),
+  thumbnailUrl: z.string().nullable(),
+  content: z.string().nullable(),
+  isPublished: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
 
 /**
  * @description 게시글 생성 입력을 검증하는 스키마입니다.
