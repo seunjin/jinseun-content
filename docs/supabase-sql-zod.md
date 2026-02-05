@@ -18,11 +18,9 @@
 - [ ] Zod 스키마와 SDK 타입 정의가 최신 마이그레이션을 반영하는가?
 
 ## Zod 기반 데이터 검증 플로우
-1. **입력 검증**: 사용자 입력이나 외부 파라미터는 요청 직전에 `z.object({...}).safeParse`로 검증합니다. 실패 시 사용자 메시지와 로깅 전략을 통일합니다.
-2. **SDK 응답 검증**: Supabase SDK 호출 후 반환되는 `data` 객체는 대응하는 Zod 스키마로 검증합니다. 실패 시 API 호출 결과를 로그에 남기고 적절한 에러를 반환합니다.
-3. **타입 연동**: 스키마에서 `export type HotTopic = z.infer<typeof hotTopicSchema>`처럼 타입을 추출해 TypeScript 타입과 런타임 검증이 일치하게 유지합니다.
-4. **스키마 분리**: 입력/응답의 형태가 다르면 스키마를 별도로 정의합니다. 예를 들어 `hotTopicInsertSchema`, `hotTopicResponseSchema`처럼 목적별로 나눕니다.
-5. **Supabase SDK + Drizzle 타입 연계**: 테이블 CRUD는 Supabase JS SDK를 사용하고, 정적 타입은 `pnpm dlx drizzle-kit introspect`로 생성된 Drizzle schema를 기반으로 합니다. 생성된 타입을 Zod 스키마와 함께 재사용하면, 런타임과 컴파일 타임 타입 안전성을 동시에 확보할 수 있습니다.
+1. **입력 검증**: 사용자 입력이나 외부 파라미터는 요청 직전에 `z.object({...}).safeParse`로 검증합니다.
+2. **응답 검증**: Supabase SDK 호출 후 반환된 데이터는 정의된 Zod 스키마로 검증하여 타입 안전성을 확보합니다.
+3. **타입 연동**: [architecture-guide.md](./architecture-guide.md)에 기술된 방식에 따라 Supabase 생성 타입과 Zod를 결합하여 사용합니다.
 
 ```ts
 import { z } from "zod";
@@ -74,8 +72,7 @@ export async function createTopic(payload: unknown) {
 - `supabase migration new <name>`: 새 SQL 마이그레이션 템플릿 생성
 - `supabase db push`: 작성한 마이그레이션을 로컬 DB에 적용
 - `supabase db reset --local`: 로컬 DB를 드롭 후 모든 마이그레이션을 재적용
-- `supabase gen types typescript --local > src/types/supabase.ts`: 최신 DB 스키마 기반 TypeScript 타입 생성
-- `pnpm db:introspect`: Supabase 스키마를 기반으로 Drizzle schema 및 TypeScript 타입을 생성
+- `supabase gen types typescript --local > src/shared/lib/supabase/database.types.ts`: 최신 DB 스키마 기반 TypeScript 타입 생성
 
 ## 로컬/원격 Supabase DB 동기화 개념 정리
 

@@ -3,6 +3,7 @@ import type { ProfileRow } from "@features/profiles/schemas";
 import { requireEnv } from "@shared/utils/env";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { Database } from "./database.types";
 
 /**
  * Server Component·Route Handler에서 사용할 Supabase 클라이언트를 생성합니다.
@@ -11,7 +12,7 @@ import { cookies } from "next/headers";
 export async function createServerSupabase() {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  return createServerClient<Database>(
     requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
     requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
