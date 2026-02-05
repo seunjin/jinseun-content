@@ -289,3 +289,9 @@
 .page-content-viwer [data-node-type="blockOuter"] {
   scroll-margin-top: calc(var(--header-height) + var(--page-toolbar-height));
 }
+
+/* BlockNote 이미지 추가 시 아웃라인 제거 */
+.bn-block-content.ProseMirror-selectednode > *,
+.ProseMirror-selectednode > .bn-block-content > * {
+  outline: none !important;
+}
