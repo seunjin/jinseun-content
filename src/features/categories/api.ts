@@ -1,3 +1,4 @@
+import type { Database } from "@lib/supabase/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   type CategoryRow,
@@ -11,42 +12,12 @@ import {
 } from "./schemas";
 
 const CATEGORY_SELECT =
-  "id, name, slug, description, sort_order, is_visible, created_at, updated_at";
+  "id, name, slug, description, sortOrder:sort_order, isVisible:is_visible, createdAt:created_at, updatedAt:updated_at" as const;
 
-type AnySupabaseClient = SupabaseClient;
-
-type RawCategoryRow = {
-  id: number;
-  name: string;
-  slug: string;
-  description: string | null;
-  sort_order: number;
-  is_visible: boolean;
-  created_at: string | null;
-  updated_at: string | null;
-};
-
-/**
- * @description Supabase가 반환한 카테고리 행을 Drizzle 스키마 형태로 변환합니다.
- */
-const mapCategoryRow = (row: RawCategoryRow) => ({
-  id: row.id,
-  name: row.name,
-  slug: row.slug,
-  description: row.description,
-  sortOrder: row.sort_order,
-  isVisible: row.is_visible,
-  createdAt: row.created_at,
-  updatedAt: row.updated_at,
-});
-
-export type FetchCategoriesOptions = {
-  onlyVisible?: boolean;
-};
+type AnySupabaseClient = SupabaseClient<Database>;
 
 /**
  * @description 최종 정렬 순서 값을 계산합니다.
- * - 지정된 sortOrder가 없으면 현재 최대값 + 1을 반환합니다.
  */
 async function resolveNextSortOrder(client: AnySupabaseClient) {
   const { data, error } = await client
@@ -84,7 +55,7 @@ async function fetchCategories(
   if (error) throw error;
   if (!data) return [];
 
-  return categoryRowSchema.array().parse(data.map(mapCategoryRow));
+  return categoryRowSchema.array().parse(data);
 }
 
 /**
@@ -103,7 +74,7 @@ async function fetchCategoryById(
   if (error) throw error;
   if (!data) return null;
 
-  return categoryRowSchema.parse(mapCategoryRow(data));
+  return categoryRowSchema.parse(data);
 }
 
 /**
@@ -122,7 +93,7 @@ async function fetchCategoryBySlug(
   if (error) throw error;
   if (!data) return null;
 
-  return categoryRowSchema.parse(mapCategoryRow(data));
+  return categoryRowSchema.parse(data);
 }
 
 /**
@@ -150,7 +121,7 @@ async function createCategory(
   if (error) throw error;
   if (!data) throw new Error("카테고리 생성에 실패했습니다.");
 
-  return categoryRowSchema.parse(mapCategoryRow(data));
+  return categoryRowSchema.parse(data);
 }
 
 /**
@@ -189,7 +160,7 @@ async function updateCategory(
   if (error) throw error;
   if (!data) throw new Error("카테고리 업데이트에 실패했습니다.");
 
-  return categoryRowSchema.parse(mapCategoryRow(data));
+  return categoryRowSchema.parse(data);
 }
 
 /**
@@ -213,8 +184,6 @@ async function reorderCategories(
   const parsed = reorderCategoriesInputSchema.parse(payload);
   const { orderings } = parsed;
 
-  // Upsert는 누락 컬럼이 있는 신규 insert로 오해될 수 있어 NOT NULL 제약을 유발합니다.
-  // 안전하게 id별 update로 처리합니다.
   for (const ordering of orderings) {
     const { error: updateError } = await client
       .from("categories")
@@ -237,12 +206,15 @@ async function reorderCategories(
   if (error) throw error;
   if (!data) return [];
 
-  return categoryRowSchema.array().parse(data.map(mapCategoryRow));
+  return categoryRowSchema.array().parse(data);
 }
+
+export type FetchCategoriesOptions = {
+  onlyVisible?: boolean;
+};
 
 /**
  * @description 카테고리 API 헬퍼를 생성합니다.
- * - 서버/클라이언트에서 동일하게 사용할 수 있도록 구성합니다.
  */
 export function createCategoriesApi(client: AnySupabaseClient) {
   return {
