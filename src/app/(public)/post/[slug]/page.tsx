@@ -174,13 +174,15 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
 
         {/* 썸네일 */}
         {post.thumbnailUrl && (
-          <div className="relative aspect-video">
+          <div className="w-full overflow-hidden rounded-xl border bg-muted/20">
             <Image
               src={post.thumbnailUrl}
               alt={post.title}
-              fill
-              className="object-cover"
+              width={1200}
+              height={800}
+              className="w-full h-auto object-contain max-h-[70vh] mx-auto"
               sizes="(min-width: 1200px) 1056px, (min-width: 768px) calc(100vw - 48px), 100vw"
+              priority
             />
           </div>
         )}

@@ -118,18 +118,20 @@ const AdminPostDetailPage = async ({ params }: AdminPostDetailPageProps) => {
 
         <Separator className="bg-foreground/10" />
 
-        {/* 썸네일 */}
-        {post.thumbnailUrl && (
-          <div className="relative aspect-video">
+        {/* 썸네일 - 주석 처리 26.2.5 페이지 내 이미지는 blocknote로 처리한다 */}
+        {/* {post.thumbnailUrl && (
+          <div className="w-full overflow-hidden rounded-xl">
             <Image
               src={post.thumbnailUrl}
               alt={post.title}
-              fill
-              className="object-cover"
+              width={1200}
+              height={800}
+              className="w-full h-auto object-contain max-h-[70vh] mx-auto"
               sizes="(min-width: 1200px) 1056px, (min-width: 768px) calc(100vw - 48px), 100vw"
+              priority
             />
           </div>
-        )}
+        )} */}
         <div className="flex flex-col gap-6 lg:flex-row">
           {/* BlockNote 기반 본문(content) 뷰어 */}
           <section className="page-content-viwer flex-1">
