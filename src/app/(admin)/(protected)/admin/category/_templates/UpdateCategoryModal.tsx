@@ -1,11 +1,11 @@
 "use client";
 
+import { updateCategoryAction } from "@features/categories/actions";
 import {
   type CategoryRow,
   categoryRowSchema,
   type UpdateCategoryInput,
 } from "@features/categories/schemas";
-import { updateCategoryAction } from "@features/categories/actions";
 import { createClient } from "@lib/supabase/client.supabase";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -44,7 +44,9 @@ const UpdateCategoryModal = ({ categoryId }: UpdateCategoryModalProps) => {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, slug, description, sortOrder:sort_order, isVisible:is_visible, createdAt:created_at, updatedAt:updated_at")
+        .select(
+          "id, name, slug, description, sortOrder:sort_order, isVisible:is_visible, createdAt:created_at, updatedAt:updated_at",
+        )
         .eq("id", categoryId)
         .single();
 
@@ -69,7 +71,12 @@ const UpdateCategoryModal = ({ categoryId }: UpdateCategoryModalProps) => {
           <div className="text-destructive">
             {error?.message ?? "카테고리를 불러오는 중 오류가 발생했습니다."}
           </div>
-          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
             다시 시도
           </Button>
         </div>
@@ -110,8 +117,10 @@ const UpdateCategoryForm = ({ category }: UpdateCategoryFormProps) => {
       toast.success("카테고리 수정에 성공했습니다.");
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "수정 중 오류가 발생했습니다.");
-    }
+      toast.error(
+        error instanceof Error ? error.message : "수정 중 오류가 발생했습니다.",
+      );
+    },
   });
 
   const form = useForm({
@@ -136,12 +145,22 @@ const UpdateCategoryForm = ({ category }: UpdateCategoryFormProps) => {
   }, [defaults, form]);
 
   return (
-    <form className="flex flex-col gap-4 pb-6" onSubmit={(e) => { e.preventDefault(); void form.handleSubmit(); }}>
+    <form
+      className="flex flex-col gap-4 pb-6"
+      onSubmit={(e) => {
+        e.preventDefault();
+        void form.handleSubmit();
+      }}
+    >
       <form.Field name="name">
         {(field) => (
           <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Name</Label>
-            <Input autoFocus value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
+            <Input
+              autoFocus
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
           </div>
         )}
       </form.Field>
@@ -150,7 +169,10 @@ const UpdateCategoryForm = ({ category }: UpdateCategoryFormProps) => {
         {(field) => (
           <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Slug</Label>
-            <Input value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
+            <Input
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
           </div>
         )}
       </form.Field>
@@ -159,7 +181,10 @@ const UpdateCategoryForm = ({ category }: UpdateCategoryFormProps) => {
         {(field) => (
           <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Description</Label>
-            <Textarea value={field.state.value ?? ""} onChange={(e) => field.handleChange(e.target.value)} />
+            <Textarea
+              value={field.state.value ?? ""}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
           </div>
         )}
       </form.Field>
@@ -169,14 +194,22 @@ const UpdateCategoryForm = ({ category }: UpdateCategoryFormProps) => {
           <div className="flex flex-col gap-2">
             <Label className="text-muted-foreground">Visibility</Label>
             <div className="flex items-center space-x-2">
-              <Switch checked={field.state.value} onCheckedChange={field.handleChange} />
+              <Switch
+                checked={field.state.value}
+                onCheckedChange={field.handleChange}
+              />
               <Label>{field.state.value ? "공개" : "비공개"}</Label>
             </div>
           </div>
         )}
       </form.Field>
 
-      <Button size="lg" className="w-full" type="submit" disabled={mutation.isPending}>
+      <Button
+        size="lg"
+        className="w-full"
+        type="submit"
+        disabled={mutation.isPending}
+      >
         {mutation.isPending && <Spinner className="size-4" />} 수정하기
       </Button>
     </form>

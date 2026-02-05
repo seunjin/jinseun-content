@@ -7,7 +7,6 @@ import BlockNoteViewerClient from "@ui/components/editor/BlockNoteViewer.client"
 import PageContainer from "@ui/layouts/PageContainer";
 import { Separator } from "@ui/shadcn/components";
 import type { Metadata } from "next";
-import Image from "next/image";
 
 type PublicPostDetailPageProps = {
   /**
@@ -172,8 +171,8 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
 
         <Separator className="bg-foreground/10" />
 
-        {/* 썸네일 */}
-        {post.thumbnailUrl && (
+        {/* 썸네일 - 주석 처리 26.2.5 페이지 내 이미지는 blocknote로 처리한다 */}
+        {/* {post.thumbnailUrl && (
           <div className="w-full overflow-hidden rounded-xl border bg-muted/20">
             <Image
               src={post.thumbnailUrl}
@@ -185,7 +184,7 @@ const PublicPostDetailPage = async ({ params }: PublicPostDetailPageProps) => {
               priority
             />
           </div>
-        )}
+        )} */}
 
         <div className="flex flex-col gap-6 lg:flex-row">
           {/* BlockNote 기반 본문(content) 뷰어 */}

@@ -209,6 +209,39 @@ async function reorderCategories(
   return categoryRowSchema.array().parse(data);
 }
 
+/**
+ * @description 카테고리 목록과 각 카테고리의 공개된 게시글 개수를 함께 조회합니다.
+ */
+async function fetchCategoriesWithCount(
+  client: AnySupabaseClient,
+  options: FetchCategoriesOptions = {},
+): Promise<(CategoryRow & { visiblePostCount: number })[]> {
+  const query = client
+    .from("categories")
+    .select(`
+      ${CATEGORY_SELECT},
+      posts(count)
+    `)
+    .eq("posts.is_published", true)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (options.onlyVisible) {
+    query.eq("is_visible", true);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+  if (!data) return [];
+
+  // biome-ignore lint/suspicious/noExplicitAny: Supabase join query return type can be complex
+  return data.map((item: any) => ({
+    ...categoryRowSchema.parse(item),
+    visiblePostCount: item.posts?.[0]?.count ?? 0,
+  }));
+}
+
 export type FetchCategoriesOptions = {
   onlyVisible?: boolean;
 };
@@ -229,6 +262,8 @@ export function createCategoriesApi(client: AnySupabaseClient) {
     deleteCategory: (id: number) => deleteCategory(client, id),
     reorderCategories: (payload: ReorderCategoriesInput) =>
       reorderCategories(client, payload),
+    fetchCategoriesWithCount: (options?: FetchCategoriesOptions) =>
+      fetchCategoriesWithCount(client, options),
   };
 }
 

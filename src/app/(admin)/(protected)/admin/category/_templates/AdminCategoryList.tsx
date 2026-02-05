@@ -20,13 +20,11 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type {
-  CategoryRow,
-} from "@features/categories/schemas";
 import {
+  deleteCategoryAction,
   reorderCategoriesAction,
-  deleteCategoryAction
 } from "@features/categories/actions";
+import type { CategoryRow } from "@features/categories/schemas";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Icon from "@ui/components/lucide-icons/Icon";
 import { Button, Switch } from "@ui/shadcn/components";
@@ -82,7 +80,10 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
       await queryClient.invalidateQueries({ queryKey: ["categories"] });
       toast.success("카테고리 삭제에 성공했습니다.");
     },
-    onError: (error) => toast.error(error instanceof Error ? error.message : "삭제 중 오류가 발생했습니다.")
+    onError: (error) =>
+      toast.error(
+        error instanceof Error ? error.message : "삭제 중 오류가 발생했습니다.",
+      ),
   });
 
   const [ordered, setOrdered] = useState<CategoryRow[]>(categories);
@@ -131,8 +132,20 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
     return (
       <div className="flex flex-col items-center gap-4 border rounded-lg p-6 text-center">
         <div className="text-destructive font-medium">{error}</div>
-        <Button variant="outline" onClick={() => { void refetch(); }} disabled={isRefetching} size="sm">
-          {isRefetching ? <Spinner className="size-4" /> : <Icon name="RefreshCcw" className="size-4" />} 다시 시도
+        <Button
+          variant="outline"
+          onClick={() => {
+            void refetch();
+          }}
+          disabled={isRefetching}
+          size="sm"
+        >
+          {isRefetching ? (
+            <Spinner className="size-4" />
+          ) : (
+            <Icon name="RefreshCcw" className="size-4" />
+          )}{" "}
+          다시 시도
         </Button>
       </div>
     );
@@ -158,17 +171,45 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
               disabled={isSavingOrder}
               id="toggle-reorder-mode"
             />
-            <label htmlFor="toggle-reorder-mode" className="cursor-pointer">정렬 모드</label>
+            <label htmlFor="toggle-reorder-mode" className="cursor-pointer">
+              정렬 모드
+            </label>
           </div>
-          <Button variant="outline" onClick={() => { void refetch(); }} disabled={isRefetching} size="sm">
-            {isRefetching ? <Spinner className="size-3" /> : <Icon name="RefreshCcw" className="size-3" />} 새로고침
+          <Button
+            variant="outline"
+            onClick={() => {
+              void refetch();
+            }}
+            disabled={isRefetching}
+            size="sm"
+          >
+            {isRefetching ? (
+              <Spinner className="size-3" />
+            ) : (
+              <Icon name="RefreshCcw" className="size-3" />
+            )}{" "}
+            새로고침
           </Button>
         </div>
       </div>
 
-      <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3", isSavingOrder && "opacity-50 pointer-events-none")}>
+      <div
+        className={cn(
+          "grid gap-4 sm:grid-cols-2 xl:grid-cols-3",
+          isSavingOrder && "opacity-50 pointer-events-none",
+        )}
+      >
         {isEditOrder ? (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToParentElement, restrictToFirstScrollableAncestor, restrictToWindowEdges]}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[
+              restrictToParentElement,
+              restrictToFirstScrollableAncestor,
+              restrictToWindowEdges,
+            ]}
+          >
             <SortableContext items={itemIds} strategy={rectSortingStrategy}>
               {ordered.map((item, idx) => (
                 <SortableCard key={item.id} id={item.id}>
@@ -176,7 +217,11 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
                     <span className="absolute -top-2 -left-2 z-10 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground shadow">
                       {idx + 1}
                     </span>
-                    <AdminCategoryItem item={item} isPending={isDeleting || isSavingOrder} onDelete={(id) => deleteAsync(id)} />
+                    <AdminCategoryItem
+                      item={item}
+                      isPending={isDeleting || isSavingOrder}
+                      onDelete={(id) => deleteAsync(id)}
+                    />
                   </div>
                 </SortableCard>
               ))}
@@ -184,7 +229,12 @@ const AdminCategoryList = ({ initialCategories }: AdminCategoryListProps) => {
           </DndContext>
         ) : (
           ordered.map((item) => (
-            <AdminCategoryItem key={item.id} item={item} isPending={isDeleting} onDelete={(id) => deleteAsync(id)} />
+            <AdminCategoryItem
+              key={item.id}
+              item={item}
+              isPending={isDeleting}
+              onDelete={(id) => deleteAsync(id)}
+            />
           ))
         )}
       </div>

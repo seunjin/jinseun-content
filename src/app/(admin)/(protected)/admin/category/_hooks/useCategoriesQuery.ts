@@ -19,11 +19,13 @@ const fetchCategories = async (): Promise<CategoryRow[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, description, sortOrder:sort_order, isVisible:is_visible, createdAt:created_at, updatedAt:updated_at")
+    .select(
+      "id, name, slug, description, sortOrder:sort_order, isVisible:is_visible, createdAt:created_at, updatedAt:updated_at",
+    )
     .order("sort_order", { ascending: true });
 
   if (error) throw new Error(error.message);
-  
+
   // Zod 검증 (Alias 결과에 맞춰 검증 가능하도록 스키마 활용)
   return z.array(categoryRowSchema).parse(data);
 };

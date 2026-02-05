@@ -21,6 +21,16 @@ export async function fetchCategoriesServer(
 }
 
 /**
+ * @description 카테고리 목록과 공개된 게시글 개수를 함께 조회합니다.
+ */
+export async function fetchCategoriesWithCountServer(
+  options: FetchCategoriesOptions = {},
+) {
+  const supabase = await createServerSupabase();
+  return createCategoriesApi(supabase).fetchCategoriesWithCount(options);
+}
+
+/**
  * @description ID 기준으로 카테고리를 조회합니다.
  */
 export async function fetchCategoryByIdServer(id: number) {

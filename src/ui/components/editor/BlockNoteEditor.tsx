@@ -24,14 +24,13 @@ import { createCustomSchema } from "./schema";
 /**
  * @description 슬래시 메뉴에 Callout 항목 추가를 위한 유틸리티
  */
-// biome-ignore lint/suspicious/noExplicitAny: BlockNote editor types can be complex with custom schemas
 const insertCallout = (
-  editor: any,
+  editor: ReturnType<typeof useCreateBlockNote>,
   type: "beige" | "info" | "warning" | "error" | "success" = "beige",
 ) => {
   insertOrUpdateBlock(editor, {
     type: "callout",
-    props: { type } as any,
+    props: { type } as never,
   });
 };
 

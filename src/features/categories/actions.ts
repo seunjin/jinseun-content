@@ -20,7 +20,7 @@ export async function createCategoryAction(payload: CreateCategoryInput) {
 
   revalidatePath("/admin/category");
   // 공개 페이지 카테고리 목록도 갱신이 필요할 수 있습니다.
-  revalidatePath("/", "layout"); 
+  revalidatePath("/", "layout");
 
   return category;
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import type { CreateCategoryInput } from "@features/categories/schemas";
 import { createCategoryAction } from "@features/categories/actions";
+import type { CreateCategoryInput } from "@features/categories/schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ModalContainer from "@ui/components/dialogs/ModalContainer";
@@ -36,7 +36,11 @@ const CreateCategoryModal = () => {
       close();
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "카테고리 생성 중 오류가 발생했습니다.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "카테고리 생성 중 오류가 발생했습니다.",
+      );
     },
   });
 
@@ -133,7 +137,9 @@ const CreateCategoryModal = () => {
                   checked={field.state.value}
                   onCheckedChange={(checked) => field.handleChange(!!checked)}
                 />
-                <Label htmlFor="isVisible">{field.state.value ? "공개" : "비공개"}</Label>
+                <Label htmlFor="isVisible">
+                  {field.state.value ? "공개" : "비공개"}
+                </Label>
               </div>
             </div>
           )}

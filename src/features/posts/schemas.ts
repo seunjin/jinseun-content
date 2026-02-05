@@ -1,4 +1,3 @@
-import type { Database } from "@lib/supabase/database.types";
 import { z } from "zod";
 
 /**

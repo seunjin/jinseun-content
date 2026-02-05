@@ -9,26 +9,6 @@ import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import { createCustomSchema } from "./schema";
 
-const CODE_BLOCK_LANGUAGES: Record<
-  string,
-  { name: string; aliases?: string[] }
-> = {
-  typescript: { name: "TypeScript", aliases: ["ts"] },
-  tsx: { name: "TSX", aliases: ["tsx"] },
-  javascript: { name: "JavaScript", aliases: ["js"] },
-  jsx: { name: "JSX", aliases: ["jsx"] },
-  json: { name: "JSON" },
-  css: { name: "CSS" },
-  html: { name: "HTML" },
-  yaml: {
-    name: "YAML",
-    aliases: ["yml"],
-  },
-  markdown: { name: "Markdown", aliases: ["md"] },
-};
-const CODE_BLOCK_LANGUAGE_KEYS = ["typescript", "javascript", "json"] as const;
-const CODE_BLOCK_THEME = "one-dark-pro" as const;
-
 export type BlockNoteViewerProps = {
   /**
    * @description BlockNote 에디터에서 직렬화한 문서 JSON 문자열입니다.

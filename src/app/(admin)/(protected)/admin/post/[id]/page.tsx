@@ -6,7 +6,6 @@ import Icon from "@ui/components/lucide-icons/Icon";
 import PageContainer from "@ui/layouts/PageContainer";
 import { Button, Separator } from "@ui/shadcn/components";
 import { cn } from "@ui/shadcn/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
 
 type AdminPostDetailPageProps = {

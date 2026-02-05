@@ -1,58 +1,6 @@
-import type { CategoryRow } from "@features/categories/schemas";
-import { categoryRowSchema } from "@features/categories/schemas";
+import { fetchCategoriesWithCountServer } from "@features/categories/server";
 import { cn } from "@ui/shadcn/lib/utils";
 import Link from "next/link";
-import { z } from "zod";
-
-type CategoryWithCount = CategoryRow & {
-  /** 해당 카테고리에 속한 공개된(isPublished=true) 게시글 개수 */
-  visiblePostCount: number;
-};
-
-/**
- * @description 카테고리 목록을 API 라우트(`/api/categories/with-post-counts`)에서 조회합니다.
- * - 응답 스키마를 Zod로 검증해 타입 안전성을 보장합니다.
- * - 오류가 발생하면 null을 반환해 상위 컴포넌트에서 폴백 렌더링을 할 수 있게 합니다.
- */
-const categoryWithCountSchema = categoryRowSchema.extend({
-  visiblePostCount: z.number().int().min(0),
-});
-
-const fetchCategoriesFromApi = async (): Promise<
-  CategoryWithCount[] | null
-> => {
-  try {
-    const appOrigin =
-      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-    const url = new URL(
-      "/api/categories/with-post-counts?onlyVisible=true",
-      appOrigin,
-    ).toString();
-
-    const response = await fetch(url, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const json = (await response.json()) as {
-      data: unknown;
-      requestId?: string;
-      traceId?: string;
-    };
-
-    const parsed = categoryWithCountSchema.array().safeParse(json.data);
-    if (!parsed.success) {
-      return null;
-    }
-
-    return parsed.data;
-  } catch {
-    return null;
-  }
-};
 
 export type CategoryMobileFilterProps = {
   /**
@@ -75,7 +23,9 @@ const CategoryMobileFilter = async ({
   basePath = "/",
   activeSlug,
 }: CategoryMobileFilterProps) => {
-  const categories = await fetchCategoriesFromApi();
+  const categories = await fetchCategoriesWithCountServer({
+    onlyVisible: true,
+  });
 
   const totalVisiblePostCount =
     categories?.reduce((sum, category) => sum + category.visiblePostCount, 0) ??

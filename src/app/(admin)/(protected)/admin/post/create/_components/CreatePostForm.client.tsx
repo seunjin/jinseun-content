@@ -1,8 +1,8 @@
 "use client";
 
 import type { CategoryRow } from "@features/categories/schemas";
-import type { CreatePostInput } from "@features/posts/schemas";
 import { createPostAction } from "@features/posts/actions";
+import type { CreatePostInput } from "@features/posts/schemas";
 import Icon from "@ui/components/lucide-icons/Icon";
 import {
   Button,
@@ -10,15 +10,13 @@ import {
   Label,
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
   Switch,
   Textarea,
 } from "@ui/shadcn/components";
-import { cn } from "@ui/shadcn/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -44,8 +42,9 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
   const [contentJson, setContentJson] = useState<string>("");
   const [isPublished, setIsPublished] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(undefined);
-  const [createdDate, setCreatedDate] = useState<string>("");
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(
+    undefined,
+  );
 
   const slugifyFromTitle = (input: string) =>
     input
@@ -55,12 +54,16 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
 
-  const handleChangeDescription: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
+  const handleChangeDescription: React.ChangeEventHandler<
+    HTMLTextAreaElement
+  > = (event) => {
     const nextValue = event.target.value.slice(0, 200);
     setDescription(nextValue);
   };
 
-  const handleKeywordKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
+  const handleKeywordKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
+    event,
+  ) => {
     if (event.key !== "Enter") return;
     event.preventDefault();
     const raw = keywordInput.trim();
@@ -85,7 +88,9 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
     if (isSaving) return;
 
     const normalizedDescription = description.trim();
-    const keywordValues = keywords.map((v) => v.trim()).filter((v) => v.length > 0);
+    const keywordValues = keywords
+      .map((v) => v.trim())
+      .filter((v) => v.length > 0);
     const categoryIdNum = Number.parseInt(selectedCategoryId, 10);
     const trimmedTitle = title.trim();
     const trimmedSlug = slug.trim();
@@ -103,16 +108,6 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       return;
     }
 
-    let createdAt: string | undefined;
-    if (createdDate) {
-      const date = new Date(`${createdDate}T00:00:00Z`);
-      if (Number.isNaN(date.getTime())) {
-        toast.error("작성일 형식이 올바르지 않습니다.");
-        return;
-      }
-      createdAt = date.toISOString();
-    }
-
     const payload: CreatePostInput = {
       title: trimmedTitle,
       slug: trimmedSlug,
@@ -120,7 +115,6 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
       description: normalizedDescription || undefined,
       keywords: keywordValues.length > 0 ? keywordValues : undefined,
       thumbnailUrl: thumbnailUrl?.trim() || undefined,
-      createdAt,
       content: contentJson || undefined,
       isPublished,
     };
@@ -128,11 +122,15 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
     try {
       setIsSaving(true);
       const result = await createPostAction(payload);
-      toast.success(isPublished ? "게시글을 발행했습니다." : "게시글을 저장했습니다.");
+      toast.success(
+        isPublished ? "게시글을 발행했습니다." : "게시글을 저장했습니다.",
+      );
       router.push(`/admin/post/${result.id}`);
       router.refresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.");
+      toast.error(
+        error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -169,19 +167,33 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
 
         <div className="flex flex-col gap-2">
           <Label className="text-muted-foreground">카테고리</Label>
-          <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
-            <SelectTrigger><SelectValue placeholder="카테고리를 선택하세요" /></SelectTrigger>
+          <Select
+            value={selectedCategoryId}
+            onValueChange={setSelectedCategoryId}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="카테고리를 선택하세요" />
+            </SelectTrigger>
             <SelectContent>
-              {categories.map((c) => c.isVisible && (
-                <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
-              ))}
+              {categories.map(
+                (c) =>
+                  c.isVisible && (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {c.name}
+                    </SelectItem>
+                  ),
+              )}
             </SelectContent>
           </Select>
         </div>
 
         <div className="flex flex-col gap-2">
           <Label className="text-muted-foreground">제목</Label>
-          <Input placeholder="글 제목을 입력하세요." value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Input
+            placeholder="글 제목을 입력하세요."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -189,38 +201,73 @@ const CreatePostForm = ({ categories }: CreatePostFormProps) => {
           <Input
             placeholder="예: my-first-post"
             value={slug}
-            onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-            onFocus={() => { if (!slug && title.trim()) setSlug(slugifyFromTitle(title.trim())); }}
+            onChange={(e) =>
+              setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
+            }
+            onFocus={() => {
+              if (!slug && title.trim())
+                setSlug(slugifyFromTitle(title.trim()));
+            }}
           />
         </div>
 
         <div className="flex flex-col gap-2">
           <Label className="text-muted-foreground">설명 (최대 200자)</Label>
-          <Textarea value={description} onChange={handleChangeDescription} rows={4} />
+          <Textarea
+            value={description}
+            onChange={handleChangeDescription}
+            rows={4}
+          />
         </div>
 
         <div className="flex flex-col gap-2">
           <Label className="text-muted-foreground">썸네일 URL</Label>
-          <Input value={thumbnailUrl ?? ""} onChange={(e) => setThumbnailUrl(e.target.value)} />
+          <Input
+            value={thumbnailUrl ?? ""}
+            onChange={(e) => setThumbnailUrl(e.target.value)}
+          />
           {thumbnailUrl && (
             <div className="mt-2 border rounded p-2 flex justify-center bg-muted/20">
-              <img src={thumbnailUrl} alt="preview" className="max-h-[200px] object-contain" />
+              <Image
+                src={thumbnailUrl}
+                alt="preview"
+                width={400}
+                height={200}
+                className="max-h-[200px] w-auto object-contain"
+                unoptimized
+              />
             </div>
           )}
         </div>
 
         <div className="flex items-center gap-2">
-          <Switch id="isPublished" checked={isPublished} onCheckedChange={setIsPublished} />
-          <Label htmlFor="isPublished">{isPublished ? "공개" : "비공개(초안)"}</Label>
+          <Switch
+            id="isPublished"
+            checked={isPublished}
+            onCheckedChange={setIsPublished}
+          />
+          <Label htmlFor="isPublished">
+            {isPublished ? "공개" : "비공개(초안)"}
+          </Label>
         </div>
 
         <div className="flex flex-col gap-2">
           <Label className="text-muted-foreground">키워드 (최대 5개)</Label>
-          <Input value={keywordInput} onChange={(e) => setKeywordInput(e.target.value.replace(/,/g, ""))} onKeyDown={handleKeywordKeyDown} />
+          <Input
+            value={keywordInput}
+            onChange={(e) => setKeywordInput(e.target.value.replace(/,/g, ""))}
+            onKeyDown={handleKeywordKeyDown}
+          />
           <div className="flex flex-wrap gap-1">
             {keywords.map((k) => (
-              <div key={k} className="bg-accent px-2 py-1 rounded-full text-xs flex items-center gap-1">
-                {k} <button onClick={() => handleRemoveKeyword(k)}><Icon name="X" size={12} /></button>
+              <div
+                key={k}
+                className="bg-accent px-2 py-1 rounded-full text-xs flex items-center gap-1"
+              >
+                {k}{" "}
+                <button type="button" onClick={() => handleRemoveKeyword(k)}>
+                  <Icon name="X" size={12} />
+                </button>
               </div>
             ))}
           </div>
